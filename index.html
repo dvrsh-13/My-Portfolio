@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio ─ Computer Science &amp; Mathematics</title>
+    <meta name="description" content="Portfolio of a Computer Science &amp; Mathematics researcher and distributed systems architect. Formal verification, high-throughput systems, and applied mathematics." />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body class="antialiased">
+    <!-- =====================================================================
+         FIXED RAIL HEADER (Mobile: 390x64 top bar | Desktop: Left 64px rail)
+         ===================================================================== -->
+    <header
+      class="fixed z-[110] inset-x-0 top-0 flex w-full flex-row items-center justify-between border-b px-5 py-4 transition-colors duration-500 md:inset-x-auto md:inset-y-0 md:left-0 md:w-16 md:flex-col md:items-center md:justify-start md:px-0 md:py-0 md:border-b-0 md:border-r"
+      style="border-color: var(--header-border); background-color: var(--header-bg); color: var(--header-text);"
+      data-intro-header
+      aria-label="Global site rail navigation"
+    >
+      <!-- Real-time scroll progress indicator line -->
+      <div
+        class="pointer-events-none absolute -bottom-px left-0 z-10 h-px w-full origin-left bg-[#8A8178] will-change-transform md:top-0 md:bottom-auto md:h-dvh md:w-[2px] md:origin-top"
+        data-header-scroll-progress
+        style="transform: scaleY(0);"
+        aria-hidden="true"
+      ></div>
+
+      <!-- Mobile brand mark -->
+      <a href="#site-top" class="block w-12 shrink-0 md:hidden font-serif text-lg tracking-wider font-semibold" aria-label="Home">
+        ∑·λ
+      </a>
+
+      <!-- Menu toggle trigger -->
+      <button
+        id="menu-toggle"
+        type="button"
+        class="flex shrink-0 cursor-pointer items-center justify-center outline-none hover:opacity-75 transition-opacity md:h-16 md:w-full md:border-b"
+        style="border-color: var(--header-border);"
+        aria-expanded="false"
+        aria-controls="fullscreen-menu"
+        aria-label="Open menu"
+      >
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+          <line x1="3" y1="8" x2="21" y2="8"></line>
+          <line x1="3" y1="16" x2="21" y2="16"></line>
+        </svg>
+      </button>
+
+      <!-- Desktop vertical text rail -->
+      <div class="hidden flex-1 flex-col items-center justify-between py-8 md:flex">
+        <p class="vt-rl vt-reading-up font-mono text-[calc(1.1_*_var(--scale))] uppercase tracking-widest opacity-80">
+          SYSTEMS · DISCRETE MATH
+        </p>
+
+        <!-- Center geometric Monogram / Sigma-Lambda mark -->
+        <a href="#site-top" class="block text-center font-serif text-[calc(1.6_*_var(--scale))] tracking-tighter opacity-90 hover:opacity-100 transition-opacity" aria-label="Home">
+          <span class="block">∑</span>
+          <span class="block text-xs font-mono opacity-60">2026</span>
+        </a>
+
+        <p class="vt-rl vt-reading-up font-mono text-[calc(1.1_*_var(--scale))] uppercase tracking-widest opacity-80">
+          FOLIO — ARCHITECTURE
+        </p>
+      </div>
+    </header>
+
+    <!-- =====================================================================
+         FULLSCREEN MODAL NAVIGATION
+         ===================================================================== -->
+    <dialog
+      id="fullscreen-menu"
+      class="fixed inset-0 z-[120] m-0 h-dvh max-h-none w-full max-w-none border-0 bg-transparent p-0 backdrop:bg-transparent"
+      aria-label="Site navigation"
+      aria-modal="true"
+    >
+      <div class="relative flex min-h-0 min-w-0 flex-1 flex-col bg-[#1f1d1b] text-[#faf9f6] h-full p-8 md:p-16 justify-between">
+        <div class="flex justify-between items-center border-b border-[#5a524d] pb-6">
+          <span class="font-mono text-sm tracking-widest uppercase opacity-60">Index of Chapters</span>
+          <button
+            type="button"
+            id="menu-close"
+            class="font-mono text-sm uppercase tracking-widest cursor-pointer hover:opacity-70 transition-opacity flex items-center gap-2"
+            aria-label="Close menu"
+          >
+            <span>[ESC] CLOSE</span>
+          </button>
+        </div>
+
+        <nav class="flex flex-col gap-4 md:gap-6 my-auto" aria-label="Primary Chapters">
+          <a class="group flex items-center gap-6 text-[#faf9f6] opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-[calc(5.2_*_var(--scale))] leading-tight" href="#site-top" data-nav-link>
+            <span class="font-mono text-sm opacity-50 md:text-[calc(1.4_*_var(--scale))]">00.</span>
+            <span>Initialization</span>
+          </a>
+          <a class="group flex items-center gap-6 text-[#faf9f6] opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-[calc(5.2_*_var(--scale))] leading-tight" href="#about" data-nav-link>
+            <span class="font-mono text-sm opacity-50 md:text-[calc(1.4_*_var(--scale))]">01.</span>
+            <span>Philosophy &amp; Theory</span>
+          </a>
+          <a class="group flex items-center gap-6 text-[#faf9f6] opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-[calc(5.2_*_var(--scale))] leading-tight" href="#education" data-nav-link>
+            <span class="font-mono text-sm opacity-50 md:text-[calc(1.4_*_var(--scale))]">02.</span>
+            <span>Academic Pedigree</span>
+          </a>
+          <a class="group flex items-center gap-6 text-[#faf9f6] opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-[calc(5.2_*_var(--scale))] leading-tight" href="#experience" data-nav-link>
+            <span class="font-mono text-sm opacity-50 md:text-[calc(1.4_*_var(--scale))]">03.</span>
+            <span>Infrastructure &amp; Systems</span>
+          </a>
+          <a class="group flex items-center gap-6 text-[#faf9f6] opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-[calc(5.2_*_var(--scale))] leading-tight" href="#projects" data-nav-link>
+            <span class="font-mono text-sm opacity-50 md:text-[calc(1.4_*_var(--scale))]">04.</span>
+            <span>Selected Artifacts</span>
+          </a>
+          <a class="group flex items-center gap-6 text-[#faf9f6] opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-[calc(5.2_*_var(--scale))] leading-tight" href="#blog" data-nav-link>
+            <span class="font-mono text-sm opacity-50 md:text-[calc(1.4_*_var(--scale))]">05.</span>
+            <span>Technical Dispatches</span>
+          </a>
+          <a class="group flex items-center gap-6 text-[#faf9f6] opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-[calc(5.2_*_var(--scale))] leading-tight" href="#contact" data-nav-link>
+            <span class="font-mono text-sm opacity-50 md:text-[calc(1.4_*_var(--scale))]">06.</span>
+            <span>Terminal Dispatch</span>
+          </a>
+        </nav>
+
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-t border-[#5a524d] pt-6 gap-4 font-mono text-xs opacity-75">
+          <div class="flex gap-6">
+            <a href="https://github.com" target="_blank" rel="noreferrer" class="to-link-underline">GITHUB</a>
+            <a href="https://arxiv.org" target="_blank" rel="noreferrer" class="to-link-underline">ARXIV</a>
+            <a href="https://scholar.google.com" target="_blank" rel="noreferrer" class="to-link-underline">SCHOLAR</a>
+            <a href="https://linkedin.com" target="_blank" rel="noreferrer" class="to-link-underline">LINKEDIN</a>
+          </div>
+          <div>PGP: 4A89 2F10 C91B 8E23 ...</div>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- =====================================================================
+         MAIN PINNED STORYBOARD / HORIZONTAL TRACK CONTAINER
+         ===================================================================== -->
+    <main>
+      <div id="site-top" class="bg-[#edeae6]" data-horizontal-story>
+        <div data-horizontal-pin class="relative w-full md:h-dvh">
+          <div data-horizontal-track class="horizontal-track">
+
+            <!-- =============================================================
+                 PANEL 00: HERO / INITIALIZATION
+                 ============================================================= -->
+            <section
+              class="horizontal-panel flex w-full flex-col justify-between shrink-0 h-dvh overflow-hidden bg-[#262220] text-[#f3eee8] p-8 md:p-[var(--vg)] md:pl-28 md:w-screen"
+              data-section="hero"
+              data-header-bg="transparent"
+              data-header-text="#f3eee8"
+              data-header-border="#5a524d"
+              data-horizontal-panel
+              aria-label="System Initialization"
+            >
+              <!-- Background tone wipe overlay -->
+              <div
+                class="pointer-events-none absolute bottom-0 left-0 z-0 w-full h-full bg-[#2e2b28]"
+                aria-hidden="true"
+                data-loading-base-overlay
+              ></div>
+
+              <!-- Top Telemetry Bar -->
+              <div class="relative z-10 flex justify-between items-start border-b border-[#5a524d]/60 pb-4 font-mono text-xs md:text-[calc(1.1_*_var(--scale))] tracking-wider opacity-80" data-reveal-line>
+                <div>
+                  <span class="text-[#8A8178]">LOC:</span> CAMBRIDGE, MA / (UTC-5) <span data-telemetry-clock class="tabular-nums font-semibold text-[#f3eee8]">--:--:--</span>
+                </div>
+                <div>
+                  <span class="text-[#8A8178]">STATUS:</span> <span class="text-emerald-400 font-semibold">[SYS.NORMAL]</span>
+                </div>
+                <div class="hidden md:block">
+                  <span class="text-[#8A8178]">SPEC:</span> DISTRIBUTED SYSTEMS &amp; APPLIED MATH
+                </div>
+              </div>
+
+              <!-- Center Display: Year strip ticker & Monumental Name -->
+              <div class="relative z-10 my-auto flex flex-col gap-4">
+                <!-- Year Ticker -->
+                <div data-year-row class="font-serif tabular-nums text-[length:var(--year-slot)] leading-none overflow-hidden h-[1em]">
+                  <div class="flex items-center">
+                    <span class="mr-2 opacity-40">20</span>
+                    <div class="h-[1em] overflow-hidden">
+                      <div data-year-strip class="flex flex-col">
+                        <span class="year-strip-cell h-[1em] flex items-center">18</span>
+                        <span class="year-strip-cell h-[1em] flex items-center">19</span>
+                        <span class="year-strip-cell h-[1em] flex items-center">20</span>
+                        <span class="year-strip-cell h-[1em] flex items-center">21</span>
+                        <span class="year-strip-cell h-[1em] flex items-center">22</span>
+                        <span class="year-strip-cell h-[1em] flex items-center">23</span>
+                        <span class="year-strip-cell h-[1em] flex items-center">24</span>
+                        <span class="year-strip-cell h-[1em] flex items-center">25</span>
+                        <span class="year-strip-cell h-[1em] flex items-center">26</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Display Name Heading (revealed smoothly) -->
+                <div data-name-row class="font-serif text-[length:var(--name-fs)] leading-none tracking-tight uppercase">
+                  <h1 class="font-normal">
+                    <span class="block">DEV PATEL</span>
+                  </h1>
+                </div>
+
+                <p class="max-w-xl text-base md:text-[calc(1.8_*_var(--scale))] text-[#c8c0b8] font-normal leading-relaxed mt-2" data-reveal-line>
+                  Computer Scientist &amp; Applied Mathematician exploring formal verification, consensus protocols, and provably resilient distributed architectures.
+                </p>
+              </div>
+
+              <!-- Bottom Action Rail -->
+              <div class="relative z-10 flex justify-between items-end border-t border-[#5a524d]/60 pt-4 font-mono text-xs md:text-[calc(1.1_*_var(--scale))]" data-reveal-line>
+                <div>
+                  <span class="opacity-60">FOCUS:</span> <span>STOCHASTIC CALCULUS · FORMAL METHODS · DISTRIBUTED KERNELS</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="animate-pulse">↓</span>
+                  <span class="uppercase tracking-widest opacity-80">SCROLL TO TRAVERSE</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 PANEL 01: CHAPTER I — PHILOSOPHY & ABOUT
+                 ============================================================= -->
+            <section
+              id="about"
+              class="horizontal-panel flex w-full flex-col justify-between shrink-0 h-dvh overflow-hidden bg-[#faf9f6] text-[#2e2b28] p-8 md:p-[var(--vg)] md:pl-28 md:w-[calc(94_*_var(--scale))]"
+              data-section="about"
+              data-header-bg="#faf9f6"
+              data-header-text="#2e2b28"
+              data-header-border="#b8b3ac"
+              data-horizontal-panel
+              aria-label="Chapter I: Philosophy and Research"
+            >
+              <div class="flex justify-between items-center border-b border-[#b8b3ac]/50 pb-4 font-mono text-xs md:text-[calc(1.1_*_var(--scale))] uppercase tracking-wider text-[#5f5a54]">
+                <span>Chapter 01</span>
+                <span>Philosophy &amp; Theoretical Lens</span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-auto items-center">
+                <div class="flex flex-col gap-6">
+                  <h2 class="font-serif text-3xl md:text-[var(--display-fs)] leading-snug font-normal">
+                    Transforming discrete mathematics and formal logic into resilient, low-latency computing infrastructure.
+                  </h2>
+                  <p class="text-sm md:text-base leading-relaxed text-[#5f5a54]">
+                    Modern computing systems are too critical to rely on heuristics alone. By anchoring system architecture in category theory, state-machine replication invariants, and rigorous probabilistic bounds, we construct systems that are verifiably correct under extreme concurrency.
+                  </p>
+
+                  <!-- Interactive Research Focus Tags with preview trigger -->
+                  <div class="flex flex-col gap-2 pt-2">
+                    <span class="font-mono text-xs uppercase tracking-wider text-[#8a8178]">Primary Research Areas (Hover to Inspect):</span>
+                    <ul class="flex flex-wrap gap-2 text-xs md:text-sm font-mono">
+                      <li data-research-tag data-research-index="0" class="px-3 py-1.5 border border-[#b8b3ac] rounded hover:bg-[#2e2b28] hover:text-[#faf9f6] transition-colors cursor-pointer">
+                        01. Distributed Consensus (Raft/Paxos)
+                      </li>
+                      <li data-research-tag data-research-index="1" class="px-3 py-1.5 border border-[#b8b3ac] rounded hover:bg-[#2e2b28] hover:text-[#faf9f6] transition-colors cursor-pointer">
+                        02. Type Systems &amp; Abstract Interpretation
+                      </li>
+                      <li data-research-tag data-research-index="2" class="px-3 py-1.5 border border-[#b8b3ac] rounded hover:bg-[#2e2b28] hover:text-[#faf9f6] transition-colors cursor-pointer">
+                        03. Stochastic Processes &amp; Queueing Theory
+                      </li>
+                      <li data-research-tag data-research-index="3" class="px-3 py-1.5 border border-[#b8b3ac] rounded hover:bg-[#2e2b28] hover:text-[#faf9f6] transition-colors cursor-pointer">
+                        04. Formal Verification (TLA+ &amp; Coq)
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- Right geometric blueprint / formula preview card -->
+                <div class="relative aspect-[4/3] md:aspect-[3/4] max-h-[calc(48_*_var(--scale))] w-full border border-[#b8b3ac] p-6 bg-[#edeae6] flex flex-col justify-between font-mono text-xs">
+                  <div class="flex justify-between text-[#8a8178] border-b border-[#b8b3ac]/60 pb-2">
+                    <span>TELEMETRY_PORTAL</span>
+                    <span>FIG. 1.1</span>
+                  </div>
+
+                  <!-- Diagram slot 0: Consensus Invariant -->
+                  <div data-research-diagram class="flex flex-col gap-3 my-auto transition-opacity duration-300">
+                    <div class="text-sm font-semibold text-[#2e2b28]">State Machine Replication Invariant</div>
+                    <code class="p-3 bg-[#faf9f6] border border-[#b8b3ac]/50 text-[11px] block overflow-x-auto leading-relaxed">
+                      ∀ e1, e2 ∈ Log :<br />
+                      (e1.term = e2.term ∧ e1.index = e2.index) ⇒ e1.cmd = e2.cmd<br />
+                      LeaderCompleteness: term(S1) > term(S2) ⇒ Log(S2) ⊆ Log(S1)
+                    </code>
+                    <p class="text-[11px] text-[#5f5a54]">Safety proof guaranteed via linearizable quorum intersections.</p>
+                  </div>
+
+                  <!-- Diagram slot 1: Type Theory -->
+                  <div data-research-diagram class="flex flex-col gap-3 my-auto transition-opacity duration-300 opacity-0 absolute inset-6">
+                    <div class="text-sm font-semibold text-[#2e2b28]">Curry-Howard Isomorphism</div>
+                    <code class="p-3 bg-[#faf9f6] border border-[#b8b3ac]/50 text-[11px] block overflow-x-auto leading-relaxed">
+                      Propositions ≡ Types<br />
+                      Proofs ≡ Programs<br />
+                      Simplification ≡ Evaluation (β-reduction)<br />
+                      Γ ⊢ t : T ⟺ Context Γ entails Proposition T
+                    </code>
+                    <p class="text-[11px] text-[#5f5a54]">Compiling verified invariants into sound zero-overhead machine bytecode.</p>
+                  </div>
+
+                  <!-- Diagram slot 2: Queueing -->
+                  <div data-research-diagram class="flex flex-col gap-3 my-auto transition-opacity duration-300 opacity-0 absolute inset-6">
+                    <div class="text-sm font-semibold text-[#2e2b28]">M/G/1 Queue Delay Distribution</div>
+                    <code class="p-3 bg-[#faf9f6] border border-[#b8b3ac]/50 text-[11px] block overflow-x-auto leading-relaxed">
+                      W_q = λ · E[S²] / (2 · (1 - ρ))<br />
+                      Pollaczek–Khinchine Formula<br />
+                      Tail p99.9 latency bounded under heavy traffic Poisson arrivals.
+                    </code>
+                    <p class="text-[11px] text-[#5f5a54]">Zero-allocation memory pipelines to mitigate tail latency blowups.</p>
+                  </div>
+
+                  <!-- Diagram slot 3: Formal Verification -->
+                  <div data-research-diagram class="flex flex-col gap-3 my-auto transition-opacity duration-300 opacity-0 absolute inset-6">
+                    <div class="text-sm font-semibold text-[#2e2b28]">Temporal Logic of Actions (TLA+)</div>
+                    <code class="p-3 bg-[#faf9f6] border border-[#b8b3ac]/50 text-[11px] block overflow-x-auto leading-relaxed">
+                      Spec ≜ Init ∧ □[Next]_vars ∧ WF_vars(Next)<br />
+                      Invariant ≜ □(TypeOK ∧ Agreement ∧ Validity)<br />
+                      Model checking exhaustively across 2^48 state spaces.
+                    </code>
+                    <p class="text-[11px] text-[#5f5a54]">Exhaustive state space exploration eliminates concurrency race conditions.</p>
+                  </div>
+
+                  <div class="border-t border-[#b8b3ac]/60 pt-2 text-[10px] text-[#8a8178]">
+                    RENDERED ON CONTINUOUS MATHEMATICAL MAPPING ENGINE
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center border-t border-[#b8b3ac]/50 pt-4 font-mono text-xs text-[#5f5a54]">
+                <span>PRINCIPLE: FIRST-PRINCIPLES RIGOR</span>
+                <a href="#education" class="to-link-underline">TRAVERSE TO ACADEMIC RECORD →</a>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 PANEL 02: CHAPTER II — EDUCATION & ACADEMIC PEDIGREE
+                 ============================================================= -->
+            <section
+              id="education"
+              class="horizontal-panel flex w-full flex-col justify-between shrink-0 h-dvh overflow-hidden bg-[#edeae6] text-[#2e2b28] p-8 md:p-[var(--vg)] md:pl-28 md:w-[calc(90_*_var(--scale))]"
+              data-section="education"
+              data-header-bg="#edeae6"
+              data-header-text="#2e2b28"
+              data-header-border="#b8b3ac"
+              data-horizontal-panel
+              aria-label="Chapter II: Academic Pedigree"
+            >
+              <div class="flex justify-between items-center border-b border-[#b8b3ac]/50 pb-4 font-mono text-xs md:text-[calc(1.1_*_var(--scale))] uppercase tracking-wider text-[#5f5a54]">
+                <span>Chapter 02</span>
+                <span>Academic Pedigree &amp; Theoretical Foundations</span>
+              </div>
+
+              <div class="flex flex-col gap-6 my-auto">
+                <div class="border-b border-[#b8b3ac]/50 pb-6">
+                  <div class="flex justify-between items-baseline">
+                    <h3 class="font-serif text-2xl md:text-[calc(2.6_*_var(--scale))] font-normal">
+                      B.S. in Computer Science &amp; Applied Mathematics
+                    </h3>
+                    <span class="font-mono text-xs md:text-sm text-[#5f5a54]">2022 — 2026</span>
+                  </div>
+                  <p class="font-mono text-xs text-[#8a8178] mt-1">Summa Cum Laude · Top Honors · GPA: 3.98/4.00</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+                  <div class="flex flex-col gap-3">
+                    <span class="font-mono text-xs uppercase tracking-wider text-[#5f5a54] font-semibold">Core Graduate Coursework:</span>
+                    <ul class="space-y-1.5 text-[#2e2b28] font-mono text-xs leading-relaxed">
+                      <li>• Advanced Distributed Systems (Linearizability, Paxos, Raft)</li>
+                      <li>• Measure-Theoretic Probability &amp; Stochastic Processes</li>
+                      <li>• Abstract Algebra, Rings &amp; Galois Theory</li>
+                      <li>• Compilers &amp; Program Synthesis</li>
+                      <li>• Computational Complexity &amp; Randomized Algorithms</li>
+                      <li>• Quantum Information &amp; Cryptographic Protocols</li>
+                    </ul>
+                  </div>
+
+                  <div class="flex flex-col gap-3">
+                    <span class="font-mono text-xs uppercase tracking-wider text-[#5f5a54] font-semibold">Academic Honors &amp; Competitions:</span>
+                    <ul class="space-y-2 text-xs leading-relaxed text-[#5f5a54]">
+                      <li>
+                        <strong class="text-[#2e2b28] font-mono">William Lowell Putnam Mathematical Competition:</strong>
+                        Top 100 National Recognition for algorithmic problem solving.
+                      </li>
+                      <li>
+                        <strong class="text-[#2e2b28] font-mono">ICPC Regional Finalist:</strong>
+                        Gold medalist in graph algorithms, dynamic programming, and numerical computation.
+                      </li>
+                      <li>
+                        <strong class="text-[#2e2b28] font-mono">Undergraduate Research Fellowship:</strong>
+                        Awarded for work on lock-free concurrent data structures and cache coherence models.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center border-t border-[#b8b3ac]/50 pt-4 font-mono text-xs text-[#5f5a54]">
+                <span>RESEARCH THESIS: FORMAL STATE REACHABILITY IN CONCURRENT ACTOR NETWORKS</span>
+                <a href="#experience" class="to-link-underline">VIEW INDUSTRIAL EXPERIENCE →</a>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 PANEL 03: TRANSITION — "THE SYSTEMS" (Cinematic Zoom & Split)
+                 ============================================================= -->
+            <section
+              class="horizontal-panel flex w-full flex-col items-center justify-center shrink-0 h-dvh overflow-hidden bg-[#faf9f6] text-[#2e2b28] p-8 md:p-[var(--vg)] md:w-screen relative"
+              data-section="transition"
+              data-transition-section
+              data-header-bg="#faf9f6"
+              data-header-text="#2e2b28"
+              data-header-border="#b8b3ac"
+              data-horizontal-panel
+              aria-label="Transition: The Systems"
+            >
+              <!-- Center expanding media viewport (scaled up during scroll pause) -->
+              <div
+                class="pointer-events-none absolute inset-0 z-10 hidden items-center justify-center md:flex"
+                aria-hidden="true"
+              >
+                <div
+                  data-transition-media
+                  class="h-[calc(26_*_var(--scale))] w-[calc(42_*_var(--scale))] overflow-hidden bg-[#262220] border border-[#5a524d] p-6 flex flex-col justify-between font-mono text-xs text-[#faf9f6] shadow-2xl"
+                >
+                  <div class="flex justify-between border-b border-[#5a524d] pb-2 text-[#8a8178]">
+                    <span>KERNEL_BENCHMARK_PROFILER</span>
+                    <span>L3 CACHE HIT: 99.4%</span>
+                  </div>
+                  <div class="my-auto flex flex-col gap-2">
+                    <div class="text-emerald-400 font-mono text-sm">> RUNNING STRESS SUITE (16 THREADS, NUMA NODE 0)</div>
+                    <div class="h-2 w-full bg-[#3a3632] rounded overflow-hidden">
+                      <div class="h-full bg-emerald-500 w-[94%]"></div>
+                    </div>
+                    <div class="text-[11px] text-[#c8c0b8]">THROUGHPUT: 12,480,200 OPS/SEC | P99: 142ns | ALLOC: ZERO</div>
+                  </div>
+                  <div class="border-t border-[#5a524d] pt-2 text-[10px] text-[#8a8178]">
+                    VERIFIED ON LINUX 6.8 X86_64 AVX-512 VNNI ARCHITECTURE
+                  </div>
+                </div>
+              </div>
+
+              <!-- Huge Typographic Words that fly outwards on X-axis -->
+              <div class="relative z-20 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-16">
+                <span data-word-left class="font-serif text-6xl md:text-[calc(14_*_var(--scale))] uppercase tracking-tight font-normal">
+                  THE
+                </span>
+                <span data-word-right class="font-serif text-6xl md:text-[calc(14_*_var(--scale))] uppercase tracking-tight font-normal">
+                  SYSTEMS
+                </span>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 PANEL 04: CHAPTER III — EXPERIENCE & INDUSTRIAL SYSTEMS
+                 ============================================================= -->
+            <section
+              id="experience"
+              class="horizontal-panel flex w-full flex-col justify-between shrink-0 h-dvh overflow-hidden bg-[#2e2b28] text-[#faf9f6] p-8 md:p-[var(--vg)] md:pl-28 md:w-[calc(96_*_var(--scale))]"
+              data-section="experience"
+              data-header-bg="#2e2b28"
+              data-header-text="#faf9f6"
+              data-header-border="#5a524d"
+              data-horizontal-panel
+              aria-label="Chapter III: Engineering & Research Roles"
+            >
+              <div class="flex justify-between items-center border-b border-[#5a524d] pb-4 font-mono text-xs md:text-[calc(1.1_*_var(--scale))] uppercase tracking-wider text-[#8A8178]">
+                <span>Chapter 03</span>
+                <span>Engineering Leadership &amp; High-Throughput Systems</span>
+              </div>
+
+              <div class="flex flex-col gap-6 my-auto">
+                <!-- Role 01 -->
+                <div class="border-b border-[#5a524d] pb-5">
+                  <div class="flex justify-between items-baseline">
+                    <h3 class="font-serif text-xl md:text-[calc(2.4_*_var(--scale))] font-normal">
+                      Distributed Systems Research Intern · High-Throughput Lab
+                    </h3>
+                    <span class="font-mono text-xs md:text-sm text-[#8A8178]">2025</span>
+                  </div>
+                  <p class="text-sm text-[#c8c0b8] mt-2 leading-relaxed">
+                    Designed and benchmarked a multi-leader Raft consensus cluster in Rust with asynchronous batching and kernel bypass (io_uring). Achieved 4.2x latency reduction over conventional Raft under cross-datacenter WAN partitions.
+                  </p>
+                </div>
+
+                <!-- Role 02 -->
+                <div class="border-b border-[#5a524d] pb-5">
+                  <div class="flex justify-between items-baseline">
+                    <h3 class="font-serif text-xl md:text-[calc(2.4_*_var(--scale))] font-normal">
+                      Quantitative Systems Engineer · Algorithmic Trading Group
+                    </h3>
+                    <span class="font-mono text-xs md:text-sm text-[#8A8178]">2024</span>
+                  </div>
+                  <p class="text-sm text-[#c8c0b8] mt-2 leading-relaxed">
+                    Architected lock-free, zero-copy L3 orderbook matching pipeline in modern C++23. Utilized cache-line padding, SIMD AVX-512 instruction dispatch, and Linux core pinning to maintain sub-microsecond determinism under 8M updates/sec market spikes.
+                  </p>
+                </div>
+
+                <!-- Role 03 -->
+                <div>
+                  <div class="flex justify-between items-baseline">
+                    <h3 class="font-serif text-xl md:text-[calc(2.4_*_var(--scale))] font-normal">
+                      Undergraduate Researcher · Formal Methods &amp; Language Runtime Group
+                    </h3>
+                    <span class="font-mono text-xs md:text-sm text-[#8A8178]">2023 — 2024</span>
+                  </div>
+                  <p class="text-sm text-[#c8c0b8] mt-2 leading-relaxed">
+                    Formalized linearizability guarantees in Coq for a lock-free work-stealing deque. Proved absence of data races, progress invariants, and ABA hazards in memory reclaimers.
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center border-t border-[#5a524d] pt-4 font-mono text-xs text-[#8A8178]">
+                <span>KEY INVARIANT: DETERMINISM UNDER EXTREME SCALE</span>
+                <a href="#projects" class="to-link-underline">EXAMINE SELECTED PROJECTS →</a>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 PANEL 05: CHAPTER IV — SELECTED PROJECTS & ARTIFACTS
+                 ============================================================= -->
+            <section
+              id="projects"
+              class="horizontal-panel flex w-full flex-col justify-between shrink-0 h-dvh overflow-hidden bg-[#edeae6] text-[#2e2b28] p-8 md:p-[var(--vg)] md:pl-28 md:w-[calc(105_*_var(--scale))]"
+              data-section="projects"
+              data-header-bg="#edeae6"
+              data-header-text="#2e2b28"
+              data-header-border="#b8b3ac"
+              data-horizontal-panel
+              aria-label="Chapter IV: Selected Projects and Artifacts"
+            >
+              <div class="flex justify-between items-center border-b border-[#b8b3ac]/50 pb-4 font-mono text-xs md:text-[calc(1.1_*_var(--scale))] uppercase tracking-wider text-[#5f5a54]">
+                <span>Chapter 04</span>
+                <span>Selected Artifacts &amp; Architecture Blueprints</span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-[1fr_calc(42_*_var(--scale))] gap-12 my-auto items-center">
+                <!-- Project List with Hover State -->
+                <div class="flex flex-col gap-2 work-list">
+                  <!-- Project 0 -->
+                  <div class="work-item border-b border-[#b8b3ac]/60 py-4 cursor-pointer" data-project-item data-project-index="0">
+                    <div class="flex justify-between items-center">
+                      <div class="flex items-baseline gap-4">
+                        <span class="font-mono text-xs text-[#8a8178]">01</span>
+                        <h3 class="font-serif text-2xl md:text-[calc(3.2_*_var(--scale))] font-normal">Aether-Consensus</h3>
+                      </div>
+                      <span class="work-item-arrow font-mono text-lg">↗</span>
+                    </div>
+                    <p class="font-mono text-xs text-[#5f5a54] mt-1 pl-8">
+                      Formally verified Raft consensus engine in Rust · TLA+ Specification · io_uring kernel bypass
+                    </p>
+                  </div>
+
+                  <!-- Project 1 -->
+                  <div class="work-item border-b border-[#b8b3ac]/60 py-4 cursor-pointer" data-project-item data-project-index="1">
+                    <div class="flex justify-between items-center">
+                      <div class="flex items-baseline gap-4">
+                        <span class="font-mono text-xs text-[#8a8178]">02</span>
+                        <h3 class="font-serif text-2xl md:text-[calc(3.2_*_var(--scale))] font-normal">Kryo-VM</h3>
+                      </div>
+                      <span class="work-item-arrow font-mono text-lg">↗</span>
+                    </div>
+                    <p class="font-mono text-xs text-[#5f5a54] mt-1 pl-8">
+                      High-performance bytecode VM in C++23 · Linear scan register allocation · Tracing JIT compiler
+                    </p>
+                  </div>
+
+                  <!-- Project 2 -->
+                  <div class="work-item border-b border-[#b8b3ac]/60 py-4 cursor-pointer" data-project-item data-project-index="2">
+                    <div class="flex justify-between items-center">
+                      <div class="flex items-baseline gap-4">
+                        <span class="font-mono text-xs text-[#8a8178]">03</span>
+                        <h3 class="font-serif text-2xl md:text-[calc(3.2_*_var(--scale))] font-normal">ZeroKnowledge-SNARK</h3>
+                      </div>
+                      <span class="work-item-arrow font-mono text-lg">↗</span>
+                    </div>
+                    <p class="font-mono text-xs text-[#5f5a54] mt-1 pl-8">
+                      Arithmetic circuit compiler over BN254 pairing-friendly elliptic curves · O(1) succint verification
+                    </p>
+                  </div>
+
+                  <!-- Project 3 -->
+                  <div class="work-item py-4 cursor-pointer" data-project-item data-project-index="3">
+                    <div class="flex justify-between items-center">
+                      <div class="flex items-baseline gap-4">
+                        <span class="font-mono text-xs text-[#8a8178]">04</span>
+                        <h3 class="font-serif text-2xl md:text-[calc(3.2_*_var(--scale))] font-normal">Hyperion-Book</h3>
+                      </div>
+                      <span class="work-item-arrow font-mono text-lg">↗</span>
+                    </div>
+                    <p class="font-mono text-xs text-[#5f5a54] mt-1 pl-8">
+                      Lock-free limit orderbook processing 10M orders/sec · Cache-conscious B+ ring buffers
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Hover Blueprint Preview Portal Frame -->
+                <div class="relative aspect-[16/10] w-full border border-[#b8b3ac] bg-[#faf9f6] p-6 overflow-hidden flex flex-col justify-between font-mono text-xs shadow-inner">
+                  <!-- Default Placeholder -->
+                  <div data-project-placeholder class="flex flex-col justify-between h-full transition-opacity duration-300">
+                    <div class="flex justify-between text-[#8a8178]">
+                      <span>HOVER_PORTAL</span>
+                      <span>INTERACTIVE TELEMETRY</span>
+                    </div>
+                    <div class="text-center my-auto text-[#8a8178] flex flex-col items-center gap-2">
+                      <svg class="w-8 h-8 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                      <span>Hover any system to inspect architectural telemetry</span>
+                    </div>
+                    <div class="text-[10px] text-[#8a8178] border-t border-[#b8b3ac]/50 pt-2">
+                      PROFILER CONNECTED
+                    </div>
+                  </div>
+
+                  <!-- Project Image/Diagram 0 -->
+                  <div data-project-image class="absolute inset-6 opacity-0 transition-opacity duration-300 flex flex-col justify-between bg-[#faf9f6]">
+                    <div class="flex justify-between text-[#8a8178] border-b border-[#b8b3ac]/40 pb-2">
+                      <span class="text-emerald-700 font-semibold">01 · AETHER-CONSENSUS</span>
+                      <span>RAFT-v2</span>
+                    </div>
+                    <div class="my-auto space-y-2">
+                      <div class="p-2.5 bg-[#edeae6] border border-[#b8b3ac]/50 text-[11px] leading-relaxed">
+                        • Verified Safety Invariant: Election Safety &amp; Leader Append-Only<br />
+                        • RPC Transport: Zero-copy user-space ring buffers<br />
+                        • Benchmark: 3.2M commits/sec on 5-node cluster
+                      </div>
+                    </div>
+                    <div class="text-[10px] text-[#8a8178] border-t border-[#b8b3ac]/40 pt-2">
+                      SOURCE: GITHUB.COM/ARCH/AETHER · LICENSE: MIT
+                    </div>
+                  </div>
+
+                  <!-- Project Image/Diagram 1 -->
+                  <div data-project-image class="absolute inset-6 opacity-0 transition-opacity duration-300 flex flex-col justify-between bg-[#faf9f6]">
+                    <div class="flex justify-between text-[#8a8178] border-b border-[#b8b3ac]/40 pb-2">
+                      <span class="text-emerald-700 font-semibold">02 · KRYO-VM</span>
+                      <span>C++23 JIT</span>
+                    </div>
+                    <div class="my-auto space-y-2">
+                      <div class="p-2.5 bg-[#edeae6] border border-[#b8b3ac]/50 text-[11px] leading-relaxed">
+                        • Register Allocation: Chaitin-Briggs graph coloring<br />
+                        • Optimization: SSA form with sparse conditional constant propagation<br />
+                        • Execution speed within 1.12x of native clang -O3
+                      </div>
+                    </div>
+                    <div class="text-[10px] text-[#8a8178] border-t border-[#b8b3ac]/40 pt-2">
+                      TARGET: X86_64 / AARCH64 DUAL BACKEND
+                    </div>
+                  </div>
+
+                  <!-- Project Image/Diagram 2 -->
+                  <div data-project-image class="absolute inset-6 opacity-0 transition-opacity duration-300 flex flex-col justify-between bg-[#faf9f6]">
+                    <div class="flex justify-between text-[#8a8178] border-b border-[#b8b3ac]/40 pb-2">
+                      <span class="text-emerald-700 font-semibold">03 · ZK-SNARK</span>
+                      <span>PLONK PROVER</span>
+                    </div>
+                    <div class="my-auto space-y-2">
+                      <div class="p-2.5 bg-[#edeae6] border border-[#b8b3ac]/50 text-[11px] leading-relaxed">
+                        • Multiscalar Multiplication (MSM) via Pippenger algorithm<br />
+                        • FFT polynomial evaluation over roots of unity<br />
+                        • Proof verification time: 2.4 milliseconds
+                      </div>
+                    </div>
+                    <div class="text-[10px] text-[#8a8178] border-t border-[#b8b3ac]/40 pt-2">
+                      CURVE: BN254 PAIRING-FRIENDLY GROUP
+                    </div>
+                  </div>
+
+                  <!-- Project Image/Diagram 3 -->
+                  <div data-project-image class="absolute inset-6 opacity-0 transition-opacity duration-300 flex flex-col justify-between bg-[#faf9f6]">
+                    <div class="flex justify-between text-[#8a8178] border-b border-[#b8b3ac]/40 pb-2">
+                      <span class="text-emerald-700 font-semibold">04 · HYPERION-BOOK</span>
+                      <span>ULTRA LOW LATENCY</span>
+                    </div>
+                    <div class="my-auto space-y-2">
+                      <div class="p-2.5 bg-[#edeae6] border border-[#b8b3ac]/50 text-[11px] leading-relaxed">
+                        • Data Structure: Radix price tree with intrusive intrusive intrusive free list<br />
+                        • Memory: Locked pages with hugepage mmap(MAP_HUGETLB)<br />
+                        • P99 Tick-to-Trade: 84 nanoseconds
+                      </div>
+                    </div>
+                    <div class="text-[10px] text-[#8a8178] border-t border-[#b8b3ac]/40 pt-2">
+                      TEST HARNESS: HARDWARE TIMESTAMP NIC PCAP REPLAY
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center border-t border-[#b8b3ac]/50 pt-4 font-mono text-xs text-[#5f5a54]">
+                <span>ARCHITECTURAL INTEGRITY: ALL CODE IS PROVED OR BENCHMARKED</span>
+                <a href="#blog" class="to-link-underline">READ TECHNICAL DISPATCHES →</a>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 PANEL 06: CHAPTER V — BLOG & TECHNICAL PAPERS
+                 ============================================================= -->
+            <section
+              id="blog"
+              class="horizontal-panel flex w-full flex-col justify-between shrink-0 h-dvh overflow-hidden bg-[#faf9f6] text-[#2e2b28] p-8 md:p-[var(--vg)] md:pl-28 md:w-[calc(90_*_var(--scale))]"
+              data-section="blog"
+              data-header-bg="#faf9f6"
+              data-header-text="#2e2b28"
+              data-header-border="#b8b3ac"
+              data-horizontal-panel
+              aria-label="Chapter V: Technical Dispatches &amp; Papers"
+            >
+              <div class="flex justify-between items-center border-b border-[#b8b3ac]/50 pb-4 font-mono text-xs md:text-[calc(1.1_*_var(--scale))] uppercase tracking-wider text-[#5f5a54]">
+                <span>Chapter 05</span>
+                <span>Writings, Notes &amp; Theoretical Dispatches</span>
+              </div>
+
+              <div class="flex flex-col gap-6 my-auto">
+                <article class="border-b border-[#b8b3ac]/50 pb-5">
+                  <div class="flex justify-between items-baseline font-mono text-xs text-[#8a8178]">
+                    <span>RESEARCH ESSAY · 14 MIN READ</span>
+                    <span>OCTOBER 2025</span>
+                  </div>
+                  <h3 class="font-serif text-xl md:text-2xl mt-1 font-normal">
+                    <a href="#" class="to-link-underline">On the Duality of Monads and Distributed State Machines</a>
+                  </h3>
+                  <p class="text-sm text-[#5f5a54] mt-1.5 leading-relaxed">
+                    Formalizing distributed commit logs as monadic bind operations over partially ordered event graphs. Showing how commutative monoids simplify conflict-free replicated data types (CRDTs).
+                  </p>
+                </article>
+
+                <article class="border-b border-[#b8b3ac]/50 pb-5">
+                  <div class="flex justify-between items-baseline font-mono text-xs text-[#8a8178]">
+                    <span>SYSTEMS NOTE · 8 MIN READ</span>
+                    <span>JULY 2025</span>
+                  </div>
+                  <h3 class="font-serif text-xl md:text-2xl mt-1 font-normal">
+                    <a href="#" class="to-link-underline">Cache-Oblivious B-Trees in Modern NUMA Architectures</a>
+                  </h3>
+                  <p class="text-sm text-[#5f5a54] mt-1.5 leading-relaxed">
+                    Exploiting the Van Emde Boas layout to achieve asymptotically optimal memory access without tuning for specific hardware L1/L2/L3 cache capacities.
+                  </p>
+                </article>
+
+                <article>
+                  <div class="flex justify-between items-baseline font-mono text-xs text-[#8a8178]">
+                    <span>THEORY PAPER · 22 MIN READ</span>
+                    <span>MARCH 2025</span>
+                  </div>
+                  <h3 class="font-serif text-xl md:text-2xl mt-1 font-normal">
+                    <a href="#" class="to-link-underline">Linearizability vs. Sequential Consistency: A Formal Comparison</a>
+                  </h3>
+                  <p class="text-sm text-[#5f5a54] mt-1.5 leading-relaxed">
+                    A constructive proof dissecting the composability breakdown of sequential consistency compared to the strict composability invariants of linearizability.
+                  </p>
+                </article>
+              </div>
+
+              <div class="flex justify-between items-center border-t border-[#b8b3ac]/50 pt-4 font-mono text-xs text-[#5f5a54]">
+                <span>ARCHIVE: ALL DISPATCHES ARE TYPESET WITH LATEX EQUATIONS</span>
+                <a href="#contact" class="to-link-underline">CONNECT AT TERMINAL →</a>
+              </div>
+            </section>
+
+            <!-- =============================================================
+                 PANEL 07: CHAPTER VI — TERMINAL & CONTACT
+                 ============================================================= -->
+            <section
+              id="contact"
+              class="horizontal-panel flex w-full flex-col justify-between shrink-0 h-dvh overflow-hidden bg-[#1f1d1b] text-[#faf9f6] p-8 md:p-[var(--vg)] md:pl-28 md:w-screen"
+              data-section="contact"
+              data-header-bg="#1f1d1b"
+              data-header-text="#faf9f6"
+              data-header-border="#5a524d"
+              data-horizontal-panel
+              aria-label="Chapter VI: Terminal &amp; Direct Communication"
+            >
+              <div class="flex justify-between items-center border-b border-[#5a524d] pb-4 font-mono text-xs md:text-[calc(1.1_*_var(--scale))] uppercase tracking-wider text-[#8A8178]">
+                <span>Chapter 06</span>
+                <span>Direct Terminal &amp; Dispatch Channels</span>
+              </div>
+
+              <div class="my-auto flex flex-col gap-8 max-w-4xl">
+                <div>
+                  <span class="font-mono text-xs uppercase tracking-widest text-[#8a8178]">NEXT CHAPTER</span>
+                  <h2 class="font-serif text-5xl md:text-[calc(10_*_var(--scale))] uppercase leading-none tracking-tight font-normal mt-2">
+                    INITIATE CONTACT
+                  </h2>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                  <span class="font-mono text-xs text-[#8A8178] uppercase tracking-wider">Primary Channel (Direct RFC 5322):</span>
+                  <a
+                    href="mailto:dev.patel.cs@domain.edu"
+                    id="contact-email"
+                    class="from-link-underline font-serif text-3xl md:text-[calc(4.2_*_var(--scale))] text-[#faf9f6] hover:opacity-80 transition-opacity w-fit"
+                  >
+                    dev.patel.cs@domain.edu
+                  </a>
+                  <p class="font-mono text-xs text-[#8A8178]">
+                    Available for research lab fellowships, high-throughput distributed infrastructure roles, and quantitative systems engineering.
+                  </p>
+                </div>
+
+                <!-- PGP Key / Security Card -->
+                <div class="p-4 border border-[#5a524d] bg-[#262220] font-mono text-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div>
+                    <div class="text-[#8a8178] text-[10px] uppercase">PGP Fingerprint (RSA 4096)</div>
+                    <div class="text-[#faf9f6] font-semibold tracking-wider text-xs mt-0.5">
+                      B891 42E0 9C77 1B54 F26A · 83DE 4A89 2F10 C91B 8E23
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    id="copy-pgp-btn"
+                    class="px-3 py-1.5 border border-[#8a8178] text-[#f3eee8] hover:bg-[#faf9f6] hover:text-[#1f1d1b] transition-colors cursor-pointer text-[11px] uppercase"
+                  >
+                    Copy Key Fingerprint
+                  </button>
+                </div>
+
+                <!-- Social & Academic Nodes -->
+                <div class="flex flex-wrap gap-8 font-mono text-sm pt-2">
+                  <a href="https://github.com" target="_blank" rel="noreferrer" class="to-link-underline">GITHUB // @dev-patel</a>
+                  <a href="https://arxiv.org" target="_blank" rel="noreferrer" class="to-link-underline">ARXIV PAPERS</a>
+                  <a href="https://scholar.google.com" target="_blank" rel="noreferrer" class="to-link-underline">GOOGLE SCHOLAR</a>
+                  <a href="https://linkedin.com" target="_blank" rel="noreferrer" class="to-link-underline">LINKEDIN</a>
+                  <a href="https://x.com" target="_blank" rel="noreferrer" class="to-link-underline">X / TWITTER</a>
+                </div>
+              </div>
+
+              <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-t border-[#5a524d] pt-4 font-mono text-xs text-[#8A8178] gap-2">
+                <div>© 2026 DEV PATEL — CRAFTED WITH PROPORTIONAL GEOMETRIC DISCIPLINE</div>
+                <div>FOLIO EDITION — COMP.SCI &amp; APPLIED MATH</div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Main Entry Module -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

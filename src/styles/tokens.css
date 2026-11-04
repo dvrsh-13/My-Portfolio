@@ -1,0 +1,66 @@
+/* ==========================================================================
+   MATHEMATICAL FLUID SCALING & DESIGN TOKENS
+   Reverse engineered from khanhnguyen.design with bespoke CS/Math precision
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Mobile Fluid Scale: 390px artboard (1 unit = 10px) */
+  --scale: calc(100vw / 39);
+  
+  /* Typography Families */
+  --font-serif: "Newsreader", "PP Editorial Old", "Editorial New", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", "PP Neue Montreal", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
+
+  /* Palette: Warm Architectural Parchment & Obsidian Slate */
+  --color-paper-light: #faf9f6;
+  --color-paper-mid: #edeae6;
+  --color-paper-dark: #f3eee8;
+  --color-chalk: #d8d1c8;
+
+  --color-carbon-dark: #1f1d1b;
+  --color-carbon-hero: #262220;
+  --color-carbon-espresso: #2e2b28;
+  --color-carbon-overlay: #3a3632;
+
+  --color-hairline-dark: #5a524d;
+  --color-hairline-mid: #5f5a54;
+  --color-hairline-light: #8a8178;
+  --color-hairline-bone: #b8b3ac;
+
+  /* Header Rail Dynamic Theme (updated per section by JS) */
+  --header-bg: transparent;
+  --header-text: #f3eee8;
+  --header-border: #5a524d;
+
+  /* Spacing & Sizes (Mobile) */
+  --vg: calc(2.4 * var(--scale));
+  --display-fs: calc(2.4 * var(--scale));
+  --list-fs: calc(3.8 * var(--scale));
+  --cta-fs: calc(1.8 * var(--scale));
+  --name-fs: calc(7.8 * var(--scale));
+  --year-slot: calc(7.4 * var(--scale));
+  --card-w: calc(34 * var(--scale));
+}
+
+@media (min-width: 768px) {
+  :root {
+    /* Desktop Fluid Scale: 1440px artboard (1 unit = 10px) */
+    --scale: calc(100vw / 144);
+
+    /* Mathematical Proportions */
+    --vg: calc(4.8 * var(--scale));                     /* 48px @ 1440px */
+    --display-fs: calc(3.2 * var(--scale));             /* 32px @ 1440px */
+    --list-fs: calc(6.4 * var(--scale));                /* 64px @ 1440px */
+    --cta-fs: calc(2.3 * var(--scale));                 /* 23px @ 1440px */
+    --name-fs: calc(14.2 * var(--scale));               /* 142px @ 1440px */
+    --year-slot: calc(14.2 * var(--scale));             /* 142px @ 1440px */
+
+    --card-w: calc(40 * var(--scale));
+    --card-h: calc(52 * var(--scale));
+    --preview-w: calc(38 * var(--scale));
+    --preview-h: calc(26 * var(--scale));
+  }
+}

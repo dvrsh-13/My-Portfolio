@@ -1,0 +1,175 @@
+@import "./tokens.css";
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--color-carbon-hero);
+  color: var(--color-paper-light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-color: var(--color-carbon-hero);
+}
+
+/* Lenis Recommended CSS */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Typography Utilities */
+.font-serif {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Vertical Text Modes */
+.vt-rl {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  white-space: nowrap;
+}
+
+.vt-reading-up {
+  transform-origin: 50% 50%;
+  transform: rotate(180deg);
+}
+
+/* Directional Kinetic Underlines */
+.to-link-underline, .from-link-underline {
+  display: inline-block;
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+}
+
+.to-link-underline::after, .from-link-underline::after {
+  content: "";
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: currentColor;
+  will-change: transform;
+}
+
+.to-link-underline::after {
+  transform-origin: 100% 50%;
+  transform: scaleX(0);
+  transition: transform 0.4s cubic-bezier(0.21, 0, 0.32, 1);
+}
+
+.to-link-underline:hover::after {
+  transform-origin: 0% 50%;
+  transform: scaleX(1);
+}
+
+.from-link-underline::after {
+  transform-origin: 0% 50%;
+  transform: scaleX(1);
+  transition: transform 0.4s cubic-bezier(0.21, 0, 0.32, 1);
+}
+
+.from-link-underline:hover::after {
+  transform-origin: 100% 50%;
+  transform: scaleX(0);
+}
+
+/* Line reveal clip masking */
+.clip-line {
+  overflow: hidden;
+  display: block;
+}
+
+.clip-line-inner {
+  display: block;
+  transform: translateY(100%);
+  will-change: transform;
+}
+
+/* Interactive Work / Project Item */
+.work-item {
+  position: relative;
+  transition: opacity 0.4s ease;
+}
+
+.work-list:hover .work-item:not(:hover) {
+  opacity: 0.25;
+}
+
+.work-item-arrow {
+  opacity: 0;
+  transform: translate(-10px, 10px) scale(0.6);
+  transform-origin: left bottom;
+  transition: opacity 0.3s ease-out, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.work-item:hover .work-item-arrow {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+/* Structural Layouts */
+.horizontal-track {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .horizontal-track {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 100dvh;
+    width: max-content;
+  }
+
+  .horizontal-panel {
+    height: 100dvh;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+}

@@ -233,22 +233,90 @@ html.lenis, html.lenis body {
   min-height: 100%;
 }
 
-/* Custom Cursor: Hide default OS pointer on devices with a mouse/trackpad */
+/* Universal Focus Outline Normalization: Prevent ugly click boxes */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+[role="button"]:focus:not(:focus-visible),
+summary:focus:not(:focus-visible),
+[tabindex]:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 1px solid currentColor !important;
+  outline-offset: 4px;
+}
+
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom Cursor: Hide default OS pointer on main portfolio experience ONLY */
 @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  html,
-  body,
-  a,
-  button,
-  input,
-  textarea,
-  select,
-  [role="button"],
-  .work-item,
-  .cursor-pointer,
-  [data-open-project],
-  [data-open-post],
-  [data-open-view],
-  [data-nav-link] {
+  body.has-custom-cursor,
+  body.has-custom-cursor a,
+  body.has-custom-cursor button,
+  body.has-custom-cursor input,
+  body.has-custom-cursor textarea,
+  body.has-custom-cursor select,
+  body.has-custom-cursor [role="button"],
+  body.has-custom-cursor .work-item,
+  body.has-custom-cursor .cursor-pointer,
+  body.has-custom-cursor [data-open-project],
+  body.has-custom-cursor [data-open-post],
+  body.has-custom-cursor [data-open-view],
+  body.has-custom-cursor [data-nav-link] {
     cursor: none !important;
   }
+}
+
+/* Ensure CMS page always has standard, visible OS cursors */
+body.cms-page,
+body.cms-page * {
+  cursor: auto !important;
+}
+body.cms-page input[type="text"],
+body.cms-page input[type="password"],
+body.cms-page input[type="email"],
+body.cms-page input[type="number"],
+body.cms-page textarea {
+  cursor: text !important;
+}
+body.cms-page button,
+body.cms-page a,
+body.cms-page [role="button"],
+body.cms-page label.cursor-pointer,
+body.cms-page input[type="checkbox"],
+body.cms-page select {
+  cursor: pointer !important;
+}
+
+/* Instant Custom Cursor Theme Classes (Zero latency color switching) */
+#folio-cursor.theme-light #cursor-dot {
+  background-color: #000000 !important;
+}
+#folio-cursor.theme-light #cursor-ring {
+  border-color: rgba(0, 0, 0, 0.7) !important;
+}
+#folio-cursor.theme-light.is-hovered #cursor-ring {
+  border-color: #000000 !important;
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+#folio-cursor.theme-dark #cursor-dot {
+  background-color: #ffffff !important;
+}
+#folio-cursor.theme-dark #cursor-ring {
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+#folio-cursor.theme-dark.is-hovered #cursor-ring {
+  border-color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.16) !important;
 }

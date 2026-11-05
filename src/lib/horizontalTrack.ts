@@ -2,6 +2,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { getLenis } from "./smoothScroll";
 import { checkPanelEntrances } from "./panelAnimations";
+import { updateCursorThemeExternal } from "./customCursor";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -336,6 +337,7 @@ export function initHorizontalTrack() {
           }
           updateRailTheme();
           checkPanelEntrances();
+          updateCursorThemeExternal();
         },
       });
     } else {
@@ -372,6 +374,7 @@ export function initHorizontalTrack() {
           }
           updateRailTheme();
           checkPanelEntrances();
+          updateCursorThemeExternal();
         },
       });
     }

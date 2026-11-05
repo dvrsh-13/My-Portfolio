@@ -71,7 +71,34 @@ export function initPanelAnimations() {
     }
   });
 
-  // Check initial visibility in case first panels are in view
+  // Attach IntersectionObserver for mobile / vertical layouts to ensure panels never get stuck at opacity: 0
+  if (typeof IntersectionObserver !== "undefined") {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const panel = entry.target as HTMLElement;
+            const section = panel.dataset.section;
+            if (section === "hero" || section === "transition") return;
+            if (panel.dataset.animated !== "true") {
+              panel.dataset.animated = "true";
+              playPanelEntrance(panel, section);
+            }
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    panels.forEach((p) => {
+      const section = p.dataset.section;
+      if (section !== "hero" && section !== "transition") {
+        observer.observe(p);
+      }
+    });
+  }
+
+  // Check initial visibility in case first panels are in view on desktop
   checkPanelEntrances();
 }
 
@@ -109,12 +136,12 @@ function playPanelEntrance(panel: HTMLElement, section?: string) {
   const footerBar = panel.querySelector<HTMLElement>(".border-t:last-child");
   const mainContent = panel.querySelector<HTMLElement>(".my-auto");
 
-  // Subtle header & footer hairline reveal
+  // Subtle header & footer hairline reveal (slowed by ~15% for unhurried elegance)
   if (headerBar) {
-    tl.to(headerBar, { opacity: 1, y: 0, duration: 0.9 }, 0);
+    tl.to(headerBar, { opacity: 1, y: 0, duration: 1.05 }, 0);
   }
   if (footerBar) {
-    tl.to(footerBar, { opacity: 1, y: 0, duration: 0.9 }, 0.15);
+    tl.to(footerBar, { opacity: 1, y: 0, duration: 1.05 }, 0.18);
   }
 
   if (!mainContent) return;
@@ -126,26 +153,26 @@ function playPanelEntrance(panel: HTMLElement, section?: string) {
     const focusItems = mainContent.querySelectorAll(".md\\:border-l > div");
 
     if (headline) {
-      tl.to(headline, { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.1 }, 0.1);
+      tl.to(headline, { opacity: 1, y: 0, filter: "blur(0px)", clearProps: "filter", duration: 1.25 }, 0.12);
     }
     if (bio) {
-      tl.to(bio, { opacity: 1, y: 0, duration: 1.0 }, 0.25);
+      tl.to(bio, { opacity: 1, y: 0, duration: 1.15 }, 0.28);
     }
     if (buttons) {
-      tl.to(buttons, { opacity: 1, y: 0, duration: 0.9 }, 0.35);
+      tl.to(buttons, { opacity: 1, y: 0, duration: 1.05 }, 0.4);
     }
     if (focusItems.length) {
-      tl.to(focusItems, { opacity: 1, y: 0, duration: 0.95, stagger: 0.1 }, 0.2);
+      tl.to(focusItems, { opacity: 1, y: 0, duration: 1.1, stagger: 0.12 }, 0.22);
     }
   } else if (section === "education") {
     const eduContainer = mainContent.querySelector("[data-dynamic-education]");
     const comps = mainContent.querySelectorAll(".grid > div");
 
     if (eduContainer) {
-      tl.to(eduContainer, { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.1 }, 0.1);
+      tl.to(eduContainer, { opacity: 1, y: 0, filter: "blur(0px)", clearProps: "filter", duration: 1.25 }, 0.12);
     }
     if (comps.length) {
-      tl.to(comps, { opacity: 1, y: 0, duration: 0.95, stagger: 0.12 }, 0.3);
+      tl.to(comps, { opacity: 1, y: 0, duration: 1.1, stagger: 0.14 }, 0.35);
     }
   } else if (section === "projects") {
     const items = mainContent.querySelectorAll(".work-item");
@@ -153,45 +180,45 @@ function playPanelEntrance(panel: HTMLElement, section?: string) {
     const hoverFrame = mainContent.querySelector("#project-hover-frame");
 
     if (items.length) {
-      tl.to(items, { opacity: 1, x: 0, filter: "blur(0px)", duration: 1.0, stagger: 0.08 }, 0.1);
+      tl.to(items, { opacity: 1, x: 0, filter: "blur(0px)", clearProps: "filter", duration: 1.15, stagger: 0.095 }, 0.12);
     }
     if (viewAllBtn) {
-      tl.to(viewAllBtn, { opacity: 1, y: 0, duration: 0.9 }, 0.35);
+      tl.to(viewAllBtn, { opacity: 1, y: 0, duration: 1.05 }, 0.4);
     }
     if (hoverFrame) {
-      tl.to(hoverFrame, { scale: 1, duration: 1.0 }, 0.2);
+      tl.to(hoverFrame, { scale: 1, duration: 1.15 }, 0.25);
     }
   } else if (section === "blog") {
     const blogItems = mainContent.querySelectorAll("[data-dynamic-blogs] > *");
     const viewAllBtn = mainContent.querySelector("button[data-open-view]");
 
     if (blogItems.length) {
-      tl.to(blogItems, { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.0, stagger: 0.09 }, 0.1);
+      tl.to(blogItems, { opacity: 1, y: 0, filter: "blur(0px)", clearProps: "filter", duration: 1.15, stagger: 0.105 }, 0.12);
     }
     if (viewAllBtn) {
-      tl.to(viewAllBtn, { opacity: 1, y: 0, duration: 0.9 }, 0.35);
+      tl.to(viewAllBtn, { opacity: 1, y: 0, duration: 1.05 }, 0.4);
     }
   } else if (section === "experience") {
     const expItems = mainContent.querySelectorAll("[data-dynamic-experience] > *");
     const viewAllBtn = mainContent.querySelector("button[data-open-view]");
 
     if (expItems.length) {
-      tl.to(expItems, { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.0, stagger: 0.09 }, 0.1);
+      tl.to(expItems, { opacity: 1, y: 0, filter: "blur(0px)", clearProps: "filter", duration: 1.15, stagger: 0.105 }, 0.12);
     }
     if (viewAllBtn) {
-      tl.to(viewAllBtn, { opacity: 1, y: 0, duration: 0.9 }, 0.35);
+      tl.to(viewAllBtn, { opacity: 1, y: 0, duration: 1.05 }, 0.4);
     }
   } else if (section === "contact") {
     const headline = mainContent.querySelector("h2");
     const contactLinks = mainContent.querySelectorAll("a, .font-mono");
 
     if (headline) {
-      tl.to(headline, { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.2 }, 0.1);
+      tl.to(headline, { opacity: 1, y: 0, filter: "blur(0px)", clearProps: "filter", duration: 1.38 }, 0.12);
     }
     if (contactLinks.length) {
-      tl.to(contactLinks, { opacity: 1, y: 0, duration: 0.9, stagger: 0.08 }, 0.25);
+      tl.to(contactLinks, { opacity: 1, y: 0, duration: 1.05, stagger: 0.095 }, 0.28);
     }
   } else {
-    tl.to(mainContent, { opacity: 1, y: 0, duration: 1.0 }, 0.1);
+    tl.to(mainContent, { opacity: 1, y: 0, duration: 1.15 }, 0.12);
   }
 }

@@ -1,5 +1,11 @@
 import gsap from "gsap";
 
+let syncCursorThemeExternal: (() => void) | null = null;
+
+export function updateCursorThemeExternal() {
+  syncCursorThemeExternal?.();
+}
+
 export function initCustomCursor() {
   const container = document.querySelector<HTMLElement>("#folio-cursor");
   const dot = document.querySelector<HTMLElement>("#cursor-dot");
@@ -16,99 +22,93 @@ export function initCustomCursor() {
     return;
   }
 
+  // Progressive enhancement: only suppress native OS cursor after custom cursor successfully initializes
+  document.body.classList.add("has-custom-cursor");
+
+  // Cache static element lookups to avoid forced reflows on high-frequency pointer ticks
+  const archiveView = document.querySelector<HTMLElement>("#vertical-archive-view");
+  const articleView = document.querySelector<HTMLElement>("#vertical-article-view");
+  const projectView = document.querySelector<HTMLElement>("#vertical-project-view");
+  const menu = document.querySelector<HTMLElement>("#fullscreen-menu");
+  const rail = document.querySelector<HTMLElement>("[data-intro-header]");
+  const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-horizontal-panel]"));
+
   let isHovered = false;
   let isVisible = false;
   let isLightScreen = false;
+  let lastClientX = -1;
+  let lastClientY = -1;
+
+  // Set initial state
+  container.classList.add("theme-dark");
 
   // Optimized GSAP quickTo setters for 60-120fps tracking
   const dotX = gsap.quickTo(dot, "x", { duration: 0.08, ease: "power3.out" });
   const dotY = gsap.quickTo(dot, "y", { duration: 0.08, ease: "power3.out" });
 
-  const ringX = gsap.quickTo(ring, "x", { duration: 0.26, ease: "power2.out" });
-  const ringY = gsap.quickTo(ring, "y", { duration: 0.26, ease: "power2.out" });
+  const ringX = gsap.quickTo(ring, "x", { duration: 0.24, ease: "power2.out" });
+  const ringY = gsap.quickTo(ring, "y", { duration: 0.24, ease: "power2.out" });
+
+  const isModalActive = (el: HTMLElement | null): boolean => {
+    if (!el) return false;
+    return el.style.display !== "none" && el.getAttribute("aria-hidden") !== "true";
+  };
+
+  const isMenuVisible = (): boolean => {
+    if (!menu) return false;
+    return !menu.classList.contains("opacity-0") && menu.style.display !== "none";
+  };
 
   const checkIsLightScreen = (clientX: number, clientY: number): boolean => {
-    // Check if any full-screen vertical modal view is open (archives and articles have dark backgrounds)
-    const archiveView = document.querySelector<HTMLElement>("#vertical-archive-view");
-    const articleView = document.querySelector<HTMLElement>("#vertical-article-view");
-    const projectView = document.querySelector<HTMLElement>("#vertical-project-view");
+    if (clientX < 0 || clientY < 0) return false;
 
+    // Any active fullscreen overlay (archives, articles, projects, menu) has a dark obsidian canvas
     if (
-      (archiveView && archiveView.style.visibility !== "hidden" && archiveView.classList.contains("opacity-100")) ||
-      (articleView && articleView.style.visibility !== "hidden" && articleView.classList.contains("opacity-100")) ||
-      (projectView && projectView.style.visibility !== "hidden" && projectView.classList.contains("opacity-100"))
+      isModalActive(archiveView) ||
+      isModalActive(articleView) ||
+      isModalActive(projectView) ||
+      isMenuVisible()
     ) {
       return false;
     }
 
-    // Check if hovering on an inverted dark element (e.g. pill button or black card) on a white screen
-    const el = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
-    if (el) {
-      if (el.closest(".bg-black, .bg-[#080808], .bg-[#0a0a0a], .bg-[#121214], .bg-[#161616], [data-header-bg='#000000']")) {
-        const parentPanel = el.closest<HTMLElement>("[data-horizontal-panel]");
-        if (parentPanel?.dataset.headerBg?.toLowerCase() === "#ffffff") {
-          // If specific element has dark background, adapt to dark
-          return false;
-        }
-      }
+    // Check left rail header if pointer is over the 64px rail on desktop
+    if (clientX < 64 && window.innerWidth >= 768 && rail) {
+      const railBg = (rail.style.getPropertyValue("--header-bg") || "").toLowerCase().trim();
+      return railBg === "#ffffff" || railBg === "#fff";
     }
 
-    // Check horizontal panel underlying the pointer
-    const panels = document.querySelectorAll<HTMLElement>("[data-horizontal-panel]");
-    for (const p of panels) {
+    // Check horizontal panel underlying the pointer position
+    for (let i = 0; i < panels.length; i++) {
+      const p = panels[i];
       const rect = p.getBoundingClientRect();
       if (rect.left <= clientX && rect.right > clientX) {
-        const bg = (p.dataset.headerBg || "").toLowerCase();
+        const bg = (p.dataset.headerBg || "").toLowerCase().trim();
         return bg === "#ffffff" || bg === "#fff";
-      }
-    }
-
-    // Check left rail header if pointer is over rail
-    if (clientX < 64) {
-      const rail = document.querySelector<HTMLElement>("[data-intro-header]");
-      if (rail) {
-        const railBg = rail.style.getPropertyValue("--header-bg").toLowerCase();
-        return railBg === "#ffffff" || railBg === "#fff";
       }
     }
 
     return false;
   };
 
-  const updateCursorColors = (light: boolean) => {
-    isLightScreen = light;
-    if (light) {
-      // Crisp black on white panels
-      gsap.to(dot, {
-        backgroundColor: "#000000",
-        duration: 0.2,
-        ease: "power2.out",
-      });
-      gsap.to(ring, {
-        borderColor: isHovered ? "#000000" : "rgba(0, 0, 0, 0.65)",
-        backgroundColor: isHovered ? "rgba(0, 0, 0, 0.12)" : "transparent",
-        duration: 0.2,
-        ease: "power2.out",
-      });
-    } else {
-      // Crisp white on dark panels
-      gsap.to(dot, {
-        backgroundColor: "#ffffff",
-        duration: 0.2,
-        ease: "power2.out",
-      });
-      gsap.to(ring, {
-        borderColor: isHovered ? "#ffffff" : "rgba(255, 255, 255, 0.65)",
-        backgroundColor: isHovered ? "rgba(255, 255, 255, 0.16)" : "transparent",
-        duration: 0.2,
-        ease: "power2.out",
-      });
+  const syncThemeInstantly = () => {
+    if (!isVisible || lastClientX < 0) return;
+    const light = checkIsLightScreen(lastClientX, lastClientY);
+    if (light !== isLightScreen) {
+      isLightScreen = light;
+      container.classList.toggle("theme-light", light);
+      container.classList.toggle("theme-dark", !light);
     }
   };
+
+  syncCursorThemeExternal = syncThemeInstantly;
 
   const onPointerMove = (e: PointerEvent) => {
     // Ignore touch interactions on hybrid touchscreen devices
     if (e.pointerType === "touch") return;
+
+    lastClientX = e.clientX;
+    lastClientY = e.clientY;
 
     if (!isVisible) {
       // Snap position immediately on first move to prevent fly-in from (0, 0)
@@ -123,11 +123,7 @@ export function initCustomCursor() {
     ringX(e.clientX);
     ringY(e.clientY);
 
-    // Dynamic contrast adaptation between light and dark panels
-    const currentIsLight = checkIsLightScreen(e.clientX, e.clientY);
-    if (currentIsLight !== isLightScreen) {
-      updateCursorColors(currentIsLight);
-    }
+    syncThemeInstantly();
   };
 
   const onPointerDown = (e: PointerEvent) => {
@@ -169,32 +165,30 @@ export function initCustomCursor() {
     if (isInteractiveTarget(target)) {
       if (!isHovered) {
         isHovered = true;
+        container.classList.add("is-hovered");
         gsap.to(ring, {
           scale: 1.75,
-          borderColor: isLightScreen ? "#000000" : "#ffffff",
-          backgroundColor: isLightScreen ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.16)",
-          duration: 0.25,
+          duration: 0.22,
           ease: "power2.out",
         });
         gsap.to(dot, {
           scale: 0.45,
-          duration: 0.2,
+          duration: 0.18,
           ease: "power2.out",
         });
       }
     } else {
       if (isHovered) {
         isHovered = false;
+        container.classList.remove("is-hovered");
         gsap.to(ring, {
           scale: 1.0,
-          borderColor: isLightScreen ? "rgba(0, 0, 0, 0.65)" : "rgba(255, 255, 255, 0.65)",
-          backgroundColor: "transparent",
-          duration: 0.25,
+          duration: 0.22,
           ease: "power2.out",
         });
         gsap.to(dot, {
           scale: 1.0,
-          duration: 0.2,
+          duration: 0.18,
           ease: "power2.out",
         });
       }
@@ -204,6 +198,9 @@ export function initCustomCursor() {
   window.addEventListener("pointermove", onPointerMove, { passive: true });
   window.addEventListener("pointerdown", onPointerDown, { passive: true });
   window.addEventListener("pointerup", onPointerUp, { passive: true });
+
+  // Update theme when scrolling even if pointer is stationary
+  window.addEventListener("scroll", syncThemeInstantly, { passive: true });
 
   // Hide custom cursor immediately when pointer leaves document / window
   document.documentElement.addEventListener("mouseleave", hideCursor, { passive: true });

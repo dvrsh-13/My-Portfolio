@@ -124,11 +124,10 @@ function setupAuthGate() {
       const passHash = await computeSha256(cleanPass);
       const comboHash = await computeSha256(`${username.trim()}:${cleanPass}`);
 
-      // Cryptographic verification: matches master password hash or raw string fallback
+      // Cryptographic verification against verified SHA-256 hash constants
       const isPasswordValid =
         passHash === CMS_PASS_HASH ||
-        comboHash === CMS_AUTH_HASH ||
-        cleanPass === "IopTyuWer$123!";
+        comboHash === CMS_AUTH_HASH;
 
       const normalizedUser = username.trim().toLowerCase();
       const isUserValid = Boolean(normalizedUser && normalizedUser.length > 0);
@@ -932,9 +931,8 @@ function handleFormSubmit() {
 }
 
 function setupStickyHeaderCollapse() {
-  const header = document.getElementById("cms-header-main");
+  const header = document.getElementById("cms-header");
   const stickyBar = document.getElementById("cms-sticky-bar");
-  const fixedSaveBtn = document.getElementById("cms-fixed-save-btn");
   if (!header || !stickyBar) return;
 
   const onScroll = () => {
@@ -945,16 +943,6 @@ function setupStickyHeaderCollapse() {
     } else {
       header.classList.remove("hidden");
       stickyBar.classList.remove("py-1", "shadow-xl");
-    }
-
-    if (fixedSaveBtn) {
-      if (scrollY > 120) {
-        fixedSaveBtn.classList.remove("opacity-0", "pointer-events-none", "translate-y-4");
-        fixedSaveBtn.classList.add("opacity-100", "pointer-events-auto", "translate-y-0");
-      } else {
-        fixedSaveBtn.classList.add("opacity-0", "pointer-events-none", "translate-y-4");
-        fixedSaveBtn.classList.remove("opacity-100", "pointer-events-auto", "translate-y-0");
-      }
     }
   };
 
@@ -1001,7 +989,7 @@ function setupEventListeners() {
   };
 
   document.getElementById("save-profile-btn")?.addEventListener("click", handleSaveProfile);
-  document.getElementById("cms-fixed-save-btn")?.addEventListener("click", () => {
+  document.getElementById("cms-persistent-save-btn")?.addEventListener("click", () => {
     handleSaveProfile();
     showToast("✓ All CMS Changes Saved");
   });

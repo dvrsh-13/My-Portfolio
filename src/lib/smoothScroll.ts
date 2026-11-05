@@ -16,12 +16,16 @@ export function initSmoothScroll(startLocked = false): Lenis {
 
   isScrollLocked = startLocked;
 
+  const prefersReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   lenisInstance = new Lenis({
-    duration: 1.2,
+    duration: prefersReducedMotion ? 0.05 : 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential deceleration
     orientation: "vertical",
     gestureOrientation: "vertical",
-    smoothWheel: true,
+    smoothWheel: !prefersReducedMotion,
     wheelMultiplier: 1.0,
     touchMultiplier: 1.5,
     prevent: (node) => {

@@ -60,7 +60,14 @@ export function scrollToSection(
   targetId: string,
   options: { duration?: number; immediate?: boolean } = {}
 ) {
-  const { duration = 1.2, immediate = false } = options;
+  const prefersReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const {
+    duration = prefersReducedMotion ? 0 : 1.2,
+    immediate = prefersReducedMotion,
+  } = options;
   const cleanId = targetId.replace(/^#/, "");
   const targetEl =
     document.getElementById(cleanId) ||
@@ -227,6 +234,10 @@ export function initHorizontalTrack() {
   const mm = gsap.matchMedia();
 
   mm.add("(min-width: 768px)", () => {
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const getScrollDistance = () => track.scrollWidth - window.innerWidth;
 
     masterTimeline = gsap.timeline({
@@ -303,19 +314,21 @@ export function initHorizontalTrack() {
         start: "top top",
         end: () => `+=${totalScroll}`,
         pin: true,
-        scrub: 1,
+        scrub: prefersReducedMotion ? 0 : 1,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        snap: {
-          snapTo: (val: number) => {
-            const dir = activeTrigger ? activeTrigger.direction : 0;
-            return computeSmartSnap(val, uniqueSnapPoints, dir);
-          },
-          duration: { min: 0.25, max: 0.55 },
-          delay: 0.35,
-          ease: "power2.out",
-          inertia: false,
-        },
+        snap: prefersReducedMotion
+          ? undefined
+          : {
+              snapTo: (val: number) => {
+                const dir = activeTrigger ? activeTrigger.direction : 0;
+                return computeSmartSnap(val, uniqueSnapPoints, dir);
+              },
+              duration: { min: 0.25, max: 0.55 },
+              delay: 0.35,
+              ease: "power2.out",
+              inertia: false,
+            },
         onUpdate: (self) => {
           if (progressBar) {
             progressBar.style.transform = `scaleY(${self.progress})`;
@@ -336,19 +349,21 @@ export function initHorizontalTrack() {
         start: "top top",
         end: () => `+=${getScrollDistance()}`,
         pin: true,
-        scrub: 1,
+        scrub: prefersReducedMotion ? 0 : 1,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        snap: {
-          snapTo: (val: number) => {
-            const dir = activeTrigger ? activeTrigger.direction : 0;
-            return computeSmartSnap(val, fallbackSnapPoints, dir);
-          },
-          duration: { min: 0.25, max: 0.55 },
-          delay: 0.35,
-          ease: "power2.out",
-          inertia: false,
-        },
+        snap: prefersReducedMotion
+          ? undefined
+          : {
+              snapTo: (val: number) => {
+                const dir = activeTrigger ? activeTrigger.direction : 0;
+                return computeSmartSnap(val, fallbackSnapPoints, dir);
+              },
+              duration: { min: 0.25, max: 0.55 },
+              delay: 0.35,
+              ease: "power2.out",
+              inertia: false,
+            },
         onUpdate: (self) => {
           if (progressBar) {
             progressBar.style.transform = `scaleY(${self.progress})`;

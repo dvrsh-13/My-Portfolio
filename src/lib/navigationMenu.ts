@@ -91,6 +91,13 @@ export function initNavigationMenu() {
         const targetId = href.slice(1);
         setTimeout(() => {
           scrollToSection(targetId, { duration: 1.2 });
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) {
+            if (!targetEl.hasAttribute("tabindex")) {
+              targetEl.setAttribute("tabindex", "-1");
+            }
+            targetEl.focus({ preventScroll: true });
+          }
         }, 80);
       }
     });
@@ -106,6 +113,13 @@ export function initNavigationMenu() {
       e.preventDefault();
       const targetId = href.slice(1);
       scrollToSection(targetId, { duration: 1.2 });
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) {
+        if (!targetEl.hasAttribute("tabindex")) {
+          targetEl.setAttribute("tabindex", "-1");
+        }
+        targetEl.focus({ preventScroll: true });
+      }
     }
   });
 

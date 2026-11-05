@@ -837,7 +837,7 @@ function setupEventListeners() {
   const ghTokenInput = document.getElementById("gh-sync-token") as HTMLInputElement;
   const ghStatus = document.getElementById("gh-sync-status");
 
-  const savedToken = localStorage.getItem("folio_gh_token");
+  const savedToken = sessionStorage.getItem("folio_gh_token");
   if (savedToken && ghTokenInput) ghTokenInput.value = savedToken;
   const savedRepo = localStorage.getItem("folio_gh_repo");
   if (savedRepo && ghRepoInput) ghRepoInput.value = savedRepo;
@@ -845,14 +845,14 @@ function setupEventListeners() {
   document.getElementById("gh-publish-btn")?.addEventListener("click", async () => {
     const token = ghTokenInput?.value.trim();
     const repo = ghRepoInput?.value.trim() || "dvrsh-13/My-Portfolio";
-    const branch = ghBranchInput?.value.trim() || "Main";
+    const branch = ghBranchInput?.value.trim() || "main";
 
     if (!token) {
       showToast("Please provide a GitHub Personal Access Token (PAT) with repo scope", true);
       return;
     }
 
-    localStorage.setItem("folio_gh_token", token);
+    sessionStorage.setItem("folio_gh_token", token);
     localStorage.setItem("folio_gh_repo", repo);
 
     if (ghStatus) {

@@ -27,6 +27,7 @@ export class CMSStore {
   private education!: EducationItem[];
   private blogs!: BlogItem[];
   private listeners: (() => void)[] = [];
+  private memoryFallback: Record<string, string> = {};
 
   private constructor() {
     this.reloadAllFromStorage();
@@ -64,21 +65,38 @@ export class CMSStore {
 
   private loadFromStorage<T>(key: string, fallback: T): T {
     try {
-      const saved = localStorage.getItem(key);
-      if (saved) {
-        return JSON.parse(saved) as T;
+      if (typeof window !== "undefined" && window.localStorage) {
+        const saved = localStorage.getItem(key);
+        if (saved) {
+          return JSON.parse(saved) as T;
+        }
       }
     } catch (e) {
-      console.warn(`[CMS] Failed reading storage key ${key}:`, e);
+      console.warn(`[CMS] LocalStorage read failed for ${key}, checking fallback:`, e);
     }
-    return fallback;
+
+    if (this.memoryFallback[key]) {
+      try {
+        return JSON.parse(this.memoryFallback[key]) as T;
+      } catch {
+        // Fall back to default
+      }
+    }
+    return typeof structuredClone === "function"
+      ? structuredClone(fallback)
+      : (JSON.parse(JSON.stringify(fallback)) as T);
   }
 
   private saveToStorage<T>(key: string, value: T) {
+    const serialized = JSON.stringify(value);
+    this.memoryFallback[key] = serialized;
+
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      if (typeof window !== "undefined" && window.localStorage) {
+        localStorage.setItem(key, serialized);
+      }
     } catch (e) {
-      console.error(`[CMS] Failed writing storage key ${key}:`, e);
+      console.warn(`[CMS] LocalStorage write failed for ${key}, retained in memory:`, e);
     }
   }
 
@@ -349,18 +367,127 @@ export const INITIAL_BLOGS: BlogItem[] = ${JSON.stringify(this.blogs, null, 2)};
 
   public importJSON(jsonStr: string) {
     try {
-      const data = JSON.parse(jsonStr);
-      if (data.settings) this.settings = data.settings;
-      if (data.projects) this.projects = data.projects;
-      if (data.experience) this.experience = data.experience;
-      if (data.education) this.education = data.education;
-      if (data.blogs) this.blogs = data.blogs;
+      if (typeof jsonStr !== "string" || !jsonStr.trim()) {
+        throw new Error("Payload is empty or not a valid JSON string");
+      }
 
-      this.saveToStorage(STORAGE_KEYS.SETTINGS, this.settings);
-      this.saveToStorage(STORAGE_KEYS.PROJECTS, this.projects);
-      this.saveToStorage(STORAGE_KEYS.EXPERIENCE, this.experience);
-      this.saveToStorage(STORAGE_KEYS.EDUCATION, this.education);
-      this.saveToStorage(STORAGE_KEYS.BLOGS, this.blogs);
+      const data = JSON.parse(jsonStr);
+      if (!data || typeof data !== "object" || Array.isArray(data)) {
+        throw new Error("Root JSON structure must be a non-null object");
+      }
+
+      // Guard against prototype pollution keys on parsed object
+      const dangerousKeys = ["__proto__", "constructor", "prototype"];
+      if (Object.keys(data).some((k) => dangerousKeys.includes(k))) {
+        throw new Error("Unauthorized root key detected in JSON payload");
+      }
+
+      // 1. Settings validation & sanitization
+      if (data.settings && typeof data.settings === "object" && !Array.isArray(data.settings)) {
+        const s = data.settings;
+        this.settings = {
+          name: typeof s.name === "string" && s.name.trim() ? s.name.trim() : this.settings.name,
+          status: typeof s.status === "string" && s.status.trim() ? s.status.trim() : this.settings.status,
+          title: typeof s.title === "string" && s.title.trim() ? s.title.trim() : this.settings.title,
+          bio: typeof s.bio === "string" && s.bio.trim() ? s.bio.trim() : this.settings.bio,
+          location: typeof s.location === "string" && s.location.trim() ? s.location.trim() : this.settings.location,
+          email: typeof s.email === "string" && s.email.trim() ? s.email.trim() : this.settings.email,
+          github: typeof s.github === "string" && s.github.trim() ? s.github.trim() : this.settings.github,
+          linkedin: typeof s.linkedin === "string" && s.linkedin.trim() ? s.linkedin.trim() : this.settings.linkedin,
+          featuredProjectsLimit: Math.max(1, Math.min(10, Number(s.featuredProjectsLimit) || 3)),
+          featuredExperienceLimit: Math.max(1, Math.min(10, Number(s.featuredExperienceLimit) || 3)),
+          featuredBlogsLimit: Math.max(1, Math.min(10, Number(s.featuredBlogsLimit) || 3)),
+        };
+        this.saveToStorage(STORAGE_KEYS.SETTINGS, this.settings);
+      }
+
+      // 2. Projects validation
+      if (Array.isArray(data.projects)) {
+        const validProjects: ProjectItem[] = data.projects
+          .filter((p: unknown) => p && typeof p === "object" && !Array.isArray(p))
+          .map((p: Record<string, unknown>, idx: number) => ({
+            id: typeof p.id === "string" && p.id.trim() ? p.id.trim() : `project-${idx + 1}`,
+            title: typeof p.title === "string" && p.title.trim() ? p.title.trim() : "Untitled Project",
+            subtitle: typeof p.subtitle === "string" ? p.subtitle.trim() : "",
+            category: typeof p.category === "string" ? p.category.trim() : "Engineering",
+            year: typeof p.year === "string" ? p.year.trim() : "2026",
+            description: typeof p.description === "string" ? p.description.trim() : "",
+            metrics: Array.isArray(p.metrics) ? p.metrics.filter((m): m is string => typeof m === "string") : [],
+            tags: Array.isArray(p.tags) ? p.tags.filter((t): t is string => typeof t === "string") : [],
+            featured: Boolean(p.featured),
+            codeSnippet: typeof p.codeSnippet === "string" ? p.codeSnippet : undefined,
+          }));
+
+        if (validProjects.length > 0) {
+          this.projects = validProjects;
+          this.saveToStorage(STORAGE_KEYS.PROJECTS, this.projects);
+        }
+      }
+
+      // 3. Experience validation
+      if (Array.isArray(data.experience)) {
+        const validExp: ExperienceItem[] = data.experience
+          .filter((e: unknown) => e && typeof e === "object" && !Array.isArray(e))
+          .map((e: Record<string, unknown>, idx: number) => ({
+            id: typeof e.id === "string" && e.id.trim() ? e.id.trim() : `exp-${idx + 1}`,
+            role: typeof e.role === "string" && e.role.trim() ? e.role.trim() : "Role",
+            company: typeof e.company === "string" && e.company.trim() ? e.company.trim() : "Organization",
+            location: typeof e.location === "string" ? e.location.trim() : "London, UK",
+            period: typeof e.period === "string" ? e.period.trim() : "",
+            description: typeof e.description === "string" ? e.description.trim() : "",
+            bulletPoints: Array.isArray(e.bulletPoints)
+              ? e.bulletPoints.filter((b): b is string => typeof b === "string")
+              : [],
+            featured: Boolean(e.featured),
+            category: e.category === "competition" ? "competition" : "work",
+          }));
+
+        if (validExp.length > 0) {
+          this.experience = validExp;
+          this.saveToStorage(STORAGE_KEYS.EXPERIENCE, this.experience);
+        }
+      }
+
+      // 4. Education validation
+      if (Array.isArray(data.education)) {
+        const validEdu: EducationItem[] = data.education
+          .filter((ed: unknown) => ed && typeof ed === "object" && !Array.isArray(ed))
+          .map((ed: Record<string, unknown>, idx: number) => ({
+            id: typeof ed.id === "string" && ed.id.trim() ? ed.id.trim() : `edu-${idx + 1}`,
+            institution: typeof ed.institution === "string" ? ed.institution.trim() : "",
+            program: typeof ed.program === "string" ? ed.program.trim() : "",
+            period: typeof ed.period === "string" ? ed.period.trim() : "",
+            grades: typeof ed.grades === "string" ? ed.grades.trim() : "",
+            details: Array.isArray(ed.details) ? ed.details.filter((d): d is string => typeof d === "string") : [],
+            featured: Boolean(ed.featured),
+          }));
+
+        if (validEdu.length > 0) {
+          this.education = validEdu;
+          this.saveToStorage(STORAGE_KEYS.EDUCATION, this.education);
+        }
+      }
+
+      // 5. Blogs validation
+      if (Array.isArray(data.blogs)) {
+        const validBlogs: BlogItem[] = data.blogs
+          .filter((b: unknown) => b && typeof b === "object" && !Array.isArray(b))
+          .map((b: Record<string, unknown>, idx: number) => ({
+            id: typeof b.id === "string" && b.id.trim() ? b.id.trim() : `blog-${idx + 1}`,
+            title: typeof b.title === "string" && b.title.trim() ? b.title.trim() : "Untitled Dispatch",
+            readTime: typeof b.readTime === "string" ? b.readTime.trim() : "5 min read",
+            date: typeof b.date === "string" ? b.date.trim() : "2026",
+            excerpt: typeof b.excerpt === "string" ? b.excerpt.trim() : "",
+            content: typeof b.content === "string" ? b.content.trim() : "",
+            tags: Array.isArray(b.tags) ? b.tags.filter((t): t is string => typeof t === "string") : [],
+            featured: Boolean(b.featured),
+          }));
+
+        if (validBlogs.length > 0) {
+          this.blogs = validBlogs;
+          this.saveToStorage(STORAGE_KEYS.BLOGS, this.blogs);
+        }
+      }
 
       this.notify();
     } catch (e) {

@@ -1,15 +1,169 @@
 import { cms } from "./lib/cmsStore";
 import type { ProjectItem, ExperienceItem, BlogItem, EducationItem } from "./data/portfolioData";
+import { escapeHtml } from "./lib/utils";
 
 type CurrentEditType = "project" | "experience" | "blog" | "education";
 let activeEditType: CurrentEditType = "project";
 let activeEditId: string | null = null;
 
+const CMS_AUTH_HASH = "1deb77a9b0e4fae85aea190e3bedbeee9119a973dd45e54cd9567d349cf0ad5e";
+const CMS_SESSION_KEY = "folio_cms_session_token";
+const CMS_LOCKOUT_KEY = "folio_cms_lockout_until";
+const CMS_ATTEMPTS_KEY = "folio_cms_failed_attempts";
+
+function getLockoutUntil(): number {
+  try {
+    return parseInt(sessionStorage.getItem(CMS_LOCKOUT_KEY) || "0", 10);
+  } catch {
+    return 0;
+  }
+}
+
+function setLockoutUntil(ts: number) {
+  try {
+    sessionStorage.setItem(CMS_LOCKOUT_KEY, String(ts));
+  } catch {
+    // fallback
+  }
+}
+
+function getFailedAttempts(): number {
+  try {
+    return parseInt(sessionStorage.getItem(CMS_ATTEMPTS_KEY) || "0", 10);
+  } catch {
+    return 0;
+  }
+}
+
+function setFailedAttempts(count: number) {
+  try {
+    sessionStorage.setItem(CMS_ATTEMPTS_KEY, String(count));
+  } catch {
+    // fallback
+  }
+}
+
+async function computeSha256(str: string): Promise<string> {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function isSessionAuthenticated(): boolean {
+  const token = sessionStorage.getItem(CMS_SESSION_KEY);
+  return Boolean(token && token.startsWith("auth_"));
+}
+
 function init() {
-  setupTabs();
-  renderAll();
-  setupEventListeners();
-  setupStickyHeaderCollapse();
+  setupAuthGate();
+}
+
+function setupAuthGate() {
+  const barrier = document.getElementById("cms-login-barrier");
+  const app = document.getElementById("cms-app");
+  const form = document.getElementById("cms-login-form") as HTMLFormElement | null;
+  const usernameInput = document.getElementById("cms-auth-username") as HTMLInputElement | null;
+  const passwordInput = document.getElementById("cms-auth-password") as HTMLInputElement | null;
+  const errorBox = document.getElementById("cms-login-error");
+  const submitBtn = document.getElementById("cms-login-submit") as HTMLButtonElement | null;
+  const logoutBtn = document.getElementById("cms-logout-btn");
+
+  logoutBtn?.addEventListener("click", () => {
+    sessionStorage.removeItem(CMS_SESSION_KEY);
+    window.location.reload();
+  });
+
+  if (isSessionAuthenticated()) {
+    if (barrier) barrier.style.display = "none";
+    if (app) app.style.display = "block";
+    setupTabs();
+    renderAll();
+    setupEventListeners();
+    setupStickyHeaderCollapse();
+    return;
+  }
+
+  // Ensure app is hidden
+  if (app) app.style.display = "none";
+  if (barrier) barrier.style.display = "flex";
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const now = Date.now();
+    const currentLockout = getLockoutUntil();
+    if (now < currentLockout) {
+      const waitSec = Math.ceil((currentLockout - now) / 1000);
+      if (errorBox) {
+        errorBox.textContent = `Too many failed attempts. Try again in ${waitSec}s.`;
+        errorBox.classList.remove("hidden");
+      }
+      return;
+    }
+
+    const username = usernameInput?.value.trim() || "";
+    const password = passwordInput?.value || "";
+
+    if (!username || !password) {
+      if (errorBox) {
+        errorBox.textContent = "Please enter both username and password.";
+        errorBox.classList.remove("hidden");
+      }
+      return;
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>Verifying...</span>`;
+    }
+
+    try {
+      const hash = await computeSha256(`${username}:${password}`);
+      if (hash === CMS_AUTH_HASH) {
+        sessionStorage.setItem(CMS_SESSION_KEY, `auth_${Date.now()}`);
+        setFailedAttempts(0);
+        setLockoutUntil(0);
+        if (errorBox) errorBox.classList.add("hidden");
+        if (barrier) barrier.style.display = "none";
+        if (app) app.style.display = "block";
+
+        setupTabs();
+        renderAll();
+        setupEventListeners();
+        setupStickyHeaderCollapse();
+      } else {
+        const attempts = getFailedAttempts() + 1;
+        if (attempts >= 5) {
+          setLockoutUntil(Date.now() + 30000);
+          setFailedAttempts(0);
+          if (errorBox) {
+            errorBox.textContent = "Too many failed attempts. Access locked for 30 seconds.";
+            errorBox.classList.remove("hidden");
+          }
+        } else {
+          setFailedAttempts(attempts);
+          if (errorBox) {
+            errorBox.textContent = "Invalid administrator username or password.";
+            errorBox.classList.remove("hidden");
+          }
+        }
+        if (passwordInput) passwordInput.value = "";
+        passwordInput?.focus();
+      }
+    } catch (err) {
+      console.error("[CMS Auth Error]", err);
+      if (errorBox) {
+        errorBox.textContent = "Authentication verification error. Please retry.";
+        errorBox.classList.remove("hidden");
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Authenticate &amp; Unlock Studio</span><span>→</span>`;
+      }
+    }
+  });
 }
 
 if (document.readyState === "loading") {
@@ -37,9 +191,11 @@ function setupTabs() {
       tabBtns.forEach((b) => {
         b.classList.remove("border-white", "text-white", "font-medium");
         b.classList.add("border-transparent", "text-neutral-400", "font-normal");
+        b.setAttribute("aria-selected", "false");
       });
       btn.classList.add("border-white", "text-white", "font-medium");
       btn.classList.remove("border-transparent", "text-neutral-400", "font-normal");
+      btn.setAttribute("aria-selected", "true");
 
       tabPanels.forEach((p) => {
         p.classList.toggle("hidden", p.dataset.tabPanel !== target);
@@ -57,18 +213,19 @@ function showToast(message: string, isError = false) {
   }
 
   toast.textContent = message;
-  toast.className = `fixed bottom-8 right-8 z-[200] font-sans font-medium text-xs px-5 py-3.5 rounded-xl shadow-2xl transition-all duration-300 opacity-100 translate-y-0 flex items-center gap-2.5 border backdrop-blur-md ${
-    isError
-      ? "bg-rose-950/90 text-rose-200 border-rose-800"
-      : "bg-white text-black border-neutral-200 shadow-2xl"
+  toast.className = `fixed bottom-6 right-6 z-[150] px-5 py-3 rounded-xl font-sans text-xs font-medium shadow-2xl transition-all duration-300 flex items-center gap-2 ${
+    isError ? "bg-rose-950 text-rose-200 border border-rose-800" : "bg-neutral-100 text-neutral-900 shadow-white/10"
   }`;
+
+  toast.style.opacity = "1";
+  toast.style.transform = "translateY(0)";
 
   setTimeout(() => {
     if (toast) {
-      toast.classList.add("opacity-0", "translate-y-4");
-      toast.classList.remove("opacity-100", "translate-y-0");
+      toast.style.opacity = "0";
+      toast.style.transform = "translateY(12px)";
     }
-  }, 3000);
+  }, 3500);
 }
 
 // -------------------------------------------------------------
@@ -93,7 +250,7 @@ function renderCMSProjects() {
     <div class="border border-neutral-800 hover:border-neutral-700 p-6 bg-[#131316] rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-colors">
       <div class="space-y-2 max-w-2xl">
         <div class="flex flex-wrap items-center gap-3">
-          <h3 class="font-serif text-xl font-normal text-white">${p.title}</h3>
+          <h3 class="font-serif text-xl font-normal text-white">${escapeHtml(p.title)}</h3>
           <span class="font-mono text-xs px-2.5 py-0.5 rounded border ${
             p.featured
               ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-300 font-medium"
@@ -102,18 +259,18 @@ function renderCMSProjects() {
             ${p.featured ? "● Storyboard Featured" : "Archive Only"}
           </span>
         </div>
-        <p class="font-sans text-xs text-neutral-400 font-light">${p.subtitle} · <span class="text-neutral-500">${p.category} (${p.year})</span></p>
-        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${p.description}</p>
+        <p class="font-sans text-xs text-neutral-400 font-light">${escapeHtml(p.subtitle)} · <span class="text-neutral-500">${escapeHtml(p.category)} (${escapeHtml(p.year)})</span></p>
+        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${escapeHtml(p.description)}</p>
       </div>
 
       <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
-        <button data-edit-proj="${p.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
+        <button data-edit-proj="${escapeHtml(p.id)}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
           Edit
         </button>
-        <button data-toggle-proj="${p.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 ${p.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-colors cursor-pointer">
+        <button data-toggle-proj="${escapeHtml(p.id)}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 ${p.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-colors cursor-pointer">
           ${p.featured ? "Unfeature" : "Feature"}
         </button>
-        <button data-delete-proj="${p.id}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
+        <button data-delete-proj="${escapeHtml(p.id)}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
           Delete
         </button>
       </div>
@@ -142,7 +299,7 @@ function renderCMSProjects() {
   container.querySelectorAll("[data-delete-proj]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-delete-proj");
-      if (id && confirm("Delete this computational project?")) {
+      if (id && confirm("Delete this project from your database?")) {
         cms.deleteProject(id);
         renderCMSProjects();
       }
@@ -172,7 +329,7 @@ function renderCMSExperience() {
     <div class="border border-neutral-800 hover:border-neutral-700 p-6 bg-[#131316] rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-colors">
       <div class="space-y-2 max-w-2xl">
         <div class="flex flex-wrap items-center gap-3">
-          <h3 class="font-serif text-xl font-normal text-white">${e.company}</h3>
+          <h3 class="font-serif text-xl font-normal text-white">${escapeHtml(e.company)}</h3>
           <span class="font-mono text-xs px-2.5 py-0.5 rounded border ${
             e.featured
               ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-300 font-medium"
@@ -181,18 +338,18 @@ function renderCMSExperience() {
             ${e.featured ? "● Storyboard Featured" : "Archive Only"}
           </span>
         </div>
-        <p class="font-sans text-xs text-neutral-400 font-light">${e.role} · <span class="text-neutral-500">${e.location} (${e.period})</span></p>
-        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${e.bulletPoints[0] || e.description}</p>
+        <p class="font-sans text-xs text-neutral-400 font-light">${escapeHtml(e.role)} · <span class="text-neutral-500">${escapeHtml(e.location)} (${escapeHtml(e.period)})</span></p>
+        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${escapeHtml(e.bulletPoints[0] || e.description)}</p>
       </div>
 
       <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
-        <button data-edit-exp="${e.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
+        <button data-edit-exp="${escapeHtml(e.id)}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
           Edit
         </button>
-        <button data-toggle-exp="${e.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 ${e.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-colors cursor-pointer">
+        <button data-toggle-exp="${escapeHtml(e.id)}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 ${e.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-colors cursor-pointer">
           ${e.featured ? "Unfeature" : "Feature"}
         </button>
-        <button data-delete-exp="${e.id}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
+        <button data-delete-exp="${escapeHtml(e.id)}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
           Delete
         </button>
       </div>
@@ -221,7 +378,7 @@ function renderCMSExperience() {
   container.querySelectorAll("[data-delete-exp]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-delete-exp");
-      if (id && confirm("Delete this experience record?")) {
+      if (id && confirm("Delete this experience entry?")) {
         cms.deleteExperience(id);
         renderCMSExperience();
       }
@@ -251,7 +408,7 @@ function renderCMSBlogs() {
     <div class="border border-neutral-800 hover:border-neutral-700 p-6 bg-[#131316] rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-colors">
       <div class="space-y-2 max-w-2xl">
         <div class="flex flex-wrap items-center gap-3">
-          <h3 class="font-serif text-xl font-normal text-white">${b.title}</h3>
+          <h3 class="font-serif text-xl font-normal text-white">${escapeHtml(b.title)}</h3>
           <span class="font-mono text-xs px-2.5 py-0.5 rounded border ${
             b.featured
               ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-300 font-medium"
@@ -260,18 +417,18 @@ function renderCMSBlogs() {
             ${b.featured ? "● Storyboard Featured" : "Archive Only"}
           </span>
         </div>
-        <p class="font-sans text-xs text-neutral-400 font-light">${b.date} · ${b.readTime} · <span class="text-neutral-500">${b.tags.join(", ")}</span></p>
-        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${b.excerpt}</p>
+        <p class="font-sans text-xs text-neutral-400 font-light">${escapeHtml(b.date)} · ${escapeHtml(b.readTime)} · <span class="text-neutral-500">${b.tags.map((t) => escapeHtml(t)).join(", ")}</span></p>
+        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${escapeHtml(b.excerpt)}</p>
       </div>
 
       <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
-        <button data-edit-blog="${b.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
+        <button data-edit-blog="${escapeHtml(b.id)}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
           Edit
         </button>
-        <button data-toggle-blog="${b.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 ${b.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-colors cursor-pointer">
+        <button data-toggle-blog="${escapeHtml(b.id)}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 ${b.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-colors cursor-pointer">
           ${b.featured ? "Unfeature" : "Feature"}
         </button>
-        <button data-delete-blog="${b.id}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
+        <button data-delete-blog="${escapeHtml(b.id)}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
           Delete
         </button>
       </div>
@@ -300,7 +457,7 @@ function renderCMSBlogs() {
   container.querySelectorAll("[data-delete-blog]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-delete-blog");
-      if (id && confirm("Delete this research dispatch?")) {
+      if (id && confirm("Delete this dispatch?")) {
         cms.deleteBlog(id);
         renderCMSBlogs();
       }
@@ -321,16 +478,28 @@ function renderCMSEducation() {
       (item) => `
     <div class="border border-neutral-800 hover:border-neutral-700 p-6 bg-[#131316] rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-colors">
       <div class="space-y-2 max-w-2xl">
-        <h3 class="font-serif text-xl font-normal text-white">${item.institution}</h3>
-        <p class="font-sans text-xs text-neutral-300 font-medium">${item.program} · <span class="text-neutral-400 font-light">${item.grades}</span></p>
-        <p class="font-mono text-xs text-neutral-500">${item.period}</p>
+        <div class="flex flex-wrap items-center gap-3">
+          <h3 class="font-serif text-xl font-normal text-white">${escapeHtml(item.institution)}</h3>
+          <span class="font-mono text-xs px-2.5 py-0.5 rounded border ${
+            item.featured
+              ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-300 font-medium"
+              : "border-neutral-800 text-neutral-500"
+          }">
+            ${item.featured ? "● Storyboard Featured" : "Archive Only"}
+          </span>
+        </div>
+        <p class="font-sans text-xs text-neutral-300 font-medium">${escapeHtml(item.program)} · <span class="text-neutral-400 font-light">${escapeHtml(item.grades)}</span></p>
+        <p class="font-mono text-xs text-neutral-500">${escapeHtml(item.period)}</p>
       </div>
 
       <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
-        <button data-edit-edu="${item.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
+        <button data-edit-edu="${escapeHtml(item.id)}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
           Edit
         </button>
-        <button data-delete-edu="${item.id}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
+        <button data-toggle-edu="${escapeHtml(item.id)}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 ${item.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-colors cursor-pointer">
+          ${item.featured ? "Unfeature" : "Feature"}
+        </button>
+        <button data-delete-edu="${escapeHtml(item.id)}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
           Delete
         </button>
       </div>
@@ -343,6 +512,16 @@ function renderCMSEducation() {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-edit-edu");
       if (id) openEditModal("education", id);
+    });
+  });
+
+  container.querySelectorAll("[data-toggle-edu]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-toggle-edu");
+      if (id) {
+        cms.toggleEducationFeatured(id);
+        renderCMSEducation();
+      }
     });
   });
 
@@ -389,7 +568,7 @@ function loadProfileAndSettings() {
 }
 
 // -------------------------------------------------------------
-// 6. Modal Record Editor (Real Forms, No window.prompt!)
+// 6. Modal Record Editor (Safe DOM properties, Accessible labels)
 // -------------------------------------------------------------
 function openEditModal(type: CurrentEditType, id: string | null = null) {
   const modal = document.getElementById("cms-editor-modal") as HTMLDialogElement;
@@ -410,41 +589,51 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
     fieldsContainer.innerHTML = `
       <div class="space-y-4 font-sans text-xs">
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Project Title</label>
-          <input type="text" id="f-proj-title" value="${item?.title || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+          <label for="f-proj-title" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Project Title</label>
+          <input type="text" id="f-proj-title" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Subtitle</label>
-            <input type="text" id="f-proj-sub" value="${item?.subtitle || ""}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+            <label for="f-proj-sub" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Subtitle</label>
+            <input type="text" id="f-proj-sub" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
           <div>
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Category</label>
-            <input type="text" id="f-proj-cat" value="${item?.category || "Quantitative Systems"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+            <label for="f-proj-cat" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Category</label>
+            <input type="text" id="f-proj-cat" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Year</label>
-          <input type="text" id="f-proj-year" value="${item?.year || "2026"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-mono" />
+          <label for="f-proj-year" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Year</label>
+          <input type="text" id="f-proj-year" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-mono" />
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Description</label>
-          <textarea id="f-proj-desc" rows="3" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.description || ""}</textarea>
+          <label for="f-proj-desc" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Description</label>
+          <textarea id="f-proj-desc" rows="3" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y"></textarea>
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Key Finding / Metric (One per line)</label>
-          <textarea id="f-proj-metrics" rows="2" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.metrics.join("\n") || ""}</textarea>
+          <label for="f-proj-metrics" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Key Finding / Metric (One per line)</label>
+          <textarea id="f-proj-metrics" rows="2" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y"></textarea>
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Python / Code Snippet (Optional)</label>
-          <textarea id="f-proj-code" rows="4" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-white font-mono text-xs rounded-xl outline-none transition-all placeholder:text-neutral-600 resize-y">${item?.codeSnippet || ""}</textarea>
+          <label for="f-proj-code" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Python / Code Snippet (Optional)</label>
+          <textarea id="f-proj-code" rows="4" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-white font-mono text-xs rounded-xl outline-none transition-all placeholder:text-neutral-600 resize-y"></textarea>
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Tags (Comma-separated)</label>
-          <input type="text" id="f-proj-tags" value="${item?.tags.join(", ") || "Python, NumPy"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+          <label for="f-proj-tags" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Tags (Comma-separated)</label>
+          <input type="text" id="f-proj-tags" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
       </div>
     `;
+
+    // Safe assignment via DOM property setters
+    (document.getElementById("f-proj-title") as HTMLInputElement).value = item?.title || "";
+    (document.getElementById("f-proj-sub") as HTMLInputElement).value = item?.subtitle || "";
+    (document.getElementById("f-proj-cat") as HTMLInputElement).value = item?.category || "Quantitative Systems";
+    (document.getElementById("f-proj-year") as HTMLInputElement).value = item?.year || "2026";
+    (document.getElementById("f-proj-desc") as HTMLTextAreaElement).value = item?.description || "";
+    (document.getElementById("f-proj-metrics") as HTMLTextAreaElement).value = item?.metrics ? item.metrics.join("\n") : "";
+    (document.getElementById("f-proj-code") as HTMLTextAreaElement).value = item?.codeSnippet || "";
+    (document.getElementById("f-proj-tags") as HTMLInputElement).value = item?.tags ? item.tags.join(", ") : "Python, NumPy";
   } else if (type === "experience") {
     const item = id ? cms.getAllExperience().find((e) => e.id === id) : null;
     titleEl.textContent = item ? "Edit Work Placement" : "New Work Placement";
@@ -454,34 +643,41 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
       <div class="space-y-4 font-sans text-xs">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Company Name</label>
-            <input type="text" id="f-exp-company" value="${item?.company || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+            <label for="f-exp-company" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Company Name</label>
+            <input type="text" id="f-exp-company" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
           <div>
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Location</label>
-            <input type="text" id="f-exp-location" value="${item?.location || "London, UK"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+            <label for="f-exp-location" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Location</label>
+            <input type="text" id="f-exp-location" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Role / Placement Title</label>
-            <input type="text" id="f-exp-role" value="${item?.role || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+            <label for="f-exp-role" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Role / Placement Title</label>
+            <input type="text" id="f-exp-role" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
           <div>
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Period / Dates</label>
-            <input type="text" id="f-exp-period" value="${item?.period || "2026"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+            <label for="f-exp-period" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Period / Dates</label>
+            <input type="text" id="f-exp-period" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Narrative Summary</label>
-          <textarea id="f-exp-desc" rows="2" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.description || ""}</textarea>
+          <label for="f-exp-desc" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Narrative Summary</label>
+          <textarea id="f-exp-desc" rows="2" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y"></textarea>
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Bullet Points & Contributions (One per line)</label>
-          <textarea id="f-exp-bullets" rows="4" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.bulletPoints.join("\n") || ""}</textarea>
+          <label for="f-exp-bullets" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Bullet Points & Contributions (One per line)</label>
+          <textarea id="f-exp-bullets" rows="4" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y"></textarea>
         </div>
       </div>
     `;
+
+    (document.getElementById("f-exp-company") as HTMLInputElement).value = item?.company || "";
+    (document.getElementById("f-exp-location") as HTMLInputElement).value = item?.location || "London, UK";
+    (document.getElementById("f-exp-role") as HTMLInputElement).value = item?.role || "";
+    (document.getElementById("f-exp-period") as HTMLInputElement).value = item?.period || "2026";
+    (document.getElementById("f-exp-desc") as HTMLTextAreaElement).value = item?.description || "";
+    (document.getElementById("f-exp-bullets") as HTMLTextAreaElement).value = item?.bulletPoints ? item.bulletPoints.join("\n") : "";
   } else if (type === "blog") {
     const item = id ? cms.getAllBlogs().find((b) => b.id === id) : null;
     titleEl.textContent = item ? "Edit Research Dispatch" : "New Research Dispatch";
@@ -490,33 +686,40 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
     fieldsContainer.innerHTML = `
       <div class="space-y-4 font-sans text-xs">
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Article Title</label>
-          <input type="text" id="f-blog-title" value="${item?.title || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+          <label for="f-blog-title" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Article Title</label>
+          <input type="text" id="f-blog-title" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Publication Date</label>
-            <input type="text" id="f-blog-date" value="${item?.date || "2026"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+            <label for="f-blog-date" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Publication Date</label>
+            <input type="text" id="f-blog-date" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
           <div>
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Read Time</label>
-            <input type="text" id="f-blog-time" value="${item?.readTime || "7 min read"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+            <label for="f-blog-time" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Read Time</label>
+            <input type="text" id="f-blog-time" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Tags (Comma-separated)</label>
-          <input type="text" id="f-blog-tags" value="${item?.tags.join(", ") || "Quantitative Finance, Statistics"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+          <label for="f-blog-tags" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Tags (Comma-separated)</label>
+          <input type="text" id="f-blog-tags" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Abstract / Excerpt (Lead)</label>
-          <textarea id="f-blog-excerpt" rows="2" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.excerpt || ""}</textarea>
+          <label for="f-blog-excerpt" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Abstract / Excerpt (Lead)</label>
+          <textarea id="f-blog-excerpt" rows="2" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y"></textarea>
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Full Essay Content (Double return for paragraphs)</label>
-          <textarea id="f-blog-content" rows="6" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-white font-sans text-xs rounded-xl outline-none transition-all placeholder:text-neutral-600 leading-relaxed resize-y">${item?.content || ""}</textarea>
+          <label for="f-blog-content" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Full Essay Content (Double return for paragraphs)</label>
+          <textarea id="f-blog-content" rows="6" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-white font-sans text-xs rounded-xl outline-none transition-all placeholder:text-neutral-600 leading-relaxed resize-y"></textarea>
         </div>
       </div>
     `;
+
+    (document.getElementById("f-blog-title") as HTMLInputElement).value = item?.title || "";
+    (document.getElementById("f-blog-date") as HTMLInputElement).value = item?.date || "2026";
+    (document.getElementById("f-blog-time") as HTMLInputElement).value = item?.readTime || "7 min read";
+    (document.getElementById("f-blog-tags") as HTMLInputElement).value = item?.tags ? item.tags.join(", ") : "Quantitative Finance, Statistics";
+    (document.getElementById("f-blog-excerpt") as HTMLTextAreaElement).value = item?.excerpt || "";
+    (document.getElementById("f-blog-content") as HTMLTextAreaElement).value = item?.content || "";
   } else if (type === "education") {
     const item = id ? cms.getEducation().find((e) => e.id === id) : null;
     titleEl.textContent = item ? "Edit Academic Record" : "New Academic Record";
@@ -525,29 +728,35 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
     fieldsContainer.innerHTML = `
       <div class="space-y-4 font-sans text-xs">
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Institution Name</label>
-          <input type="text" id="f-edu-inst" value="${item?.institution || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+          <label for="f-edu-inst" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Institution Name</label>
+          <input type="text" id="f-edu-inst" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Program / Qualification</label>
-            <input type="text" id="f-edu-prog" value="${item?.program || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+            <label for="f-edu-prog" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Program / Qualification</label>
+            <input type="text" id="f-edu-prog" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
           <div>
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Period / Dates</label>
-            <input type="text" id="f-edu-period" value="${item?.period || "Sep 2024 — Aug 2026"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+            <label for="f-edu-period" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Period / Dates</label>
+            <input type="text" id="f-edu-period" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Grades Achieved</label>
-          <input type="text" id="f-edu-grades" value="${item?.grades || ""}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+          <label for="f-edu-grades" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Grades Achieved</label>
+          <input type="text" id="f-edu-grades" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
         <div>
-          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Details & Dissertations (One per line)</label>
-          <textarea id="f-edu-details" rows="3" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.details.join("\n") || ""}</textarea>
+          <label for="f-edu-details" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Details & Dissertations (One per line)</label>
+          <textarea id="f-edu-details" rows="3" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y"></textarea>
         </div>
       </div>
     `;
+
+    (document.getElementById("f-edu-inst") as HTMLInputElement).value = item?.institution || "";
+    (document.getElementById("f-edu-prog") as HTMLInputElement).value = item?.program || "";
+    (document.getElementById("f-edu-period") as HTMLInputElement).value = item?.period || "Sep 2024 — Aug 2026";
+    (document.getElementById("f-edu-grades") as HTMLInputElement).value = item?.grades || "";
+    (document.getElementById("f-edu-details") as HTMLTextAreaElement).value = item?.details ? item.details.join("\n") : "";
   }
 
   modal.showModal();
@@ -603,7 +812,7 @@ function handleFormSubmit() {
     const company = (document.getElementById("f-exp-company") as HTMLInputElement)?.value;
     const location = (document.getElementById("f-exp-location") as HTMLInputElement)?.value || "London, UK";
     const role = (document.getElementById("f-exp-role") as HTMLInputElement)?.value;
-    const period = (document.getElementById("f-exp-period") as HTMLInputElement)?.value || "2026";
+    const period = (document.getElementById("f-exp-period") as HTMLInputElement)?.value || "";
     const description = (document.getElementById("f-exp-desc") as HTMLTextAreaElement)?.value || "";
     const bulletsStr = (document.getElementById("f-exp-bullets") as HTMLTextAreaElement)?.value || "";
 
@@ -706,68 +915,37 @@ function handleFormSubmit() {
 
   const modal = document.getElementById("cms-editor-modal") as HTMLDialogElement;
   modal?.close();
-  showToast(activeEditId ? "✓ Record updated successfully" : "✓ New record created successfully");
-}
-
-function saveAllCurrentState() {
-  const nameInput = document.getElementById("setting-name") as HTMLInputElement | null;
-  const titleInput = document.getElementById("setting-title") as HTMLInputElement | null;
-  const emailInput = document.getElementById("setting-email") as HTMLInputElement | null;
-  const locationInput = document.getElementById("setting-location") as HTMLInputElement | null;
-  const githubInput = document.getElementById("setting-github") as HTMLInputElement | null;
-  const linkedinInput = document.getElementById("setting-linkedin") as HTMLInputElement | null;
-  const bioInput = document.getElementById("setting-bio") as HTMLTextAreaElement | null;
-
-  const projInput = document.getElementById("setting-proj-limit") as HTMLInputElement | null;
-  const expInput = document.getElementById("setting-exp-limit") as HTMLInputElement | null;
-  const blogInput = document.getElementById("setting-blog-limit") as HTMLInputElement | null;
-
-  const updatedSettings: Parameters<typeof cms.updateSettings>[0] = {};
-
-  if (nameInput) updatedSettings.name = nameInput.value.trim();
-  if (titleInput) updatedSettings.title = titleInput.value.trim();
-  if (emailInput) updatedSettings.email = emailInput.value.trim();
-  if (locationInput) updatedSettings.location = locationInput.value.trim();
-  if (githubInput) updatedSettings.github = githubInput.value.trim();
-  if (linkedinInput) updatedSettings.linkedin = linkedinInput.value.trim();
-  if (bioInput) updatedSettings.bio = bioInput.value;
-
-  if (projInput) updatedSettings.featuredProjectsLimit = Math.min(6, Math.max(1, parseInt(projInput.value, 10) || 3));
-  if (expInput) updatedSettings.featuredExperienceLimit = Math.min(6, Math.max(1, parseInt(expInput.value, 10) || 3));
-  if (blogInput) updatedSettings.featuredBlogsLimit = Math.min(6, Math.max(1, parseInt(blogInput.value, 10) || 3));
-
-  cms.updateSettings(updatedSettings);
-  renderAll();
-  showToast("✓ All portfolio changes saved successfully");
+  showToast("Record successfully updated");
 }
 
 function setupStickyHeaderCollapse() {
-  const header = document.getElementById("cms-header");
-  const title = document.getElementById("cms-title");
-  const subtitle = document.getElementById("cms-subtitle");
-  if (!header || !title || !subtitle) return;
+  const header = document.getElementById("cms-header-main");
+  const stickyBar = document.getElementById("cms-sticky-bar");
+  const fixedSaveBtn = document.getElementById("cms-fixed-save-btn");
+  if (!header || !stickyBar) return;
 
   const onScroll = () => {
-    const isScrolled = window.scrollY > 20;
-    if (isScrolled) {
-      header.classList.remove("py-6");
-      header.classList.add("py-2.5");
-      subtitle.classList.add("max-h-0", "opacity-0", "overflow-hidden", "mt-0");
-      subtitle.classList.remove("max-h-20", "opacity-100", "mt-1");
-      title.classList.remove("text-3xl", "md:text-4xl");
-      title.classList.add("text-xl", "md:text-2xl");
+    const scrollY = window.scrollY;
+    if (scrollY > 60) {
+      header.classList.add("hidden");
+      stickyBar.classList.add("py-1", "shadow-xl");
     } else {
-      header.classList.add("py-6");
-      header.classList.remove("py-2.5");
-      subtitle.classList.remove("max-h-0", "opacity-0", "overflow-hidden", "mt-0");
-      subtitle.classList.add("max-h-20", "opacity-100", "mt-1");
-      title.classList.add("text-3xl", "md:text-4xl");
-      title.classList.remove("text-xl", "md:text-2xl");
+      header.classList.remove("hidden");
+      stickyBar.classList.remove("py-1", "shadow-xl");
+    }
+
+    if (fixedSaveBtn) {
+      if (scrollY > 120) {
+        fixedSaveBtn.classList.remove("opacity-0", "pointer-events-none", "translate-y-4");
+        fixedSaveBtn.classList.add("opacity-100", "pointer-events-auto", "translate-y-0");
+      } else {
+        fixedSaveBtn.classList.add("opacity-0", "pointer-events-none", "translate-y-4");
+        fixedSaveBtn.classList.remove("opacity-100", "pointer-events-auto", "translate-y-0");
+      }
     }
   };
 
   window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll(); // Apply initial collapse state immediately
 }
 
 function setupEventListeners() {
@@ -777,58 +955,103 @@ function setupEventListeners() {
   document.getElementById("add-blog-btn")?.addEventListener("click", () => openEditModal("blog"));
   document.getElementById("add-education-btn")?.addEventListener("click", () => openEditModal("education"));
 
-  const modal = document.getElementById("cms-editor-modal") as HTMLDialogElement;
-  document.getElementById("modal-close-btn")?.addEventListener("click", () => modal?.close());
-  document.getElementById("modal-cancel-btn")?.addEventListener("click", () => modal?.close());
+  document.getElementById("modal-close-btn")?.addEventListener("click", () => {
+    const modal = document.getElementById("cms-editor-modal") as HTMLDialogElement;
+    modal?.close();
+  });
 
-  document.getElementById("cms-editor-form")?.addEventListener("submit", (e) => {
+  document.getElementById("modal-save-btn")?.addEventListener("click", (e) => {
     e.preventDefault();
     handleFormSubmit();
   });
 
-  // Persistent Save Changes button in sticky header
-  document.getElementById("cms-persistent-save-btn")?.addEventListener("click", () => {
-    saveAllCurrentState();
+  // Profile save
+  const handleSaveProfile = () => {
+    const name = (document.getElementById("setting-name") as HTMLInputElement)?.value;
+    const title = (document.getElementById("setting-title") as HTMLInputElement)?.value;
+    const email = (document.getElementById("setting-email") as HTMLInputElement)?.value;
+    const location = (document.getElementById("setting-location") as HTMLInputElement)?.value;
+    const github = (document.getElementById("setting-github") as HTMLInputElement)?.value;
+    const linkedin = (document.getElementById("setting-linkedin") as HTMLInputElement)?.value;
+    const bio = (document.getElementById("setting-bio") as HTMLTextAreaElement)?.value;
+
+    cms.updateSettings({
+      name,
+      title,
+      email,
+      location,
+      github,
+      linkedin,
+      bio,
+    });
+    showToast("✓ Profile & Candidate Settings saved");
+  };
+
+  document.getElementById("save-profile-btn")?.addEventListener("click", handleSaveProfile);
+  document.getElementById("cms-fixed-save-btn")?.addEventListener("click", () => {
+    handleSaveProfile();
+    showToast("✓ All CMS Changes Saved");
   });
 
-  // Save Profile
-  document.getElementById("save-profile-btn")?.addEventListener("click", () => {
-    saveAllCurrentState();
-  });
-
-  // Apply Limits
+  // Display Limits save
   document.getElementById("save-limits-btn")?.addEventListener("click", () => {
-    saveAllCurrentState();
+    const featuredProjectsLimit = parseInt(
+      (document.getElementById("setting-proj-limit") as HTMLInputElement)?.value || "3",
+      10
+    );
+    const featuredExperienceLimit = parseInt(
+      (document.getElementById("setting-exp-limit") as HTMLInputElement)?.value || "3",
+      10
+    );
+    const featuredBlogsLimit = parseInt(
+      (document.getElementById("setting-blog-limit") as HTMLInputElement)?.value || "3",
+      10
+    );
+
+    cms.updateSettings({
+      featuredProjectsLimit,
+      featuredExperienceLimit,
+      featuredBlogsLimit,
+    });
+    showToast("✓ Storyboard display limits saved");
+    renderCMSProjects();
+    renderCMSExperience();
+    renderCMSBlogs();
   });
 
-  // Reset to Defaults
+  // Reset defaults
   document.getElementById("reset-defaults-btn")?.addEventListener("click", () => {
-    if (confirm("Reset all content, records, and settings to original defaults?")) {
+    if (confirm("Reset all content back to factory defaults? This clears custom local changes.")) {
       cms.resetToDefaults();
       renderAll();
-      showToast("✓ Database reset to initial defaults");
+      showToast("Folio data reset to defaults");
     }
   });
 
   // Export JSON
   document.getElementById("export-json-btn")?.addEventListener("click", () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(cms.exportJSON());
-    const dlAnchor = document.createElement("a");
-    dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `devarsh_vinod_portfolio_${Date.now()}.json`);
-    dlAnchor.click();
+    const jsonStr = cms.exportJSON();
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `portfolio-snapshot-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("✓ Exported JSON database snapshot");
   });
 
-  // Export TypeScript code
+  // Export TypeScript file
   document.getElementById("export-ts-btn")?.addEventListener("click", () => {
-    const tsCode = cms.exportPortfolioDataTS();
-    const blob = new Blob([tsCode], { type: "text/typescript;charset=utf-8" });
+    const tsStr = cms.exportPortfolioDataTS();
+    const blob = new Blob([tsStr], { type: "text/typescript" });
     const url = URL.createObjectURL(blob);
-    const dlAnchor = document.createElement("a");
-    dlAnchor.setAttribute("href", url);
-    dlAnchor.setAttribute("download", "portfolioData.ts");
-    dlAnchor.click();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "portfolioData.ts";
+    a.click();
     URL.revokeObjectURL(url);
+    showToast("✓ Downloaded portfolioData.ts source file");
   });
 
   // GitHub Direct Sync
@@ -872,15 +1095,25 @@ function setupEventListeners() {
         },
       });
 
+      if (!getRes.ok && getRes.status !== 404) {
+        const errJson = await getRes.json().catch(() => ({}));
+        throw new Error(errJson.message || `GitHub API error: ${getRes.status} ${getRes.statusText}`);
+      }
+
       let currentSha = "";
       if (getRes.ok) {
         const fileData = await getRes.json();
         currentSha = fileData.sha;
       }
 
-      // 2. Base64 encode TypeScript content (handles UTF-8)
+      // 2. Base64 encode TypeScript content with modern TextEncoder
       const tsContent = cms.exportPortfolioDataTS();
-      const base64Content = btoa(unescape(encodeURIComponent(tsContent)));
+      const bytes = new TextEncoder().encode(tsContent);
+      let binStr = "";
+      for (let i = 0; i < bytes.length; i++) {
+        binStr += String.fromCharCode(bytes[i]);
+      }
+      const base64Content = btoa(binStr);
 
       // 3. Commit directly via GitHub REST API
       const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
@@ -899,7 +1132,7 @@ function setupEventListeners() {
       });
 
       if (!putRes.ok) {
-        const errJson = await putRes.json();
+        const errJson = await putRes.json().catch(() => ({}));
         throw new Error(errJson.message || "Failed to commit to GitHub");
       }
 

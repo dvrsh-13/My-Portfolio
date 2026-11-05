@@ -22,6 +22,74 @@
   </head>
   <body class="bg-[#0c0c0e] text-[#ededed] min-h-screen font-sans antialiased selection:bg-white selection:text-black">
 
+    <!-- =====================================================================
+         ADMINISTRATIVE ACCESS GATE (RESTRICTED STUDIO ENVIRONMENT)
+         Cryptographically verified access barrier for Devarsh Vinod
+         ===================================================================== -->
+    <div
+      id="cms-login-barrier"
+      class="fixed inset-0 z-[200] bg-[#0c0c0e] flex flex-col items-center justify-center p-6 antialiased"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Portfolio Studio Authentication"
+    >
+      <div class="w-full max-w-sm border border-neutral-800 bg-[#121214] rounded-2xl p-8 shadow-2xl space-y-6">
+        <div class="space-y-2 text-center">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white text-black font-serif text-2xl mb-1 shadow-md select-none">
+            DV
+          </div>
+          <h2 class="font-serif text-2xl text-white font-normal">Portfolio Studio</h2>
+          <p class="font-sans text-xs text-neutral-400">Restricted administrative access for Devarsh Vinod.</p>
+        </div>
+
+        <form id="cms-login-form" class="space-y-4">
+          <div class="space-y-1.5 text-left">
+            <label for="cms-auth-username" class="block font-sans text-xs text-neutral-400 font-medium uppercase tracking-wider">Username</label>
+            <input
+              type="text"
+              id="cms-auth-username"
+              autocomplete="username"
+              required
+              class="w-full bg-[#18181b] border border-neutral-800 focus:border-white px-4 py-2.5 text-sm text-white font-sans rounded-xl outline-none transition-colors"
+              placeholder="dvvrsh-admin"
+            />
+          </div>
+
+          <div class="space-y-1.5 text-left">
+            <label for="cms-auth-password" class="block font-sans text-xs text-neutral-400 font-medium uppercase tracking-wider">Password</label>
+            <input
+              type="password"
+              id="cms-auth-password"
+              autocomplete="current-password"
+              required
+              class="w-full bg-[#18181b] border border-neutral-800 focus:border-white px-4 py-2.5 text-sm text-white font-sans rounded-xl outline-none transition-colors"
+              placeholder="••••••••••••"
+            />
+          </div>
+
+          <div id="cms-login-error" class="hidden text-xs font-sans text-red-300 bg-red-950/50 border border-red-900/60 rounded-xl p-3 text-center" role="alert"></div>
+
+          <button
+            type="submit"
+            id="cms-login-submit"
+            class="w-full py-3 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded-xl shadow-md flex items-center justify-center gap-1.5"
+          >
+            <span>Authenticate &amp; Unlock Studio</span>
+            <span>→</span>
+          </button>
+
+          <div class="text-center pt-2">
+            <a href="./" class="to-link-underline text-xs font-sans text-neutral-500 hover:text-neutral-300 transition-colors">
+              ← Return to Public Portfolio
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Authenticated CMS Application Container (Hidden by default until authenticated) -->
+    <div id="cms-app" style="display: none;">
+
     <!-- Sticky Top Header & Tabs Bar -->
     <div id="cms-sticky-bar" class="sticky top-0 z-50 bg-[#0c0c0e]/95 backdrop-blur-md border-b border-neutral-800 transition-all duration-300">
       <div class="max-w-5xl mx-auto px-6">
@@ -48,27 +116,31 @@
               <span>View Live Folio</span>
               <span>↗</span>
             </a>
+            <button id="cms-logout-btn" class="px-3 py-2 rounded-lg border border-neutral-800 hover:border-red-900/60 bg-neutral-900/60 hover:bg-red-950/30 text-neutral-400 hover:text-red-300 font-sans text-xs transition-colors cursor-pointer flex items-center gap-1.5" title="Lock Studio Session">
+              <span>Lock</span>
+              <span>⎋</span>
+            </button>
           </div>
         </header>
 
         <!-- Navigation Tabs (Clean Editorial Underline Style) -->
-        <nav id="cms-tabs-nav" class="flex border-t border-neutral-800/80 gap-6 md:gap-8 font-sans text-sm pt-3 pb-2.5 overflow-x-auto transition-all duration-300" aria-label="CMS Navigation">
-          <button data-tab-btn="projects" class="pb-2 border-b-2 border-white text-white font-medium cursor-pointer transition-colors whitespace-nowrap">
+        <nav id="cms-tabs-nav" class="flex border-t border-neutral-800/80 gap-6 md:gap-8 font-sans text-sm pt-3 pb-2.5 overflow-x-auto transition-all duration-300" role="tablist" aria-label="CMS Navigation">
+          <button id="tab-btn-projects" role="tab" aria-selected="true" aria-controls="tab-panel-projects" data-tab-btn="projects" class="pb-2 border-b-2 border-white text-white font-medium cursor-pointer transition-colors whitespace-nowrap">
             Projects
           </button>
-          <button data-tab-btn="experience" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+          <button id="tab-btn-experience" role="tab" aria-selected="false" aria-controls="tab-panel-experience" data-tab-btn="experience" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
             Experience
           </button>
-          <button data-tab-btn="blogs" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+          <button id="tab-btn-blogs" role="tab" aria-selected="false" aria-controls="tab-panel-blogs" data-tab-btn="blogs" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
             Research Dispatches
           </button>
-          <button data-tab-btn="education" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+          <button id="tab-btn-education" role="tab" aria-selected="false" aria-controls="tab-panel-education" data-tab-btn="education" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
             Academic &amp; Honors
           </button>
-          <button data-tab-btn="profile" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+          <button id="tab-btn-profile" role="tab" aria-selected="false" aria-controls="tab-panel-profile" data-tab-btn="profile" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
             Profile &amp; Channels
           </button>
-          <button data-tab-btn="settings" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+          <button id="tab-btn-settings" role="tab" aria-selected="false" aria-controls="tab-panel-settings" data-tab-btn="settings" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
             Display Limits &amp; Sync
           </button>
         </nav>
@@ -81,7 +153,7 @@
       <!-- =============================================================
            TAB 1: PROJECTS
            ============================================================= -->
-      <section data-tab-panel="projects" class="space-y-6">
+      <section id="tab-panel-projects" role="tabpanel" aria-labelledby="tab-btn-projects" data-tab-panel="projects" class="space-y-6">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
           <div>
             <h2 class="font-serif text-2xl text-white font-normal">Computational Projects</h2>
@@ -100,7 +172,7 @@
       <!-- =============================================================
            TAB 2: EXPERIENCE
            ============================================================= -->
-      <section data-tab-panel="experience" class="space-y-6 hidden">
+      <section id="tab-panel-experience" role="tabpanel" aria-labelledby="tab-btn-experience" data-tab-panel="experience" class="space-y-6 hidden">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
           <div>
             <h2 class="font-serif text-2xl text-white font-normal">Work Placements &amp; Experience</h2>
@@ -119,7 +191,7 @@
       <!-- =============================================================
            TAB 3: RESEARCH DISPATCHES (BLOGS)
            ============================================================= -->
-      <section data-tab-panel="blogs" class="space-y-6 hidden">
+      <section id="tab-panel-blogs" role="tabpanel" aria-labelledby="tab-btn-blogs" data-tab-panel="blogs" class="space-y-6 hidden">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
           <div>
             <h2 class="font-serif text-2xl text-white font-normal">Research Notes &amp; Working Papers</h2>
@@ -138,7 +210,7 @@
       <!-- =============================================================
            TAB 4: ACADEMIC & HONORS (EDUCATION)
            ============================================================= -->
-      <section data-tab-panel="education" class="space-y-6 hidden">
+      <section id="tab-panel-education" role="tabpanel" aria-labelledby="tab-btn-education" data-tab-panel="education" class="space-y-6 hidden">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
           <div>
             <h2 class="font-serif text-2xl text-white font-normal">Academic Qualifications &amp; Honors</h2>
@@ -157,7 +229,7 @@
       <!-- =============================================================
            TAB 5: PROFILE & CHANNELS
            ============================================================= -->
-      <section data-tab-panel="profile" class="space-y-12 hidden">
+      <section id="tab-panel-profile" role="tabpanel" aria-labelledby="tab-btn-profile" data-tab-panel="profile" class="space-y-12 hidden">
         
         <!-- Group 1: Candidate Core Details -->
         <div class="space-y-6">
@@ -279,7 +351,7 @@
       <!-- =============================================================
            TAB 6: DISPLAY BOUNDS & GITHUB SYNC
            ============================================================= -->
-      <section data-tab-panel="settings" class="space-y-12 hidden">
+      <section id="tab-panel-settings" role="tabpanel" aria-labelledby="tab-btn-settings" data-tab-panel="settings" class="space-y-12 hidden">
         
         <!-- Storyboard Limits -->
         <div class="space-y-6">
@@ -385,7 +457,7 @@
     </main>
 
     <!-- Universal Editorial Item Modal (Projects / Experience / Blogs / Education) -->
-    <dialog id="cms-editor-modal" class="fixed inset-0 z-[120] m-auto w-full max-w-xl bg-[#141416] border border-neutral-800 text-white p-6 md:p-8 rounded-2xl shadow-2xl backdrop:bg-black/80 backdrop:backdrop-blur-sm">
+    <dialog id="cms-editor-modal" aria-labelledby="modal-form-title" class="fixed inset-0 z-[120] m-auto w-full max-w-xl bg-[#141416] border border-neutral-800 text-white p-6 md:p-8 rounded-2xl shadow-2xl backdrop:bg-black/80 backdrop:backdrop-blur-sm">
       <form method="dialog" id="cms-editor-form" class="space-y-6">
         <div class="flex justify-between items-center border-b border-neutral-800 pb-4">
           <h3 id="modal-form-title" class="font-serif text-2xl font-normal text-white">Edit Record</h3>
@@ -414,6 +486,8 @@
         </div>
       </form>
     </dialog>
+
+    </div><!-- End #cms-app -->
 
     <!-- CMS Logic Script -->
     <script type="module" src="/src/cms.ts"></script>

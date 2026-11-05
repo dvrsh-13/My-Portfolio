@@ -7,8 +7,9 @@ import { initNavigationMenu } from "./lib/navigationMenu";
 import { initVerticalViews } from "./lib/verticalViews";
 import { renderDynamicContent } from "./lib/dynamicContent";
 import { initFolioLoader } from "./lib/loader";
+import { initCustomCursor } from "./lib/customCursor";
 
-document.addEventListener("DOMContentLoaded", () => {
+function initApp() {
   // 1. Initialize Lenis Smooth Virtual Scrolling
   initSmoothScroll(false);
 
@@ -33,8 +34,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // 8. Minimal Loading Screen Sequence
   initFolioLoader();
 
+  // 9. Fluid Monochromatic Custom Cursor
+  initCustomCursor();
+
   // Expose global controller for testing and automation
   (window as unknown as { __folio: unknown }).__folio = {
     scrollToSection,
   };
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}

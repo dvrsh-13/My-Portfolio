@@ -1,6 +1,7 @@
 import gsap from "gsap";
 import { cms } from "./cmsStore";
 import { lockScroll } from "./smoothScroll";
+import { escapeHtml } from "./utils";
 
 let isArchiveOpen = false;
 let isArchiveClosing = false;
@@ -10,15 +11,6 @@ let isProjectOpen = false;
 let isProjectClosing = false;
 
 let lastFocusedElement: HTMLElement | null = null;
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
 
 function clearModalQueryParams() {
   if (window.location.search) {

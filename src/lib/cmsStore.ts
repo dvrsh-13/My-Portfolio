@@ -232,6 +232,12 @@ export class CMSStore {
     this.notify();
   }
 
+  public toggleEducationFeatured(id: string) {
+    this.education = this.education.map((e) => (e.id === id ? { ...e, featured: !e.featured } : e));
+    this.saveToStorage(STORAGE_KEYS.EDUCATION, this.education);
+    this.notify();
+  }
+
   // Blogs
   public addBlog(item: BlogItem) {
     this.blogs.unshift(item);

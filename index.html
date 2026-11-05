@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Devarsh Vinod ─ Computer Science &amp; Applied Mathematics</title>
+    <title>Devarsh Vinod</title>
     <meta name="description" content="Portfolio and candidate dossier of Devarsh Vinod. Gap year student specialising in Computer Science and Mathematics, targeting a degree apprenticeship. Machine learning, quantitative modelling, and systems engineering." />
     <meta name="author" content="Devarsh Vinod" />
     <meta name="theme-color" content="#080808" />
@@ -14,9 +14,9 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 
-    <!-- Branding & Favicon Pipeline -->
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <link rel="icon" type="image/png" sizes="512x512" href="DV.png" />
+    <!-- Branding & Favicon Pipeline: DV.png displayed on Chrome tab -->
+    <link rel="icon" type="image/png" href="DV.png" />
+    <link rel="shortcut icon" type="image/png" href="DV.png" />
     <link rel="apple-touch-icon" href="DV.png" />
     <link rel="manifest" href="manifest.webmanifest" />
 
@@ -97,20 +97,27 @@
       </div>
     </noscript>
 
+    <!-- Custom Fluid Monochromatic Cursor (Difference blending across dark/light panels) -->
+    <div id="folio-cursor" class="pointer-events-none fixed inset-0 z-[9999] overflow-hidden transition-opacity duration-300 opacity-0 hidden md:block" aria-hidden="true">
+      <div id="cursor-dot" class="fixed top-0 left-0 w-2 h-2 rounded-full bg-white pointer-events-none -translate-x-1/2 -translate-y-1/2 will-change-transform" style="mix-blend-mode: difference;"></div>
+      <div id="cursor-ring" class="fixed top-0 left-0 w-9 h-9 rounded-full border border-white/50 pointer-events-none -translate-x-1/2 -translate-y-1/2 will-change-transform transition-[border-color,background-color] duration-200" style="mix-blend-mode: difference;"></div>
+    </div>
+
     <!-- =====================================================================
          MINIMAL EDITORIAL LOADER
-         Clean, distraction-free loading screen
+         Fluid, powerful, and minimalist reveal transition
          ===================================================================== -->
     <div
       id="folio-loader"
-      class="fixed inset-0 z-[200] bg-[#080808] flex flex-col items-center justify-center transition-opacity duration-700 pointer-events-auto"
+      class="fixed inset-0 z-[200] bg-[#080808] flex flex-col items-center justify-center pointer-events-auto"
       aria-label="Loading portfolio"
     >
-      <div class="flex flex-col items-center gap-5">
+      <div id="loader-content" class="flex flex-col items-center gap-5 will-change-transform">
         <span class="font-serif text-2xl md:text-3xl tracking-widest text-white uppercase font-normal">DEVARSH VINOD</span>
-        <div class="w-16 h-[1px] bg-neutral-800 overflow-hidden relative">
-          <div id="loader-progress-bar" class="absolute inset-y-0 left-0 bg-white w-0 transition-all duration-700 ease-out"></div>
+        <div class="w-24 h-[1px] bg-neutral-800 overflow-hidden relative">
+          <div id="loader-progress-bar" class="absolute inset-y-0 left-0 bg-white w-0 will-change-transform"></div>
         </div>
+        <span class="font-mono text-[10px] uppercase tracking-widest text-neutral-500">2026 // SYSTEM FOLIO</span>
       </div>
     </div>
 
@@ -435,7 +442,7 @@
             aria-label="System Initialization"
           >
             <!-- Top Bar: Minimal & Quiet -->
-            <div class="flex justify-between items-center border-b border-neutral-800/80 pb-[18px] font-sans text-xs text-neutral-400">
+            <div class="hero-meta-top flex justify-between items-center border-b border-neutral-800/80 pb-[18px] font-sans text-xs text-neutral-400 will-change-transform">
               <div class="flex items-center gap-2 font-mono text-xs text-neutral-400">
                 Hello world
               </div>
@@ -443,17 +450,17 @@
 
             <!-- Center Display: Monumental Typographic Presentation -->
             <div class="my-auto flex flex-col justify-center max-w-5xl py-4">
-              <h1 class="font-serif text-6xl sm:text-7xl md:text-[calc(7.2_*_var(--scale))] leading-[0.95] tracking-tight font-normal text-white uppercase" data-setting-name>
+              <h1 class="hero-headline font-serif text-6xl sm:text-7xl md:text-[calc(7.2_*_var(--scale))] leading-[0.95] tracking-tight font-normal text-white uppercase will-change-transform" data-setting-name>
                 DEVARSH VINOD
               </h1>
 
-              <p class="hero-sub font-sans text-sm md:text-base text-neutral-400 font-light tracking-wide mt-5" data-setting-title>
+              <p class="hero-sub font-sans text-sm md:text-base text-neutral-400 font-light tracking-wide mt-5 will-change-transform" data-setting-title>
                 Applied Mathematics &amp; Computer Science
               </p>
             </div>
 
             <!-- Bottom Action Rail: Quiet & Uncluttered -->
-            <div class="flex justify-between items-end border-t border-neutral-800/80 pt-[18px] font-sans text-xs text-neutral-500">
+            <div class="hero-meta-bottom flex justify-between items-end border-t border-neutral-800/80 pt-[18px] font-sans text-xs text-neutral-500 will-change-transform">
               <div class="font-mono text-xs text-neutral-400">
                 DVRSH.COM
               </div>

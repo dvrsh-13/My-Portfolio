@@ -1,5 +1,6 @@
 import { cms } from "./cmsStore";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { escapeHtml } from "./utils";
 
 export function renderDynamicContent(): () => void {
   renderProfileAndSettings();
@@ -38,7 +39,7 @@ function renderProfileAndSettings() {
   document.querySelectorAll<HTMLElement>("[data-setting-bio]").forEach((el) => {
     const paragraphs = settings.bio.split("\n\n").filter(Boolean);
     if (paragraphs.length > 0) {
-      el.innerHTML = paragraphs.map((p) => `<p>${p}</p>`).join("");
+      el.innerHTML = paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join("");
     } else {
       el.textContent = settings.bio;
     }
@@ -51,7 +52,7 @@ function renderProfileAndSettings() {
 
   // Email
   document.querySelectorAll<HTMLAnchorElement>("[data-setting-email]").forEach((el) => {
-    el.href = `mailto:${settings.email}`;
+    el.href = `mailto:${encodeURIComponent(settings.email)}`;
     el.textContent = settings.email;
   });
 
@@ -71,25 +72,28 @@ function renderEducationList() {
   if (!container) return;
 
   const eduList = cms.getEducation();
-  container.innerHTML = eduList
+  const featured = eduList.filter((e) => e.featured);
+  const displayList = featured.length > 0 ? featured : eduList;
+
+  container.innerHTML = displayList
     .map(
       (item) => `
     <div class="border-b border-neutral-800 pb-4 last:border-b-0 space-y-1">
       <div class="flex justify-between items-baseline">
         <h3 class="font-serif text-xl md:text-2xl font-normal text-white">
-          ${item.institution} · <span class="font-sans text-sm md:text-base text-neutral-300 font-light">${item.program}</span>
+          ${escapeHtml(item.institution)} · <span class="font-sans text-sm md:text-base text-neutral-300 font-light">${escapeHtml(item.program)}</span>
         </h3>
-        <span class="font-mono text-xs text-neutral-500">${item.period}</span>
+        <span class="font-mono text-xs text-neutral-500">${escapeHtml(item.period)}</span>
       </div>
       <div class="flex items-center gap-2 mt-1 text-xs md:text-sm text-neutral-300 font-light">
-        <span class="text-white font-medium">${item.grades}</span>
+        <span class="text-white font-medium">${escapeHtml(item.grades)}</span>
       </div>
       ${
         item.details && item.details.length
           ? item.details
               .slice(0, 2)
               .map(
-                (d) => `<p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">${d}</p>`
+                (d) => `<p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">${escapeHtml(d)}</p>`
               )
               .join("")
           : ""
@@ -119,20 +123,20 @@ function renderProjectsList() {
       class="work-item border-b border-neutral-800 py-4 cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-white"
       data-project-item
       data-project-index="${i}"
-      data-open-project="${p.id}"
+      data-open-project="${escapeHtml(p.id)}"
       role="button"
       tabindex="0"
-      aria-label="View project details: ${p.title}"
+      aria-label="View project details: ${escapeHtml(p.title)}"
     >
       <div class="flex justify-between items-center">
         <div class="flex items-baseline gap-4">
           <span class="font-mono text-xs text-neutral-500">0${i + 1}</span>
-          <h3 class="font-serif text-2xl md:text-[calc(2.8_*_var(--scale))] font-normal text-white">${p.title}</h3>
+          <h3 class="font-serif text-2xl md:text-[calc(2.8_*_var(--scale))] font-normal text-white">${escapeHtml(p.title)}</h3>
         </div>
         <span class="work-item-arrow text-base text-neutral-400 font-sans">↗</span>
       </div>
       <p class="font-sans text-xs text-neutral-400 mt-1 pl-8 font-light">
-        ${p.subtitle} · ${p.tags.slice(0, 3).join(" · ")}
+        ${escapeHtml(p.subtitle)} · ${p.tags.slice(0, 3).map((t) => escapeHtml(t)).join(" · ")}
       </p>
     </div>
   `
@@ -147,21 +151,21 @@ function renderProjectsList() {
         (p, i) => `
       <div data-project-image="${i}" class="absolute inset-6 opacity-0 transition-opacity duration-300 flex flex-col justify-between pointer-events-none">
         <div class="flex justify-between text-neutral-400 border-b border-neutral-800 pb-2 text-xs font-sans">
-          <span class="text-white font-medium">0${i + 1} · ${p.title}</span>
-          <span class="font-mono text-neutral-500">${p.year}</span>
+          <span class="text-white font-medium">0${i + 1} · ${escapeHtml(p.title)}</span>
+          <span class="font-mono text-neutral-500">${escapeHtml(p.year)}</span>
         </div>
         <div class="my-auto space-y-3 font-sans text-xs text-neutral-300">
-          <p class="leading-relaxed font-light">${p.description}</p>
+          <p class="leading-relaxed font-light">${escapeHtml(p.description)}</p>
           ${
             p.metrics && p.metrics.length
               ? `<div class="border-l border-neutral-700 pl-3 py-0.5 text-xs text-neutral-400 font-light">
-                  ${p.metrics[0]}
+                  ${escapeHtml(p.metrics[0])}
                 </div>`
               : ""
           }
         </div>
         <div class="text-[11px] font-sans text-neutral-500 border-t border-neutral-800 pt-2">
-          ${p.tags.join(" · ")}
+          ${p.tags.map((t) => escapeHtml(t)).join(" · ")}
         </div>
       </div>
     `
@@ -190,17 +194,17 @@ function renderExperienceList() {
     <div class="border-b border-neutral-200 pb-5 last:border-b-0 space-y-1.5">
       <div class="flex justify-between items-baseline">
         <h3 class="font-serif text-xl md:text-[calc(2.2_*_var(--scale))] font-normal text-neutral-900">
-          ${e.company} · <span class="font-sans text-sm md:text-base text-neutral-600 font-light">${e.role}</span>
+          ${escapeHtml(e.company)} · <span class="font-sans text-sm md:text-base text-neutral-600 font-light">${escapeHtml(e.role)}</span>
         </h3>
-        <span class="font-mono text-xs text-neutral-500">${e.period}</span>
+        <span class="font-mono text-xs text-neutral-500">${escapeHtml(e.period)}</span>
       </div>
       <p class="font-sans text-xs md:text-sm text-neutral-600 leading-relaxed font-light">
-        ${e.bulletPoints[0] || e.description}
+        ${escapeHtml(e.bulletPoints[0] || e.description)}
       </p>
       ${
         e.bulletPoints[1]
           ? `<p class="font-sans text-xs text-neutral-500 leading-relaxed font-light">
-              • ${e.bulletPoints[1]}
+              • ${escapeHtml(e.bulletPoints[1])}
             </p>`
           : ""
       }
@@ -227,21 +231,21 @@ function renderBlogsList() {
       (b) => `
     <article
       class="border-b border-neutral-200 pb-5 last:border-b-0 cursor-pointer group outline-none focus-visible:ring-1 focus-visible:ring-neutral-900"
-      data-open-post="${b.id}"
+      data-open-post="${escapeHtml(b.id)}"
       role="button"
       tabindex="0"
-      aria-label="Read working paper: ${b.title}"
+      aria-label="Read working paper: ${escapeHtml(b.title)}"
     >
       <div class="flex justify-between items-baseline font-sans text-xs text-neutral-500">
-        <span class="font-sans text-neutral-600 font-medium">${b.tags.slice(0, 2).join(" · ")}</span>
-        <span class="font-mono text-[11px] text-neutral-400">${b.date} · ${b.readTime}</span>
+        <span class="font-sans text-neutral-600 font-medium">${b.tags.slice(0, 2).map((t) => escapeHtml(t)).join(" · ")}</span>
+        <span class="font-mono text-[11px] text-neutral-400">${escapeHtml(b.date)} · ${escapeHtml(b.readTime)}</span>
       </div>
       <h3 class="font-serif text-xl md:text-2xl mt-1.5 font-normal text-neutral-900 group-hover:text-neutral-500 transition-colors flex items-center justify-between">
-        <span>${b.title}</span>
+        <span>${escapeHtml(b.title)}</span>
         <span class="text-xs font-sans text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity">Read Note →</span>
       </h3>
       <p class="font-sans text-xs md:text-sm text-neutral-600 mt-1 leading-relaxed font-light">
-        ${b.excerpt}
+        ${escapeHtml(b.excerpt)}
       </p>
     </article>
   `

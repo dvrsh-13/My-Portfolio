@@ -12,11 +12,11 @@ import {
 } from "../data/portfolioData";
 
 const STORAGE_KEYS = {
-  SETTINGS: "folio_cms_settings_v2",
-  PROJECTS: "folio_cms_projects_v2",
-  EXPERIENCE: "folio_cms_experience_v2",
-  EDUCATION: "folio_cms_education_v2",
-  BLOGS: "folio_cms_blogs_v2",
+  SETTINGS: "folio_cms_settings_v3",
+  PROJECTS: "folio_cms_projects_v3",
+  EXPERIENCE: "folio_cms_experience_v3",
+  EDUCATION: "folio_cms_education_v3",
+  BLOGS: "folio_cms_blogs_v3",
 };
 
 export class CMSStore {

@@ -269,6 +269,9 @@ export function initHorizontalTrack() {
         },
       });
     }
+
+    // Set initial rail theme immediately on desktop mount
+    updateRailTheme();
   });
 
   return () => {

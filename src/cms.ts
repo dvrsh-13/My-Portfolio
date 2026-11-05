@@ -28,17 +28,40 @@ function setupTabs() {
       const target = btn.dataset.tabBtn;
 
       tabBtns.forEach((b) => {
-        b.classList.remove("border-white", "text-white", "font-medium");
-        b.classList.add("border-transparent", "text-neutral-500");
+        b.classList.remove("bg-white", "text-black", "shadow-sm");
+        b.classList.add("text-neutral-400", "hover:text-white", "hover:bg-neutral-900/70");
       });
-      btn.classList.add("border-white", "text-white", "font-medium");
-      btn.classList.remove("border-transparent", "text-neutral-500");
+      btn.classList.add("bg-white", "text-black", "shadow-sm");
+      btn.classList.remove("text-neutral-400", "hover:text-white", "hover:bg-neutral-900/70");
 
       tabPanels.forEach((p) => {
         p.classList.toggle("hidden", p.dataset.tabPanel !== target);
       });
     });
   });
+}
+
+function showToast(message: string, isError = false) {
+  let toast = document.getElementById("cms-toast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "cms-toast";
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.className = `fixed bottom-8 right-8 z-[200] font-sans font-medium text-xs px-5 py-3.5 rounded-xl shadow-2xl transition-all duration-300 opacity-100 translate-y-0 flex items-center gap-2.5 border backdrop-blur-md ${
+    isError
+      ? "bg-rose-950/90 text-rose-200 border-rose-800"
+      : "bg-white text-black border-neutral-200 shadow-2xl"
+  }`;
+
+  setTimeout(() => {
+    if (toast) {
+      toast.classList.add("opacity-0", "translate-y-4");
+      toast.classList.remove("opacity-100", "translate-y-0");
+    }
+  }, 3000);
 }
 
 // -------------------------------------------------------------
@@ -60,32 +83,30 @@ function renderCMSProjects() {
   container.innerHTML = projects
     .map(
       (p) => `
-    <div class="border border-neutral-800/80 p-5 bg-neutral-900/30 rounded flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors">
-      <div class="space-y-1 max-w-xl">
-        <div class="flex items-center gap-3">
+    <div class="border border-neutral-800/80 hover:border-neutral-700/80 p-5 md:p-6 bg-[#121212] hover:bg-[#141414] rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 transition-all">
+      <div class="space-y-1.5 max-w-2xl">
+        <div class="flex flex-wrap items-center gap-2.5">
           <h3 class="font-serif text-lg md:text-xl font-normal text-white">${p.title}</h3>
-          <span class="font-mono text-[10px] tracking-wide uppercase px-2 py-0.5 border ${
+          <span class="font-mono text-[10px] tracking-wide uppercase px-2.5 py-0.5 rounded-full border ${
             p.featured
-              ? "border-white/40 text-white font-medium"
-              : "border-neutral-800 text-neutral-500"
+              ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300 font-medium"
+              : "border-neutral-800 bg-neutral-900/60 text-neutral-400"
           }">
-            ${p.featured ? "Live on Storyboard" : "Full Archive View"}
+            ${p.featured ? "● Storyboard Featured" : "Archive View"}
           </span>
         </div>
-        <p class="font-sans text-xs text-neutral-400 font-light">${p.subtitle} · ${p.category} (${p.year})</p>
-        <p class="font-sans text-xs text-neutral-500 font-light line-clamp-1">${p.description}</p>
+        <p class="font-sans text-xs text-neutral-400 font-light">${p.subtitle} · <span class="text-neutral-500">${p.category} (${p.year})</span></p>
+        <p class="font-sans text-xs text-neutral-400 font-light line-clamp-2 leading-relaxed">${p.description}</p>
       </div>
 
-      <div class="flex items-center gap-4 shrink-0 font-sans text-xs">
-        <button data-edit-proj="${p.id}" class="to-link-underline text-neutral-300 hover:text-white cursor-pointer py-1">
+      <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
+        <button data-edit-proj="${p.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 text-neutral-200 hover:text-white transition-all cursor-pointer">
           Edit
         </button>
-        <span class="text-neutral-700">·</span>
-        <button data-toggle-proj="${p.id}" class="to-link-underline text-neutral-300 hover:text-white cursor-pointer py-1">
+        <button data-toggle-proj="${p.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 ${p.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-all cursor-pointer">
           ${p.featured ? "Unfeature" : "Feature"}
         </button>
-        <span class="text-neutral-700">·</span>
-        <button data-delete-proj="${p.id}" class="text-neutral-500 hover:text-rose-400 cursor-pointer transition-colors py-1">
+        <button data-delete-proj="${p.id}" class="px-3.5 py-1.5 rounded-xl border border-transparent hover:border-rose-900/40 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-all cursor-pointer">
           Delete
         </button>
       </div>
@@ -141,32 +162,30 @@ function renderCMSExperience() {
   container.innerHTML = exp
     .map(
       (e) => `
-    <div class="border border-neutral-800/80 p-5 bg-neutral-900/30 rounded flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors">
-      <div class="space-y-1 max-w-xl">
-        <div class="flex items-center gap-3">
+    <div class="border border-neutral-800/80 hover:border-neutral-700/80 p-5 md:p-6 bg-[#121212] hover:bg-[#141414] rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 transition-all">
+      <div class="space-y-1.5 max-w-2xl">
+        <div class="flex flex-wrap items-center gap-2.5">
           <h3 class="font-serif text-lg md:text-xl font-normal text-white">${e.company}</h3>
-          <span class="font-mono text-[10px] tracking-wide uppercase px-2 py-0.5 border ${
+          <span class="font-mono text-[10px] tracking-wide uppercase px-2.5 py-0.5 rounded-full border ${
             e.featured
-              ? "border-white/40 text-white font-medium"
-              : "border-neutral-800 text-neutral-500"
+              ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300 font-medium"
+              : "border-neutral-800 bg-neutral-900/60 text-neutral-400"
           }">
-            ${e.featured ? "Live on Storyboard" : "Full Archive View"}
+            ${e.featured ? "● Storyboard Featured" : "Archive View"}
           </span>
         </div>
-        <p class="font-sans text-xs text-neutral-400 font-light">${e.role} · ${e.location} (${e.period})</p>
-        <p class="font-sans text-xs text-neutral-500 font-light line-clamp-1">${e.bulletPoints[0] || e.description}</p>
+        <p class="font-sans text-xs text-neutral-400 font-light">${e.role} · <span class="text-neutral-500">${e.location} (${e.period})</span></p>
+        <p class="font-sans text-xs text-neutral-400 font-light line-clamp-2 leading-relaxed">${e.bulletPoints[0] || e.description}</p>
       </div>
 
-      <div class="flex items-center gap-4 shrink-0 font-sans text-xs">
-        <button data-edit-exp="${e.id}" class="to-link-underline text-neutral-300 hover:text-white cursor-pointer py-1">
+      <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
+        <button data-edit-exp="${e.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 text-neutral-200 hover:text-white transition-all cursor-pointer">
           Edit
         </button>
-        <span class="text-neutral-700">·</span>
-        <button data-toggle-exp="${e.id}" class="to-link-underline text-neutral-300 hover:text-white cursor-pointer py-1">
+        <button data-toggle-exp="${e.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 ${e.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-all cursor-pointer">
           ${e.featured ? "Unfeature" : "Feature"}
         </button>
-        <span class="text-neutral-700">·</span>
-        <button data-delete-exp="${e.id}" class="text-neutral-500 hover:text-rose-400 cursor-pointer transition-colors py-1">
+        <button data-delete-exp="${e.id}" class="px-3.5 py-1.5 rounded-xl border border-transparent hover:border-rose-900/40 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-all cursor-pointer">
           Delete
         </button>
       </div>
@@ -222,32 +241,30 @@ function renderCMSBlogs() {
   container.innerHTML = blogs
     .map(
       (b) => `
-    <div class="border border-neutral-800/80 p-5 bg-neutral-900/30 rounded flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors">
-      <div class="space-y-1 max-w-xl">
-        <div class="flex items-center gap-3">
+    <div class="border border-neutral-800/80 hover:border-neutral-700/80 p-5 md:p-6 bg-[#121212] hover:bg-[#141414] rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 transition-all">
+      <div class="space-y-1.5 max-w-2xl">
+        <div class="flex flex-wrap items-center gap-2.5">
           <h3 class="font-serif text-lg md:text-xl font-normal text-white">${b.title}</h3>
-          <span class="font-mono text-[10px] tracking-wide uppercase px-2 py-0.5 border ${
+          <span class="font-mono text-[10px] tracking-wide uppercase px-2.5 py-0.5 rounded-full border ${
             b.featured
-              ? "border-white/40 text-white font-medium"
-              : "border-neutral-800 text-neutral-500"
+              ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300 font-medium"
+              : "border-neutral-800 bg-neutral-900/60 text-neutral-400"
           }">
-            ${b.featured ? "Live on Storyboard" : "Full Archive View"}
+            ${b.featured ? "● Storyboard Featured" : "Archive View"}
           </span>
         </div>
-        <p class="font-sans text-xs text-neutral-400 font-light">${b.date} · ${b.readTime} · ${b.tags.join(", ")}</p>
-        <p class="font-sans text-xs text-neutral-500 font-light line-clamp-1">${b.excerpt}</p>
+        <p class="font-sans text-xs text-neutral-400 font-light">${b.date} · ${b.readTime} · <span class="text-neutral-500">${b.tags.join(", ")}</span></p>
+        <p class="font-sans text-xs text-neutral-400 font-light line-clamp-2 leading-relaxed">${b.excerpt}</p>
       </div>
 
-      <div class="flex items-center gap-4 shrink-0 font-sans text-xs">
-        <button data-edit-blog="${b.id}" class="to-link-underline text-neutral-300 hover:text-white cursor-pointer py-1">
+      <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
+        <button data-edit-blog="${b.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 text-neutral-200 hover:text-white transition-all cursor-pointer">
           Edit
         </button>
-        <span class="text-neutral-700">·</span>
-        <button data-toggle-blog="${b.id}" class="to-link-underline text-neutral-300 hover:text-white cursor-pointer py-1">
+        <button data-toggle-blog="${b.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 ${b.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-all cursor-pointer">
           ${b.featured ? "Unfeature" : "Feature"}
         </button>
-        <span class="text-neutral-700">·</span>
-        <button data-delete-blog="${b.id}" class="text-neutral-500 hover:text-rose-400 cursor-pointer transition-colors py-1">
+        <button data-delete-blog="${b.id}" class="px-3.5 py-1.5 rounded-xl border border-transparent hover:border-rose-900/40 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-all cursor-pointer">
           Delete
         </button>
       </div>
@@ -295,19 +312,18 @@ function renderCMSEducation() {
   container.innerHTML = edu
     .map(
       (item) => `
-    <div class="border border-neutral-800/80 p-5 bg-neutral-900/30 rounded flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors">
-      <div class="space-y-1 max-w-xl">
+    <div class="border border-neutral-800/80 hover:border-neutral-700/80 p-5 md:p-6 bg-[#121212] hover:bg-[#141414] rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 transition-all">
+      <div class="space-y-1.5 max-w-2xl">
         <h3 class="font-serif text-lg md:text-xl font-normal text-white">${item.institution}</h3>
         <p class="font-sans text-xs text-neutral-300 font-medium">${item.program} · <span class="text-neutral-400 font-light">${item.grades}</span></p>
         <p class="font-mono text-xs text-neutral-500">${item.period}</p>
       </div>
 
-      <div class="flex items-center gap-4 shrink-0 font-sans text-xs">
-        <button data-edit-edu="${item.id}" class="to-link-underline text-neutral-300 hover:text-white cursor-pointer py-1">
+      <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
+        <button data-edit-edu="${item.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 text-neutral-200 hover:text-white transition-all cursor-pointer">
           Edit
         </button>
-        <span class="text-neutral-700">·</span>
-        <button data-delete-edu="${item.id}" class="text-neutral-500 hover:text-rose-400 cursor-pointer transition-colors py-1">
+        <button data-delete-edu="${item.id}" class="px-3.5 py-1.5 rounded-xl border border-transparent hover:border-rose-900/40 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-all cursor-pointer">
           Delete
         </button>
       </div>
@@ -385,40 +401,40 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
     if (featuredCheckbox) featuredCheckbox.checked = item ? item.featured : true;
 
     fieldsContainer.innerHTML = `
-      <div class="space-y-3 font-sans text-xs">
+      <div class="space-y-4 font-sans text-xs">
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Project Title</label>
-          <input type="text" id="f-proj-title" value="${item?.title || ""}" required class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Project Title</label>
+          <input type="text" id="f-proj-title" value="${item?.title || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-neutral-400 mb-1 font-medium">Subtitle</label>
-            <input type="text" id="f-proj-sub" value="${item?.subtitle || ""}" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Subtitle</label>
+            <input type="text" id="f-proj-sub" value="${item?.subtitle || ""}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
           <div>
-            <label class="block text-neutral-400 mb-1 font-medium">Category</label>
-            <input type="text" id="f-proj-cat" value="${item?.category || "Quantitative Systems"}" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Category</label>
+            <input type="text" id="f-proj-cat" value="${item?.category || "Quantitative Systems"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Year</label>
-          <input type="text" id="f-proj-year" value="${item?.year || "2026"}" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Year</label>
+          <input type="text" id="f-proj-year" value="${item?.year || "2026"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-mono" />
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Description</label>
-          <textarea id="f-proj-desc" rows="3" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500">${item?.description || ""}</textarea>
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Description</label>
+          <textarea id="f-proj-desc" rows="3" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.description || ""}</textarea>
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Key Finding / Metric (One per line)</label>
-          <textarea id="f-proj-metrics" rows="2" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500">${item?.metrics.join("\n") || ""}</textarea>
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Key Finding / Metric (One per line)</label>
+          <textarea id="f-proj-metrics" rows="2" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.metrics.join("\n") || ""}</textarea>
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Python / Code Snippet (Optional)</label>
-          <textarea id="f-proj-code" rows="4" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white font-mono text-xs rounded outline-none focus:border-neutral-500">${item?.codeSnippet || ""}</textarea>
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Python / Code Snippet (Optional)</label>
+          <textarea id="f-proj-code" rows="4" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-white font-mono text-xs rounded-xl outline-none transition-all placeholder:text-neutral-600 resize-y">${item?.codeSnippet || ""}</textarea>
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Tags (Comma-separated)</label>
-          <input type="text" id="f-proj-tags" value="${item?.tags.join(", ") || "Python, NumPy"}" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Tags (Comma-separated)</label>
+          <input type="text" id="f-proj-tags" value="${item?.tags.join(", ") || "Python, NumPy"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
       </div>
     `;
@@ -428,34 +444,34 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
     if (featuredCheckbox) featuredCheckbox.checked = item ? item.featured : true;
 
     fieldsContainer.innerHTML = `
-      <div class="space-y-3 font-sans text-xs">
+      <div class="space-y-4 font-sans text-xs">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-neutral-400 mb-1 font-medium">Company Name</label>
-            <input type="text" id="f-exp-company" value="${item?.company || ""}" required class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Company Name</label>
+            <input type="text" id="f-exp-company" value="${item?.company || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
           <div>
-            <label class="block text-neutral-400 mb-1 font-medium">Location</label>
-            <input type="text" id="f-exp-location" value="${item?.location || "London, UK"}" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Location</label>
+            <input type="text" id="f-exp-location" value="${item?.location || "London, UK"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-neutral-400 mb-1 font-medium">Role / Placement Title</label>
-            <input type="text" id="f-exp-role" value="${item?.role || ""}" required class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Role / Placement Title</label>
+            <input type="text" id="f-exp-role" value="${item?.role || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
           <div>
-            <label class="block text-neutral-400 mb-1 font-medium">Period / Dates</label>
-            <input type="text" id="f-exp-period" value="${item?.period || "2026"}" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Period / Dates</label>
+            <input type="text" id="f-exp-period" value="${item?.period || "2026"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Narrative Summary</label>
-          <textarea id="f-exp-desc" rows="2" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500">${item?.description || ""}</textarea>
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Narrative Summary</label>
+          <textarea id="f-exp-desc" rows="2" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.description || ""}</textarea>
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Bullet Points & Contributions (One per line)</label>
-          <textarea id="f-exp-bullets" rows="4" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500">${item?.bulletPoints.join("\n") || ""}</textarea>
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Bullet Points & Contributions (One per line)</label>
+          <textarea id="f-exp-bullets" rows="4" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.bulletPoints.join("\n") || ""}</textarea>
         </div>
       </div>
     `;
@@ -465,32 +481,32 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
     if (featuredCheckbox) featuredCheckbox.checked = item ? item.featured : true;
 
     fieldsContainer.innerHTML = `
-      <div class="space-y-3 font-sans text-xs">
+      <div class="space-y-4 font-sans text-xs">
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Article Title</label>
-          <input type="text" id="f-blog-title" value="${item?.title || ""}" required class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Article Title</label>
+          <input type="text" id="f-blog-title" value="${item?.title || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-neutral-400 mb-1 font-medium">Publication Date</label>
-            <input type="text" id="f-blog-date" value="${item?.date || "2026"}" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Publication Date</label>
+            <input type="text" id="f-blog-date" value="${item?.date || "2026"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
           <div>
-            <label class="block text-neutral-400 mb-1 font-medium">Read Time</label>
-            <input type="text" id="f-blog-time" value="${item?.readTime || "7 min read"}" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Read Time</label>
+            <input type="text" id="f-blog-time" value="${item?.readTime || "7 min read"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Tags (Comma-separated)</label>
-          <input type="text" id="f-blog-tags" value="${item?.tags.join(", ") || "Quantitative Finance, Statistics"}" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Tags (Comma-separated)</label>
+          <input type="text" id="f-blog-tags" value="${item?.tags.join(", ") || "Quantitative Finance, Statistics"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Abstract / Excerpt (Lead)</label>
-          <textarea id="f-blog-excerpt" rows="2" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500">${item?.excerpt || ""}</textarea>
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Abstract / Excerpt (Lead)</label>
+          <textarea id="f-blog-excerpt" rows="2" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.excerpt || ""}</textarea>
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Full Essay Content (Double return for paragraphs)</label>
-          <textarea id="f-blog-content" rows="6" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white font-sans text-xs rounded outline-none focus:border-neutral-500 leading-relaxed">${item?.content || ""}</textarea>
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Full Essay Content (Double return for paragraphs)</label>
+          <textarea id="f-blog-content" rows="6" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-white font-sans text-xs rounded-xl outline-none transition-all placeholder:text-neutral-600 leading-relaxed resize-y">${item?.content || ""}</textarea>
         </div>
       </div>
     `;
@@ -500,28 +516,28 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
     if (featuredCheckbox) featuredCheckbox.checked = item ? item.featured : true;
 
     fieldsContainer.innerHTML = `
-      <div class="space-y-3 font-sans text-xs">
+      <div class="space-y-4 font-sans text-xs">
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Institution Name</label>
-          <input type="text" id="f-edu-inst" value="${item?.institution || ""}" required class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Institution Name</label>
+          <input type="text" id="f-edu-inst" value="${item?.institution || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-neutral-400 mb-1 font-medium">Program / Qualification</label>
-            <input type="text" id="f-edu-prog" value="${item?.program || ""}" required class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Program / Qualification</label>
+            <input type="text" id="f-edu-prog" value="${item?.program || ""}" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
           <div>
-            <label class="block text-neutral-400 mb-1 font-medium">Period / Dates</label>
-            <input type="text" id="f-edu-period" value="${item?.period || "Sep 2024 — Aug 2026"}" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Period / Dates</label>
+            <input type="text" id="f-edu-period" value="${item?.period || "Sep 2024 — Aug 2026"}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Grades Achieved</label>
-          <input type="text" id="f-edu-grades" value="${item?.grades || ""}" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Grades Achieved</label>
+          <input type="text" id="f-edu-grades" value="${item?.grades || ""}" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
         <div>
-          <label class="block text-neutral-400 mb-1 font-medium">Details & Dissertations (One per line)</label>
-          <textarea id="f-edu-details" rows="3" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500">${item?.details.join("\n") || ""}</textarea>
+          <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Details & Dissertations (One per line)</label>
+          <textarea id="f-edu-details" rows="3" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y">${item?.details.join("\n") || ""}</textarea>
         </div>
       </div>
     `;
@@ -683,6 +699,7 @@ function handleFormSubmit() {
 
   const modal = document.getElementById("cms-editor-modal") as HTMLDialogElement;
   modal?.close();
+  showToast(activeEditId ? "✓ Record updated successfully" : "✓ New record created successfully");
 }
 
 function setupEventListeners() {
@@ -712,16 +729,16 @@ function setupEventListeners() {
     const bioInput = document.getElementById("setting-bio") as HTMLTextAreaElement;
 
     cms.updateSettings({
-      name: nameInput.value || "DEV PATEL",
+      name: nameInput.value || "DEVARSH VINOD",
       title: titleInput.value || "Applied Mathematics & Computer Science",
-      email: emailInput.value || "devpatel.cs.math@gmail.com",
+      email: emailInput.value || "devarshvinod@gmail.com",
       location: locationInput.value || "Slough & London, UK",
       github: githubInput.value || "https://github.com",
       linkedin: linkedinInput.value || "https://linkedin.com",
       bio: bioInput.value,
     });
 
-    alert("Profile settings saved successfully.");
+    showToast("✓ Profile settings saved successfully");
   });
 
   // Apply Limits
@@ -737,7 +754,7 @@ function setupEventListeners() {
     });
 
     renderAll();
-    alert("Display limits updated and applied.");
+    showToast("✓ Storyboard display limits updated and applied");
   });
 
   // Reset to Defaults
@@ -745,7 +762,7 @@ function setupEventListeners() {
     if (confirm("Reset all content, records, and settings to original defaults?")) {
       cms.resetToDefaults();
       renderAll();
-      alert("Database reset to initial defaults.");
+      showToast("✓ Database reset to initial defaults");
     }
   });
 
@@ -754,7 +771,7 @@ function setupEventListeners() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(cms.exportJSON());
     const dlAnchor = document.createElement("a");
     dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `dev_patel_portfolio_${Date.now()}.json`);
+    dlAnchor.setAttribute("download", `devarsh_vinod_portfolio_${Date.now()}.json`);
     dlAnchor.click();
   });
 
@@ -787,7 +804,7 @@ function setupEventListeners() {
     const branch = ghBranchInput?.value.trim() || "Main";
 
     if (!token) {
-      alert("Please provide a GitHub Personal Access Token (PAT) with 'repo' scope to publish directly.");
+      showToast("Please provide a GitHub Personal Access Token (PAT) with repo scope", true);
       return;
     }
 
@@ -846,7 +863,7 @@ function setupEventListeners() {
         ghStatus.textContent = "✓ Successfully committed! GitHub Pages build will trigger automatically.";
         ghStatus.className = "text-xs font-mono text-emerald-400";
       }
-      alert("Successfully committed updated data to GitHub repository! GitHub Pages build triggered.");
+      showToast("✓ Successfully committed updated data to GitHub repository!");
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
       console.error("[CMS GitHub Sync]", err);
@@ -854,7 +871,7 @@ function setupEventListeners() {
         ghStatus.textContent = `✕ Error: ${errMsg}`;
         ghStatus.className = "text-xs font-mono text-rose-400";
       }
-      alert(`GitHub Publish Failed: ${errMsg}`);
+      showToast(`✕ GitHub Publish Failed: ${errMsg}`, true);
     }
   });
 
@@ -868,9 +885,9 @@ function setupEventListeners() {
         try {
           cms.importJSON(evt.target?.result as string);
           renderAll();
-          alert("Database snapshot imported successfully.");
+          showToast("✓ Database snapshot imported successfully");
         } catch {
-          alert("Failed to parse JSON snapshot file.");
+          showToast("✕ Failed to parse JSON snapshot file", true);
         }
       };
       reader.readAsText(file);

@@ -59,12 +59,12 @@ export interface SiteSettings {
 }
 
 export const INITIAL_SETTINGS: SiteSettings = {
-  name: "DEV PATEL",
+  name: "DEVARSH VINOD",
   status: "ACTIVE CANDIDATE",
   title: "Computer Science & Mathematics · Degree Apprenticeship Candidate",
   bio: "Gap year student specialising in Computer Science and Mathematics, aiming for a degree apprenticeship. Strong interest in software engineering, systems engineering, data analytics, and mathematical modelling in quantitative finance.",
   location: "LONDON & SLOUGH, UK",
-  email: "devpatel.cs.math@gmail.com",
+  email: "devarshvinod@gmail.com",
   github: "https://github.com",
   linkedin: "https://linkedin.com",
   featuredProjectsLimit: 3,

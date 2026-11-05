@@ -3,267 +3,405 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portfolio Management Studio ─ Dev Patel</title>
+    <title>Portfolio Management Studio ─ Devarsh Vinod</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/src/styles/main.css" />
   </head>
-  <body class="bg-[#080808] text-[#ffffff] min-h-screen font-sans antialiased p-6 md:py-12 md:px-16">
-    <div class="max-w-5xl mx-auto space-y-10">
+  <body class="bg-[#080808] text-[#f5f5f5] min-h-screen font-sans antialiased selection:bg-white selection:text-black">
+    
+    <!-- Ambient Studio Background Gradient -->
+    <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,_#171717_0%,_#080808_70%)] opacity-80" aria-hidden="true"></div>
+
+    <div class="relative max-w-6xl mx-auto px-6 py-10 md:py-16 md:px-12 space-y-10">
       
-      <!-- Studio Global Header -->
-      <header class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-neutral-800 pb-6 gap-6">
-        <div>
-          <span class="font-mono text-xs text-neutral-500 uppercase tracking-widest block mb-1">Administrative Console</span>
-          <h1 class="font-serif text-3xl md:text-5xl font-normal text-white">Content Architecture Studio</h1>
-          <p class="font-sans text-xs md:text-sm text-neutral-400 mt-1 font-light max-w-2xl">
-            Full control over portfolio content, featured records, storyboard bounds, and research papers.
+      <!-- Studio Header Bar -->
+      <header class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-neutral-800/80 pb-8 gap-6">
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-[11px] font-mono text-neutral-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>ADMINISTRATIVE STUDIO · DEVARSH VINOD</span>
+          </div>
+          <h1 class="font-serif text-3xl sm:text-4xl md:text-5xl font-normal text-white tracking-tight">
+            Content Architecture Studio
+          </h1>
+          <p class="font-sans text-xs md:text-sm text-neutral-400 font-light max-w-2xl leading-relaxed">
+            Manage live storyboard records, curate portfolio collections, enforce display limits, and sync directly with GitHub.
           </p>
         </div>
-        <div class="flex items-center gap-6 shrink-0">
-          <button id="reset-defaults-btn" class="font-sans text-xs text-neutral-400 hover:text-white transition-colors cursor-pointer to-link-underline">
+
+        <div class="flex items-center gap-4 shrink-0">
+          <button id="reset-defaults-btn" class="px-4 py-2 rounded-xl border border-neutral-800 hover:border-neutral-700 bg-neutral-900/50 hover:bg-neutral-800 text-neutral-400 hover:text-white font-sans text-xs transition-all cursor-pointer">
             Reset Defaults
           </button>
-          <a href="./" class="to-link-underline font-sans text-xs uppercase tracking-wider text-white font-medium flex items-center gap-2">
+          <a href="./" class="px-5 py-2.5 rounded-xl bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-all cursor-pointer flex items-center gap-2 shadow-sm">
             <span>← Return to Folio</span>
           </a>
         </div>
       </header>
 
-      <!-- Navigation Tabs -->
-      <nav class="flex flex-wrap border-b border-neutral-800 gap-6 md:gap-8 font-sans text-xs tracking-wider uppercase" aria-label="CMS Sections">
-        <button data-tab-btn="projects" class="pb-3 border-b-2 border-white text-white font-medium cursor-pointer transition-colors">
+      <!-- Navigation Tabs (Modernized Architectural Tab Strip) -->
+      <nav class="flex flex-wrap p-1.5 bg-[#101010] border border-neutral-800/90 rounded-2xl gap-1.5 font-sans text-xs" aria-label="CMS Navigation">
+        <button data-tab-btn="projects" class="px-4 py-2.5 rounded-xl font-medium tracking-wide uppercase transition-all duration-200 bg-white text-black shadow-sm cursor-pointer">
           Projects
         </button>
-        <button data-tab-btn="experience" class="pb-3 border-b-2 border-transparent text-neutral-500 hover:text-neutral-300 cursor-pointer transition-colors">
+        <button data-tab-btn="experience" class="px-4 py-2.5 rounded-xl font-medium tracking-wide uppercase transition-all duration-200 text-neutral-400 hover:text-white hover:bg-neutral-900/70 cursor-pointer">
           Experience
         </button>
-        <button data-tab-btn="blogs" class="pb-3 border-b-2 border-transparent text-neutral-500 hover:text-neutral-300 cursor-pointer transition-colors">
+        <button data-tab-btn="blogs" class="px-4 py-2.5 rounded-xl font-medium tracking-wide uppercase transition-all duration-200 text-neutral-400 hover:text-white hover:bg-neutral-900/70 cursor-pointer">
           Research Dispatches
         </button>
-        <button data-tab-btn="education" class="pb-3 border-b-2 border-transparent text-neutral-500 hover:text-neutral-300 cursor-pointer transition-colors">
+        <button data-tab-btn="education" class="px-4 py-2.5 rounded-xl font-medium tracking-wide uppercase transition-all duration-200 text-neutral-400 hover:text-white hover:bg-neutral-900/70 cursor-pointer">
           Academic &amp; Honors
         </button>
-        <button data-tab-btn="profile" class="pb-3 border-b-2 border-transparent text-neutral-500 hover:text-neutral-300 cursor-pointer transition-colors">
+        <button data-tab-btn="profile" class="px-4 py-2.5 rounded-xl font-medium tracking-wide uppercase transition-all duration-200 text-neutral-400 hover:text-white hover:bg-neutral-900/70 cursor-pointer">
           Profile &amp; Channels
         </button>
-        <button data-tab-btn="settings" class="pb-3 border-b-2 border-transparent text-neutral-500 hover:text-neutral-300 cursor-pointer transition-colors">
-          Display Limits &amp; Backup
+        <button data-tab-btn="settings" class="px-4 py-2.5 rounded-xl font-medium tracking-wide uppercase transition-all duration-200 text-neutral-400 hover:text-white hover:bg-neutral-900/70 cursor-pointer">
+          Display Limits &amp; Sync
         </button>
       </nav>
 
-      <!-- TAB 1: PROJECTS -->
+      <!-- =============================================================
+           TAB 1: PROJECTS
+           ============================================================= -->
       <section data-tab-panel="projects" class="space-y-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h2 class="font-serif text-2xl font-normal text-white">Computational Projects &amp; Models</h2>
-            <p id="projects-limit-indicator" class="font-sans text-xs text-neutral-400 mt-1 font-light"></p>
+        <div class="bg-[#0e0e0e] border border-neutral-800/80 rounded-2xl p-6 md:p-8 space-y-6 shadow-xl">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-neutral-800/80 pb-6 gap-4">
+            <div>
+              <h2 class="font-serif text-2xl md:text-3xl font-normal text-white">Computational Projects &amp; Models</h2>
+              <p id="projects-limit-indicator" class="font-sans text-xs text-neutral-400 mt-1 font-light"></p>
+            </div>
+            <button id="add-project-btn" class="px-4 py-2.5 bg-white text-black font-sans font-medium text-xs rounded-xl hover:bg-neutral-200 transition-all cursor-pointer shadow-sm flex items-center gap-1.5">
+              <span>+ New Project</span>
+            </button>
           </div>
-          <button id="add-project-btn" class="px-4 py-2 border border-neutral-700 hover:border-white font-sans text-xs uppercase tracking-wider text-white transition-colors cursor-pointer rounded">
-            + New Project
-          </button>
-        </div>
 
-        <div id="cms-projects-list" class="space-y-4">
-          <!-- Dynamically populated -->
+          <div id="cms-projects-list" class="space-y-4">
+            <!-- Dynamically populated from cms.ts -->
+          </div>
         </div>
       </section>
 
-      <!-- TAB 2: EXPERIENCE -->
+      <!-- =============================================================
+           TAB 2: EXPERIENCE
+           ============================================================= -->
       <section data-tab-panel="experience" class="space-y-6 hidden">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h2 class="font-serif text-2xl font-normal text-white">Work Experience &amp; Placements</h2>
-            <p id="experience-limit-indicator" class="font-sans text-xs text-neutral-400 mt-1 font-light"></p>
+        <div class="bg-[#0e0e0e] border border-neutral-800/80 rounded-2xl p-6 md:p-8 space-y-6 shadow-xl">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-neutral-800/80 pb-6 gap-4">
+            <div>
+              <h2 class="font-serif text-2xl md:text-3xl font-normal text-white">Work Experience &amp; Placements</h2>
+              <p id="experience-limit-indicator" class="font-sans text-xs text-neutral-400 mt-1 font-light"></p>
+            </div>
+            <button id="add-experience-btn" class="px-4 py-2.5 bg-white text-black font-sans font-medium text-xs rounded-xl hover:bg-neutral-200 transition-all cursor-pointer shadow-sm flex items-center gap-1.5">
+              <span>+ New Placement</span>
+            </button>
           </div>
-          <button id="add-experience-btn" class="px-4 py-2 border border-neutral-700 hover:border-white font-sans text-xs uppercase tracking-wider text-white transition-colors cursor-pointer rounded">
-            + New Placement
-          </button>
-        </div>
 
-        <div id="cms-experience-list" class="space-y-4">
-          <!-- Dynamically populated -->
+          <div id="cms-experience-list" class="space-y-4">
+            <!-- Dynamically populated from cms.ts -->
+          </div>
         </div>
       </section>
 
-      <!-- TAB 3: BLOGS -->
+      <!-- =============================================================
+           TAB 3: RESEARCH DISPATCHES (BLOGS)
+           ============================================================= -->
       <section data-tab-panel="blogs" class="space-y-6 hidden">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h2 class="font-serif text-2xl font-normal text-white">Research Notes &amp; Dispatches</h2>
-            <p id="blogs-limit-indicator" class="font-sans text-xs text-neutral-400 mt-1 font-light"></p>
+        <div class="bg-[#0e0e0e] border border-neutral-800/80 rounded-2xl p-6 md:p-8 space-y-6 shadow-xl">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-neutral-800/80 pb-6 gap-4">
+            <div>
+              <h2 class="font-serif text-2xl md:text-3xl font-normal text-white">Research Notes &amp; Dispatches</h2>
+              <p id="blogs-limit-indicator" class="font-sans text-xs text-neutral-400 mt-1 font-light"></p>
+            </div>
+            <button id="add-blog-btn" class="px-4 py-2.5 bg-white text-black font-sans font-medium text-xs rounded-xl hover:bg-neutral-200 transition-all cursor-pointer shadow-sm flex items-center gap-1.5">
+              <span>+ New Dispatch</span>
+            </button>
           </div>
-          <button id="add-blog-btn" class="px-4 py-2 border border-neutral-700 hover:border-white font-sans text-xs uppercase tracking-wider text-white transition-colors cursor-pointer rounded">
-            + New Dispatch
-          </button>
-        </div>
 
-        <div id="cms-blogs-list" class="space-y-4">
-          <!-- Dynamically populated -->
+          <div id="cms-blogs-list" class="space-y-4">
+            <!-- Dynamically populated from cms.ts -->
+          </div>
         </div>
       </section>
 
-      <!-- TAB 4: EDUCATION -->
+      <!-- =============================================================
+           TAB 4: ACADEMIC & HONORS (EDUCATION)
+           ============================================================= -->
       <section data-tab-panel="education" class="space-y-6 hidden">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h2 class="font-serif text-2xl font-normal text-white">Academic Qualifications &amp; Honors</h2>
-            <p class="font-sans text-xs text-neutral-400 mt-1 font-light">Manage academic records, EPQ dissertation, and STEM scholar affiliations.</p>
+        <div class="bg-[#0e0e0e] border border-neutral-800/80 rounded-2xl p-6 md:p-8 space-y-6 shadow-xl">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-neutral-800/80 pb-6 gap-4">
+            <div>
+              <h2 class="font-serif text-2xl md:text-3xl font-normal text-white">Academic Records &amp; Honors</h2>
+              <p class="font-sans text-xs text-neutral-400 mt-1 font-light">Qualifications, educational institutions, grades, and leadership records.</p>
+            </div>
+            <button id="add-education-btn" class="px-4 py-2.5 bg-white text-black font-sans font-medium text-xs rounded-xl hover:bg-neutral-200 transition-all cursor-pointer shadow-sm flex items-center gap-1.5">
+              <span>+ Add Academic Record</span>
+            </button>
           </div>
-          <button id="add-education-btn" class="px-4 py-2 border border-neutral-700 hover:border-white font-sans text-xs uppercase tracking-wider text-white transition-colors cursor-pointer rounded">
-            + New Academic Record
-          </button>
-        </div>
 
-        <div id="cms-education-list" class="space-y-4">
-          <!-- Dynamically populated -->
+          <div id="cms-education-list" class="space-y-4">
+            <!-- Dynamically populated from cms.ts -->
+          </div>
         </div>
       </section>
 
-      <!-- TAB 5: PROFILE & CHANNELS -->
-      <section data-tab-panel="profile" class="space-y-8 hidden">
-        <div>
-          <h2 class="font-serif text-2xl font-normal text-white">Identity &amp; Biographic Foundation</h2>
-          <p class="font-sans text-xs text-neutral-400 mt-1 font-light">
-            Update candidate name, editorial subtitles, bio lead, location, and verified communication channels.
-          </p>
-        </div>
-
-        <div class="border border-neutral-800 p-6 space-y-5 bg-neutral-900/40 rounded">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs font-sans">
-            <div>
-              <label class="text-neutral-400 block mb-1 font-medium">Candidate Name</label>
-              <input type="text" id="setting-name" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
-            </div>
-            <div>
-              <label class="text-neutral-400 block mb-1 font-medium">Hero Subtitle</label>
-              <input type="text" id="setting-title" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
-            </div>
-            <div>
-              <label class="text-neutral-400 block mb-1 font-medium">Inquiry Email</label>
-              <input type="email" id="setting-email" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
-            </div>
-            <div>
-              <label class="text-neutral-400 block mb-1 font-medium">Geographic Location</label>
-              <input type="text" id="setting-location" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
-            </div>
-            <div>
-              <label class="text-neutral-400 block mb-1 font-medium">GitHub Profile Link</label>
-              <input type="url" id="setting-github" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
-            </div>
-            <div>
-              <label class="text-neutral-400 block mb-1 font-medium">LinkedIn Profile Link</label>
-              <input type="url" id="setting-linkedin" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white rounded outline-none focus:border-neutral-500" />
-            </div>
-            <div class="md:col-span-2">
-              <label class="text-neutral-400 block mb-1 font-medium">Core Bio Lead (Chapter 01)</label>
-              <textarea id="setting-bio" rows="4" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white font-sans text-xs rounded outline-none focus:border-neutral-500 leading-relaxed"></textarea>
-            </div>
+      <!-- =============================================================
+           TAB 5: PROFILE & CHANNELS (BEAUTIFULLY STRUCTURED)
+           ============================================================= -->
+      <section data-tab-panel="profile" class="space-y-6 hidden">
+        <div class="bg-[#0e0e0e] border border-neutral-800/80 rounded-2xl overflow-hidden shadow-xl">
+          
+          <!-- Card Header -->
+          <div class="p-6 md:p-8 border-b border-neutral-800/80 bg-gradient-to-r from-neutral-900/50 to-transparent">
+            <h2 class="font-serif text-2xl md:text-3xl font-normal text-white">Identity &amp; Biographic Foundation</h2>
+            <p class="font-sans text-xs md:text-sm text-neutral-400 mt-1 font-light">
+              Edit candidate identity, editorial titles, verified contact channels, and core biographic copy.
+            </p>
           </div>
-          <button id="save-profile-btn" class="px-5 py-2.5 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded">
-            Save Profile Changes
-          </button>
+
+          <!-- Card Body -->
+          <div class="p-6 md:p-8 space-y-8">
+            
+            <!-- Group 1: Core Personalia -->
+            <div class="space-y-4">
+              <span class="font-mono text-xs uppercase tracking-wider text-neutral-400 block border-b border-neutral-800/60 pb-2">
+                01 · Core Information
+              </span>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-2">
+                    Candidate Full Name
+                  </label>
+                  <input
+                    type="text"
+                    id="setting-name"
+                    placeholder="DEVARSH VINOD"
+                    class="w-full bg-[#141414] border border-neutral-800 focus:border-white focus:bg-[#181818] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans"
+                  />
+                  <span class="text-[11px] text-neutral-500 mt-1 block">Displayed on Monumental Hero &amp; Global Navigation Monogram.</span>
+                </div>
+
+                <div>
+                  <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-2">
+                    Editorial Title / Focus
+                  </label>
+                  <input
+                    type="text"
+                    id="setting-title"
+                    placeholder="Computer Science & Mathematics · Degree Apprenticeship Candidate"
+                    class="w-full bg-[#141414] border border-neutral-800 focus:border-white focus:bg-[#181818] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans"
+                  />
+                  <span class="text-[11px] text-neutral-500 mt-1 block">Subtitle displayed below name on Hero and Chapter 01.</span>
+                </div>
+
+                <div>
+                  <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-2">
+                    Inquiry Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="setting-email"
+                    placeholder="devarshvinod@gmail.com"
+                    class="w-full bg-[#141414] border border-neutral-800 focus:border-white focus:bg-[#181818] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-mono"
+                  />
+                  <span class="text-[11px] text-neutral-500 mt-1 block">Direct contact channel wired to the Chapter 06 transmission link.</span>
+                </div>
+
+                <div>
+                  <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-2">
+                    Geographic Base
+                  </label>
+                  <input
+                    type="text"
+                    id="setting-location"
+                    placeholder="Slough & London, UK"
+                    class="w-full bg-[#141414] border border-neutral-800 focus:border-white focus:bg-[#181818] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans"
+                  />
+                  <span class="text-[11px] text-neutral-500 mt-1 block">Primary location tag shown on telemetry rails and footer.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 2: Verified Public Channels -->
+            <div class="space-y-4 pt-2">
+              <span class="font-mono text-xs uppercase tracking-wider text-neutral-400 block border-b border-neutral-800/60 pb-2">
+                02 · Verified Channels
+              </span>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-2">
+                    GitHub Profile Link
+                  </label>
+                  <input
+                    type="url"
+                    id="setting-github"
+                    placeholder="https://github.com/..."
+                    class="w-full bg-[#141414] border border-neutral-800 focus:border-white focus:bg-[#181818] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-2">
+                    LinkedIn Profile Link
+                  </label>
+                  <input
+                    type="url"
+                    id="setting-linkedin"
+                    placeholder="https://linkedin.com/in/..."
+                    class="w-full bg-[#141414] border border-neutral-800 focus:border-white focus:bg-[#181818] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 3: Core Editorial Bio -->
+            <div class="space-y-4 pt-2">
+              <span class="font-mono text-xs uppercase tracking-wider text-neutral-400 block border-b border-neutral-800/60 pb-2">
+                03 · Chapter 01 Editorial Bio Lead
+              </span>
+              <div>
+                <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-2">
+                  Biographic Statement (Chapter 01 About)
+                </label>
+                <textarea
+                  id="setting-bio"
+                  rows="5"
+                  placeholder="Gap year student specialising in Computer Science and Mathematics, aiming for a degree apprenticeship..."
+                  class="w-full bg-[#141414] border border-neutral-800 focus:border-white focus:bg-[#181818] p-4 text-sm text-white rounded-xl outline-none transition-all leading-relaxed placeholder:text-neutral-600 font-sans resize-y"
+                ></textarea>
+                <span class="text-[11px] text-neutral-500 mt-1 block">Formatted as high-contrast editorial paragraphs on Chapter 01. Separate multiple paragraphs with a blank line.</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Card Action Footer -->
+          <div class="border-t border-neutral-800/80 px-6 md:px-8 py-5 bg-[#0a0a0a] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <span class="font-sans text-xs text-neutral-500">
+              Live sync active: changes save to local storage immediately and reflect on the portfolio.
+            </span>
+            <button
+              id="save-profile-btn"
+              class="px-6 py-3 bg-white text-black font-sans font-semibold text-xs rounded-xl hover:bg-neutral-200 transition-all cursor-pointer shadow-md flex items-center gap-2 active:scale-95"
+            >
+              <span>Save Profile Changes</span>
+              <span>✓</span>
+            </button>
+          </div>
+
         </div>
       </section>
 
-      <!-- TAB 6: SETTINGS & BACKUP -->
+      <!-- =============================================================
+           TAB 6: DISPLAY BOUNDS & GITHUB SYNC
+           ============================================================= -->
       <section data-tab-panel="settings" class="space-y-8 hidden">
-        <div>
-          <h2 class="font-serif text-2xl font-normal text-white">Display Bounds &amp; Database Backups</h2>
-          <p class="font-sans text-xs text-neutral-400 mt-1 font-light">
-            Enforce upper bounds on highlighted storyboard records to prevent visual clutter and maintain negative space.
-          </p>
+        
+        <!-- Storyboard Limits Card -->
+        <div class="bg-[#0e0e0e] border border-neutral-800/80 rounded-2xl p-6 md:p-8 space-y-6 shadow-xl">
+          <div class="border-b border-neutral-800/80 pb-6">
+            <h2 class="font-serif text-2xl md:text-3xl font-normal text-white">Storyboard Limits &amp; Visual Caps</h2>
+            <p class="font-sans text-xs text-neutral-400 mt-1 font-light">
+              Enforce upper bounds on highlighted storyboard records to prevent visual clutter and maintain negative space. Excess records remain accessible in dedicated vertical archives.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="border border-neutral-800/80 p-5 space-y-3 bg-[#121212] rounded-xl">
+              <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium">Projects Storyboard Cap</label>
+              <input type="number" id="setting-proj-limit" min="1" max="6" class="w-full bg-[#181818] border border-neutral-800 px-4 py-2.5 font-mono text-white text-sm rounded-lg outline-none focus:border-white transition-all" />
+              <span class="text-[11px] text-neutral-500 block">Default: 3. Remaining records viewable in full archive view.</span>
+            </div>
+
+            <div class="border border-neutral-800/80 p-5 space-y-3 bg-[#121212] rounded-xl">
+              <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium">Experience Storyboard Cap</label>
+              <input type="number" id="setting-exp-limit" min="1" max="6" class="w-full bg-[#181818] border border-neutral-800 px-4 py-2.5 font-mono text-white text-sm rounded-lg outline-none focus:border-white transition-all" />
+              <span class="text-[11px] text-neutral-500 block">Default: 3. Excess placements viewable in full archive view.</span>
+            </div>
+
+            <div class="border border-neutral-800/80 p-5 space-y-3 bg-[#121212] rounded-xl">
+              <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium">Dispatches Storyboard Cap</label>
+              <input type="number" id="setting-blog-limit" min="1" max="6" class="w-full bg-[#181818] border border-neutral-800 px-4 py-2.5 font-mono text-white text-sm rounded-lg outline-none focus:border-white transition-all" />
+              <span class="text-[11px] text-neutral-500 block">Default: 3. All working papers viewable in full archive view.</span>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button id="save-limits-btn" class="px-6 py-3 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-all cursor-pointer rounded-xl shadow-sm flex items-center gap-2">
+              <span>Apply Storyboard Bounds</span>
+              <span>✓</span>
+            </button>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="border border-neutral-800 p-5 space-y-2 bg-neutral-900/40 rounded">
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium">Projects Storyboard Cap</label>
-            <input type="number" id="setting-proj-limit" min="1" max="6" class="w-full bg-black border border-neutral-800 px-3 py-2 font-mono text-white text-sm rounded outline-none focus:border-neutral-500" />
-            <span class="text-[11px] text-neutral-500 block">Default: 3. Remaining records viewable in full archive.</span>
-          </div>
-
-          <div class="border border-neutral-800 p-5 space-y-2 bg-neutral-900/40 rounded">
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium">Experience Storyboard Cap</label>
-            <input type="number" id="setting-exp-limit" min="1" max="6" class="w-full bg-black border border-neutral-800 px-3 py-2 font-mono text-white text-sm rounded outline-none focus:border-neutral-500" />
-            <span class="text-[11px] text-neutral-500 block">Default: 3. Excess placements viewable in full archive.</span>
-          </div>
-
-          <div class="border border-neutral-800 p-5 space-y-2 bg-neutral-900/40 rounded">
-            <label class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium">Dispatches Storyboard Cap</label>
-            <input type="number" id="setting-blog-limit" min="1" max="6" class="w-full bg-black border border-neutral-800 px-3 py-2 font-mono text-white text-sm rounded outline-none focus:border-neutral-500" />
-            <span class="text-[11px] text-neutral-500 block">Default: 3. All working papers viewable in full archive.</span>
-          </div>
-        </div>
-
-        <button id="save-limits-btn" class="px-5 py-2.5 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded">
-          Apply Storyboard Bounds
-        </button>
-
-        <!-- Export / Import JSON & Code Sync -->
-        <div class="border border-neutral-800 p-6 space-y-4 bg-neutral-900/40 rounded mt-8">
+        <!-- Database Migration & Snapshots Card -->
+        <div class="bg-[#0e0e0e] border border-neutral-800/80 rounded-2xl p-6 md:p-8 space-y-5 shadow-xl">
           <div>
-            <h3 class="font-serif text-xl font-normal text-white">Database Migration &amp; Code Snapshots</h3>
+            <h3 class="font-serif text-2xl font-normal text-white">Database Migration &amp; Code Snapshots</h3>
             <p class="text-xs text-neutral-400 font-light mt-1">
               Export database snapshot to JSON or download an updated <code>portfolioData.ts</code> source file ready to commit to GitHub.
             </p>
           </div>
-          <div class="flex flex-wrap gap-4 pt-1">
-            <button id="export-json-btn" class="px-4 py-2 border border-neutral-800 hover:border-neutral-600 text-xs font-sans uppercase tracking-wider text-neutral-300 hover:text-white transition-colors cursor-pointer rounded">
+          <div class="flex flex-wrap gap-4 pt-2">
+            <button id="export-json-btn" class="px-4 py-2.5 border border-neutral-800 hover:border-neutral-600 bg-neutral-900/60 text-xs font-sans uppercase tracking-wider text-neutral-300 hover:text-white transition-all cursor-pointer rounded-xl">
               Export JSON Snapshot (.json)
             </button>
-            <button id="export-ts-btn" class="px-4 py-2 border border-neutral-800 hover:border-neutral-600 text-xs font-sans uppercase tracking-wider text-neutral-300 hover:text-white transition-colors cursor-pointer rounded">
+            <button id="export-ts-btn" class="px-4 py-2.5 border border-neutral-800 hover:border-neutral-600 bg-neutral-900/60 text-xs font-sans uppercase tracking-wider text-neutral-300 hover:text-white transition-all cursor-pointer rounded-xl">
               Download portfolioData.ts
             </button>
-            <label class="px-4 py-2 border border-neutral-800 hover:border-neutral-600 text-xs font-sans uppercase tracking-wider text-neutral-300 hover:text-white transition-colors cursor-pointer rounded">
+            <label class="px-4 py-2.5 border border-neutral-800 hover:border-neutral-600 bg-neutral-900/60 text-xs font-sans uppercase tracking-wider text-neutral-300 hover:text-white transition-all cursor-pointer rounded-xl">
               Import Snapshot
               <input type="file" id="import-json-input" accept=".json" class="hidden" />
             </label>
           </div>
         </div>
 
-        <!-- GitHub Publishing & Direct Repository Sync -->
-        <div class="border border-neutral-800 p-6 space-y-4 bg-neutral-900/40 rounded mt-6">
+        <!-- GitHub Publishing & Direct Repository Sync Card -->
+        <div class="bg-[#0e0e0e] border border-neutral-800/80 rounded-2xl p-6 md:p-8 space-y-6 shadow-xl">
           <div>
-            <h3 class="font-serif text-xl font-normal text-white">GitHub Pages Live Sync</h3>
+            <h3 class="font-serif text-2xl font-normal text-white">GitHub Pages Live Sync</h3>
             <p class="text-xs text-neutral-400 font-light mt-1">
-              Changes saved in this CMS immediately update in your browser via <code>localStorage</code>. To publish your CMS updates permanently for all external visitors on GitHub Pages, you can commit directly to your GitHub repository below.
+              Changes saved in this CMS immediately update in your browser via <code>localStorage</code>. To publish your CMS updates permanently for all external visitors on GitHub Pages, commit directly to your GitHub repository below.
             </p>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans pt-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs font-sans pt-2">
             <div>
-              <label class="block text-neutral-400 mb-1 font-medium">GitHub Repository (owner/repo)</label>
-              <input type="text" id="gh-sync-repo" value="dvrsh-13/My-Portfolio" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white font-mono rounded outline-none focus:border-neutral-500" />
+              <label class="block text-neutral-400 mb-2 font-medium">GitHub Repository (owner/repo)</label>
+              <input type="text" id="gh-sync-repo" value="dvrsh-13/My-Portfolio" class="w-full bg-[#141414] border border-neutral-800 px-4 py-3 text-white font-mono rounded-xl outline-none focus:border-white transition-all" />
             </div>
             <div>
-              <label class="block text-neutral-400 mb-1 font-medium">Target Branch</label>
-              <input type="text" id="gh-sync-branch" value="Main" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white font-mono rounded outline-none focus:border-neutral-500" />
+              <label class="block text-neutral-400 mb-2 font-medium">Target Branch</label>
+              <input type="text" id="gh-sync-branch" value="Main" class="w-full bg-[#141414] border border-neutral-800 px-4 py-3 text-white font-mono rounded-xl outline-none focus:border-white transition-all" />
             </div>
             <div class="md:col-span-2">
-              <label class="block text-neutral-400 mb-1 font-medium">GitHub Personal Access Token (PAT) with Repo Scope</label>
-              <input type="password" id="gh-sync-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx (stored only in local browser)" class="w-full bg-black border border-neutral-800 px-3 py-2 text-white font-mono rounded outline-none focus:border-neutral-500" />
-              <span class="text-[11px] text-neutral-500 mt-1 block">Your token never leaves your browser and is only sent to api.github.com to commit the updated portfolioData.ts.</span>
+              <label class="block text-neutral-400 mb-2 font-medium">GitHub Personal Access Token (PAT) with Repo Scope</label>
+              <input type="password" id="gh-sync-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx (stored only in local browser)" class="w-full bg-[#141414] border border-neutral-800 px-4 py-3 text-white font-mono rounded-xl outline-none focus:border-white transition-all" />
+              <span class="text-[11px] text-neutral-500 mt-1.5 block">Your token never leaves your browser and is only sent to api.github.com to commit the updated portfolioData.ts.</span>
             </div>
           </div>
 
-          <div class="flex items-center gap-4 pt-2">
-            <button id="gh-publish-btn" class="px-5 py-2.5 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded flex items-center gap-2">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-t border-neutral-800/80 pt-6 gap-4">
+            <button id="gh-publish-btn" class="px-6 py-3 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-all cursor-pointer rounded-xl flex items-center gap-2 shadow-md">
               <span>Commit &amp; Publish to GitHub</span>
+              <span>↗</span>
             </button>
             <span id="gh-sync-status" class="text-xs font-mono text-neutral-400"></span>
           </div>
         </div>
+
       </section>
 
     </div>
 
     <!-- Universal Editorial Item Modal (Projects / Experience / Blogs / Education) -->
-    <dialog id="cms-editor-modal" class="fixed inset-0 z-[120] m-auto w-full max-w-2xl bg-[#0f0f0f] border border-neutral-800 text-white p-6 md:p-8 rounded-lg shadow-2xl backdrop:bg-black/80">
-      <form method="dialog" id="cms-editor-form" class="space-y-5">
-        <div class="flex justify-between items-center border-b border-neutral-800 pb-4">
+    <dialog id="cms-editor-modal" class="fixed inset-0 z-[120] m-auto w-full max-w-2xl bg-[#111111] border border-neutral-800 text-white p-6 md:p-8 rounded-2xl shadow-2xl backdrop:bg-black/85 backdrop:backdrop-blur-sm">
+      <form method="dialog" id="cms-editor-form" class="space-y-6">
+        <div class="flex justify-between items-center border-b border-neutral-800/80 pb-4">
           <h3 id="modal-form-title" class="font-serif text-2xl font-normal text-white">Edit Record</h3>
-          <button type="button" id="modal-close-btn" class="text-xs font-mono text-neutral-400 hover:text-white uppercase cursor-pointer">
+          <button type="button" id="modal-close-btn" class="text-xs font-mono text-neutral-400 hover:text-white uppercase cursor-pointer px-2 py-1 rounded hover:bg-neutral-800 transition-colors">
             Close ✕
           </button>
         </div>
@@ -272,16 +410,16 @@
           <!-- Dynamically generated fields based on item type -->
         </div>
 
-        <div class="border-t border-neutral-800 pt-4 flex justify-between items-center">
-          <label class="flex items-center gap-2 cursor-pointer font-sans text-xs text-neutral-300">
-            <input type="checkbox" id="modal-featured-checkbox" class="accent-white" />
+        <div class="border-t border-neutral-800/80 pt-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <label class="flex items-center gap-2.5 cursor-pointer font-sans text-xs text-neutral-300">
+            <input type="checkbox" id="modal-featured-checkbox" class="accent-white w-4 h-4 rounded" />
             <span>Highlight on Main Horizontal Storyboard</span>
           </label>
           <div class="flex gap-3">
-            <button type="button" id="modal-cancel-btn" class="px-4 py-2 border border-neutral-800 hover:border-neutral-600 text-xs font-sans uppercase tracking-wider text-neutral-400 hover:text-white transition-colors cursor-pointer rounded">
+            <button type="button" id="modal-cancel-btn" class="px-4 py-2.5 border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 text-xs font-sans uppercase tracking-wider text-neutral-400 hover:text-white transition-all cursor-pointer rounded-xl">
               Cancel
             </button>
-            <button type="submit" id="modal-submit-btn" class="px-5 py-2 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded">
+            <button type="submit" id="modal-submit-btn" class="px-5 py-2.5 bg-white text-black font-sans font-semibold text-xs hover:bg-neutral-200 transition-all cursor-pointer rounded-xl shadow-md">
               Save Record
             </button>
           </div>

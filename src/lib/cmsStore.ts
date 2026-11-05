@@ -44,6 +44,11 @@ export class CMSStore {
 
   public reloadAllFromStorage() {
     this.settings = this.loadFromStorage(STORAGE_KEYS.SETTINGS, INITIAL_SETTINGS);
+    if (this.settings.name === "DEV PATEL" || this.settings.email === "devpatel.cs.math@gmail.com") {
+      if (this.settings.name === "DEV PATEL") this.settings.name = "DEVARSH VINOD";
+      if (this.settings.email === "devpatel.cs.math@gmail.com") this.settings.email = "devarshvinod@gmail.com";
+      this.saveToStorage(STORAGE_KEYS.SETTINGS, this.settings);
+    }
     this.projects = this.loadFromStorage(STORAGE_KEYS.PROJECTS, INITIAL_PROJECTS);
     this.experience = this.loadFromStorage(STORAGE_KEYS.EXPERIENCE, INITIAL_EXPERIENCE);
     this.education = this.loadFromStorage(STORAGE_KEYS.EDUCATION, INITIAL_EDUCATION);
@@ -253,7 +258,7 @@ export class CMSStore {
 
   // Export / Import
   public exportPortfolioDataTS(): string {
-    return `// Dev Patel Portfolio & Content Architecture Database
+    return `// Devarsh Vinod Portfolio & Content Architecture Database
 // Automatically generated from CMS Studio
 
 export interface ProjectItem {

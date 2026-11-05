@@ -152,6 +152,38 @@ export function scrollToSection(
   }
 }
 
+function computeSmartSnap(value: number, points: number[], direction: number): number {
+  if (points.length <= 1) return value;
+  if (value <= points[0]) return points[0];
+  if (value >= points[points.length - 1]) return points[points.length - 1];
+
+  let idx = 0;
+  for (let i = 0; i < points.length - 1; i++) {
+    if (value >= points[i] && value <= points[i + 1]) {
+      idx = i;
+      break;
+    }
+  }
+
+  const pPrev = points[idx];
+  const pNext = points[idx + 1];
+  const span = pNext - pPrev;
+  if (span <= 0.0001) return pPrev;
+
+  const fraction = (value - pPrev) / span;
+
+  // Directional intelligence:
+  // When scrolling forward (direction > 0): if 20% or more towards next chapter, snap forward
+  // When scrolling backward (direction < 0): if 20% or more towards previous chapter, snap backward
+  if (direction > 0) {
+    return fraction >= 0.2 ? pNext : pPrev;
+  } else if (direction < 0) {
+    return fraction <= 0.8 ? pPrev : pNext;
+  }
+
+  return fraction >= 0.5 ? pNext : pPrev;
+}
+
 export function initHorizontalTrack() {
   const pinContainer = document.querySelector<HTMLElement>("[data-horizontal-pin]");
   const track = document.querySelector<HTMLElement>("[data-horizontal-track]");
@@ -275,9 +307,12 @@ export function initHorizontalTrack() {
         anticipatePin: 1,
         invalidateOnRefresh: true,
         snap: {
-          snapTo: uniqueSnapPoints,
-          duration: { min: 0.25, max: 0.6 },
-          delay: 0.45,
+          snapTo: (val: number) => {
+            const dir = activeTrigger ? activeTrigger.direction : 0;
+            return computeSmartSnap(val, uniqueSnapPoints, dir);
+          },
+          duration: { min: 0.25, max: 0.55 },
+          delay: 0.35,
           ease: "power2.out",
           inertia: false,
         },
@@ -305,9 +340,12 @@ export function initHorizontalTrack() {
         anticipatePin: 1,
         invalidateOnRefresh: true,
         snap: {
-          snapTo: fallbackSnapPoints,
-          duration: { min: 0.25, max: 0.6 },
-          delay: 0.25,
+          snapTo: (val: number) => {
+            const dir = activeTrigger ? activeTrigger.direction : 0;
+            return computeSmartSnap(val, fallbackSnapPoints, dir);
+          },
+          duration: { min: 0.25, max: 0.55 },
+          delay: 0.35,
           ease: "power2.out",
           inertia: false,
         },
@@ -326,7 +364,11 @@ export function initHorizontalTrack() {
 
   return () => {
     activeTrigger?.kill();
+    activeTrigger = null;
     masterTimeline?.kill();
+    masterTimeline = null;
+    centerGeometry = null;
+    activeThemePanel = null;
     mm.revert();
   };
 }

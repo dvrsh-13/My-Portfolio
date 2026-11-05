@@ -124,17 +124,17 @@
           <span class="font-mono text-xs md:text-sm text-neutral-500">02.</span>
           <span>Academics</span>
         </a>
-        <a class="group flex items-baseline gap-6 text-white opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-5xl leading-tight" href="#experience" data-nav-link>
-          <span class="font-mono text-xs md:text-sm text-neutral-500">03.</span>
-          <span>Experience</span>
-        </a>
         <a class="group flex items-baseline gap-6 text-white opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-5xl leading-tight" href="#projects" data-nav-link>
-          <span class="font-mono text-xs md:text-sm text-neutral-500">04.</span>
+          <span class="font-mono text-xs md:text-sm text-neutral-500">03.</span>
           <span>Projects</span>
         </a>
         <a class="group flex items-baseline gap-6 text-white opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-5xl leading-tight" href="#blog" data-nav-link>
+          <span class="font-mono text-xs md:text-sm text-neutral-500">04.</span>
+          <span>Dispatches</span>
+        </a>
+        <a class="group flex items-baseline gap-6 text-white opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-5xl leading-tight" href="#experience" data-nav-link>
           <span class="font-mono text-xs md:text-sm text-neutral-500">05.</span>
-          <span>Blog</span>
+          <span>Experience</span>
         </a>
       </nav>
 
@@ -162,9 +162,10 @@
       data-lenis-prevent
       role="dialog"
       aria-modal="true"
+      aria-hidden="true"
       tabindex="-1"
       class="fixed inset-0 z-[150] bg-[#0a0a0a] text-white overflow-y-auto px-6 py-12 md:py-16 md:px-12 no-scrollbar outline-none"
-      style="scrollbar-width: none; -ms-overflow-style: none;"
+      style="display: none; scrollbar-width: none; -ms-overflow-style: none;"
       aria-label="Archive View"
     >
       <div class="archive-container w-full max-w-4xl min-h-full flex flex-col justify-between mx-auto">
@@ -209,9 +210,10 @@
       data-lenis-prevent
       role="dialog"
       aria-modal="true"
+      aria-hidden="true"
       tabindex="-1"
       class="fixed inset-0 z-[160] bg-[#080808] text-white overflow-y-auto px-6 py-12 md:py-16 md:px-12 no-scrollbar outline-none"
-      style="scrollbar-width: none; -ms-overflow-style: none;"
+      style="display: none; scrollbar-width: none; -ms-overflow-style: none;"
       aria-label="Article View"
     >
       <div class="article-container w-full max-w-3xl min-h-full flex flex-col justify-between mx-auto">
@@ -247,6 +249,81 @@
           <span>Devarsh Vinod · Research Working Paper</span>
           <button data-close-article class="to-link-underline text-neutral-300 hover:text-white cursor-pointer">
             Close Post &amp; Return ↑
+          </button>
+        </div>
+      </div>
+    </article>
+
+    <!-- =====================================================================
+         DEDICATED INDIVIDUAL PROJECT READING PAGE
+         Cinematic slide-in from TOP and exit to TOP
+         ===================================================================== -->
+    <article
+      id="vertical-project-view"
+      data-lenis-prevent
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      tabindex="-1"
+      class="fixed inset-0 z-[160] bg-[#080808] text-white overflow-y-auto px-6 py-12 md:py-16 md:px-12 no-scrollbar outline-none"
+      style="display: none; scrollbar-width: none; -ms-overflow-style: none;"
+      aria-label="Project View"
+    >
+      <div class="project-container w-full max-w-3xl min-h-full flex flex-col justify-between mx-auto">
+        <div>
+          <!-- Top Navigation -->
+          <div class="flex justify-between items-center border-b border-neutral-800 pb-8 mb-12">
+            <span id="project-view-category" class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium"></span>
+            <button
+              data-close-project
+              class="to-link-underline font-sans text-xs uppercase tracking-wider text-neutral-400 hover:text-white cursor-pointer py-1 flex items-center gap-2"
+            >
+              <span>Close Project ↑</span>
+              <span class="font-mono text-neutral-500 text-[11px]">(ESC)</span>
+            </button>
+          </div>
+
+          <!-- Project Content -->
+          <div class="my-8 space-y-8">
+            <div class="space-y-4">
+              <span id="project-view-meta" class="font-mono text-xs text-neutral-500 block"></span>
+              <h1 id="project-view-title" class="font-serif text-3xl sm:text-4xl md:text-5xl leading-tight text-white font-normal"></h1>
+              <p id="project-view-subtitle" class="font-serif text-lg md:text-xl text-neutral-400 font-normal italic leading-relaxed pt-2"></p>
+            </div>
+
+            <!-- Description -->
+            <div id="project-view-description" class="space-y-4 pt-8 border-t border-neutral-800/80 font-sans font-light text-neutral-300 leading-relaxed text-sm md:text-base">
+            </div>
+
+            <!-- Key Findings & Metrics -->
+            <div id="project-view-metrics-wrap" class="space-y-3 pt-6 border-t border-neutral-800/80">
+              <h4 class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium">Empirical Results &amp; Quantitative Findings</h4>
+              <div id="project-view-metrics" class="border-l border-neutral-700 pl-4 py-1 space-y-2 text-xs md:text-sm font-sans text-neutral-300 font-light"></div>
+            </div>
+
+            <!-- Code Snippet -->
+            <div id="project-view-code-wrap" class="space-y-3 pt-6 border-t border-neutral-800/80">
+              <div class="flex justify-between items-baseline text-xs text-neutral-400 font-sans">
+                <span class="uppercase tracking-widest text-neutral-400 font-medium">Algorithmic Implementation</span>
+                <span class="font-mono text-[11px] text-neutral-500">Python / Vectorized</span>
+              </div>
+              <div class="bg-neutral-950 border border-neutral-800/80 p-5 rounded-lg text-xs font-mono text-neutral-300 overflow-x-auto shadow-inner">
+                <pre class="leading-relaxed whitespace-pre font-mono text-xs text-neutral-300"><code id="project-view-code"></code></pre>
+              </div>
+            </div>
+
+            <!-- Tags -->
+            <div class="pt-6 border-t border-neutral-800/80 flex flex-wrap gap-2 text-xs font-sans text-neutral-400">
+              <span id="project-view-tags" class="text-neutral-500"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Footer -->
+        <div class="border-t border-neutral-800 pt-8 mt-16 w-full flex justify-between items-center text-xs text-neutral-500 font-sans">
+          <span>Devarsh Vinod · Computational Implementation</span>
+          <button data-close-project class="to-link-underline text-neutral-300 hover:text-white cursor-pointer">
+            Close Project &amp; Return ↑
           </button>
         </div>
       </div>
@@ -336,6 +413,12 @@
                     Bridging abstract mathematical logic with real-world technical execution—exploring algorithmic verification, statistical signal processing, and high-performance computing.
                   </p>
                 </div>
+
+                <!-- Fast Redirect Links (Matching contact footer styling) -->
+                <div class="flex flex-wrap gap-8 font-sans text-xs pt-4 border-t border-neutral-200">
+                  <a href="#education" data-nav-link class="to-link-underline text-neutral-600 hover:text-black font-medium">Academics ↗</a>
+                  <a href="#experience" data-nav-link class="to-link-underline text-neutral-600 hover:text-black font-medium">Experience ↗</a>
+                </div>
               </div>
 
               <!-- Typographic Focus Presentation (NO pills, pure editorial spacing) -->
@@ -416,7 +499,7 @@
             </div>
 
             <div class="flex justify-end items-center border-t border-neutral-800 pt-[18px] font-sans text-xs text-neutral-500">
-              <a href="#experience" class="to-link-underline text-white font-medium">Chapter 03: Work Experience →</a>
+              <a href="#projects" class="to-link-underline text-white font-medium">Chapter 03: Projects →</a>
             </div>
           </section>
 
@@ -474,48 +557,7 @@
           </section>
 
           <!-- =============================================================
-               PANEL 04: CHAPTER III — WORK EXPERIENCE
-               High-contrast clean white canvas
-               ============================================================= -->
-          <section
-            id="experience"
-            class="horizontal-panel w-full md:w-screen md:h-dvh shrink-0 flex flex-col justify-between overflow-hidden bg-white text-neutral-900 p-6 md:py-10 md:pl-28 md:pr-16"
-            data-section="experience"
-            data-header-bg="#ffffff"
-            data-header-text="#0a0a0a"
-            data-header-border="#e5e5e5"
-            data-horizontal-panel
-            aria-label="Chapter III: Work Experience"
-          >
-            <div class="flex justify-between items-center border-b border-neutral-200 pb-[18px] font-sans text-xs uppercase tracking-wider text-neutral-500">
-              <span class="font-medium">Chapter 03</span>
-              <span>Work Experience &amp; Placements</span>
-            </div>
-
-            <div class="flex flex-col gap-6 my-auto max-w-6xl">
-              <!-- Dynamically populated from CMS (Top 3 Featured) -->
-              <div data-dynamic-experience class="space-y-4"></div>
-
-              <!-- Action to show all records via vertical full-page view -->
-              <div class="pt-2">
-                <button
-                  data-open-view="experience"
-                  class="to-link-underline font-sans text-xs text-neutral-600 hover:text-black uppercase tracking-wider cursor-pointer flex items-center gap-2 font-medium"
-                >
-                  <span>View All Work Experience</span>
-                  <span data-experience-count class="text-neutral-900 font-semibold"></span>
-                  <span>↓</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="flex justify-end items-center border-t border-neutral-200 pt-[18px] font-sans text-xs text-neutral-500">
-              <a href="#projects" class="to-link-underline text-neutral-900 font-medium">Chapter 04: Projects →</a>
-            </div>
-          </section>
-
-          <!-- =============================================================
-               PANEL 05: CHAPTER IV — PROJECTS & MODELLING
+               PANEL 04: CHAPTER III — PROJECTS & MODELLING
                Obsidian canvas with interactive hover preview portal
                ============================================================= -->
           <section
@@ -526,10 +568,10 @@
             data-header-text="#ffffff"
             data-header-border="#222222"
             data-horizontal-panel
-            aria-label="Chapter IV: Computational Projects"
+            aria-label="Chapter III: Computational Projects"
           >
             <div class="flex justify-between items-center border-b border-neutral-800 pb-[18px] font-sans text-xs uppercase tracking-wider text-neutral-400">
-              <span class="font-medium">Chapter 04</span>
+              <span class="font-medium">Chapter 03</span>
               <span>Projects &amp; Mathematical Modelling</span>
             </div>
 
@@ -553,7 +595,7 @@
               <!-- Interactive Hover Preview Portal Frame (Hidden by default until hovered) -->
               <div
                 id="project-hover-frame"
-                class="relative aspect-[16/11] w-full border border-neutral-800 bg-neutral-900/60 p-6 overflow-hidden flex flex-col justify-between font-sans text-xs rounded-lg shadow-lg opacity-0 pointer-events-none transition-opacity duration-300"
+                class="relative aspect-[16/11] w-full border border-neutral-800 bg-neutral-900/60 p-6 overflow-hidden hidden md:flex md:flex-col justify-between font-sans text-xs rounded-lg shadow-lg opacity-0 pointer-events-none transition-opacity duration-300"
               >
                 <!-- Dynamic Project Portals Container -->
                 <div data-project-portals class="contents"></div>
@@ -561,12 +603,12 @@
             </div>
 
             <div class="flex justify-end items-center border-t border-neutral-800 pt-[18px] font-sans text-xs text-neutral-500">
-              <a href="#blog" class="to-link-underline text-white font-medium">Chapter 05: Research Notes →</a>
+              <a href="#blog" class="to-link-underline text-white font-medium">Chapter 04: Research Notes →</a>
             </div>
           </section>
 
           <!-- =============================================================
-               PANEL 06: CHAPTER V — RESEARCH DISPATCHES
+               PANEL 05: CHAPTER IV — RESEARCH DISPATCHES
                Clean editorial white canvas
                ============================================================= -->
           <section
@@ -577,10 +619,10 @@
             data-header-text="#0a0a0a"
             data-header-border="#e5e5e5"
             data-horizontal-panel
-            aria-label="Chapter V: Research Notes and Dispatches"
+            aria-label="Chapter IV: Research Notes and Dispatches"
           >
             <div class="flex justify-between items-center border-b border-neutral-200 pb-[18px] font-sans text-xs uppercase tracking-wider text-neutral-500">
-              <span class="font-medium">Chapter 05</span>
+              <span class="font-medium">Chapter 04</span>
               <span>Research Notes &amp; Dispatches</span>
             </div>
 
@@ -595,6 +637,47 @@
                 >
                   <span>View All Research Notes</span>
                   <span data-blogs-count class="text-neutral-900 font-semibold"></span>
+                  <span>↓</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex justify-end items-center border-t border-neutral-200 pt-[18px] font-sans text-xs text-neutral-500">
+              <a href="#experience" class="to-link-underline text-neutral-900 font-medium">Chapter 05: Work Experience →</a>
+            </div>
+          </section>
+
+          <!-- =============================================================
+               PANEL 06: CHAPTER V — WORK EXPERIENCE
+               High-contrast clean white canvas
+               ============================================================= -->
+          <section
+            id="experience"
+            class="horizontal-panel w-full md:w-screen md:h-dvh shrink-0 flex flex-col justify-between overflow-hidden bg-white text-neutral-900 p-6 md:py-10 md:pl-28 md:pr-16"
+            data-section="experience"
+            data-header-bg="#ffffff"
+            data-header-text="#0a0a0a"
+            data-header-border="#e5e5e5"
+            data-horizontal-panel
+            aria-label="Chapter V: Work Experience"
+          >
+            <div class="flex justify-between items-center border-b border-neutral-200 pb-[18px] font-sans text-xs uppercase tracking-wider text-neutral-500">
+              <span class="font-medium">Chapter 05</span>
+              <span>Work Experience &amp; Placements</span>
+            </div>
+
+            <div class="flex flex-col gap-6 my-auto max-w-6xl">
+              <!-- Dynamically populated from CMS (Top 3 Featured) -->
+              <div data-dynamic-experience class="space-y-4"></div>
+
+              <!-- Action to show all records via vertical full-page view -->
+              <div class="pt-2">
+                <button
+                  data-open-view="experience"
+                  class="to-link-underline font-sans text-xs text-neutral-600 hover:text-black uppercase tracking-wider cursor-pointer flex items-center gap-2 font-medium"
+                >
+                  <span>View All Work Experience</span>
+                  <span data-experience-count class="text-neutral-900 font-semibold"></span>
                   <span>↓</span>
                 </button>
               </div>

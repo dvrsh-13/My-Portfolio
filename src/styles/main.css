@@ -224,7 +224,8 @@ html.lenis, html.lenis body {
   min-height: 100%;
 }
 
-.article-container {
+.article-container,
+.project-container {
   width: 100%;
   max-width: 48rem;
   margin-left: auto !important;

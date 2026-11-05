@@ -1,15 +1,15 @@
 import { cms } from "./cmsStore";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-export function renderDynamicContent() {
+export function renderDynamicContent(): () => void {
   renderProfileAndSettings();
   renderEducationList();
   renderProjectsList();
   renderExperienceList();
   renderBlogsList();
 
-  // Subscribe to CMS changes
-  cms.subscribe(() => {
+  // Subscribe to CMS changes and return unsubscribe function
+  const unsubscribe = cms.subscribe(() => {
     renderProfileAndSettings();
     renderEducationList();
     renderProjectsList();
@@ -17,6 +17,8 @@ export function renderDynamicContent() {
     renderBlogsList();
     ScrollTrigger.refresh();
   });
+
+  return unsubscribe;
 }
 
 function renderProfileAndSettings() {
@@ -113,7 +115,15 @@ function renderProjectsList() {
   container.innerHTML = featured
     .map(
       (p, i) => `
-    <div class="work-item border-b border-neutral-800 py-4 cursor-pointer" data-project-item data-project-index="${i}">
+    <div
+      class="work-item border-b border-neutral-800 py-4 cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-white"
+      data-project-item
+      data-project-index="${i}"
+      data-open-project="${p.id}"
+      role="button"
+      tabindex="0"
+      aria-label="View project details: ${p.title}"
+    >
       <div class="flex justify-between items-center">
         <div class="flex items-baseline gap-4">
           <span class="font-mono text-xs text-neutral-500">0${i + 1}</span>
@@ -215,7 +225,13 @@ function renderBlogsList() {
   container.innerHTML = featured
     .map(
       (b) => `
-    <article class="border-b border-neutral-200 pb-5 last:border-b-0 cursor-pointer group" data-open-post="${b.id}">
+    <article
+      class="border-b border-neutral-200 pb-5 last:border-b-0 cursor-pointer group outline-none focus-visible:ring-1 focus-visible:ring-neutral-900"
+      data-open-post="${b.id}"
+      role="button"
+      tabindex="0"
+      aria-label="Read working paper: ${b.title}"
+    >
       <div class="flex justify-between items-baseline font-sans text-xs text-neutral-500">
         <span class="font-sans text-neutral-600 font-medium">${b.tags.slice(0, 2).join(" · ")}</span>
         <span class="font-mono text-[11px] text-neutral-400">${b.date} · ${b.readTime}</span>
@@ -240,24 +256,27 @@ function rebindProjectHoverPortals() {
 
   if (!portalFrame) return;
 
+  const showPortal = (idx: number) => {
+    portalFrame.classList.remove("opacity-0", "pointer-events-none");
+    portalFrame.classList.add("opacity-100", "pointer-events-auto");
+
+    projectImages.forEach((img) => {
+      const isMatch = img.getAttribute("data-project-image") === String(idx);
+      img.style.opacity = isMatch ? "1" : "0";
+    });
+  };
+
+  const hidePortal = () => {
+    projectImages.forEach((img) => (img.style.opacity = "0"));
+    portalFrame.classList.add("opacity-0", "pointer-events-none");
+    portalFrame.classList.remove("opacity-100", "pointer-events-auto");
+  };
+
   projectItems.forEach((item) => {
     const idx = parseInt(item.dataset.projectIndex || "0", 10);
-    item.addEventListener("mouseenter", () => {
-      // Reveal frame
-      portalFrame.classList.remove("opacity-0", "pointer-events-none");
-      portalFrame.classList.add("opacity-100", "pointer-events-auto");
-
-      projectImages.forEach((img) => {
-        const isMatch = img.getAttribute("data-project-image") === String(idx);
-        img.style.opacity = isMatch ? "1" : "0";
-      });
-    });
-
-    item.addEventListener("mouseleave", () => {
-      projectImages.forEach((img) => (img.style.opacity = "0"));
-      // Hide frame when leaving
-      portalFrame.classList.add("opacity-0", "pointer-events-none");
-      portalFrame.classList.remove("opacity-100", "pointer-events-auto");
-    });
+    item.addEventListener("mouseenter", () => showPortal(idx));
+    item.addEventListener("mouseleave", hidePortal);
+    item.addEventListener("focus", () => showPortal(idx));
+    item.addEventListener("blur", hidePortal);
   });
 }

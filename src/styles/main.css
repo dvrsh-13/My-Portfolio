@@ -232,3 +232,23 @@ html.lenis, html.lenis body {
   margin-right: auto !important;
   min-height: 100%;
 }
+
+/* Custom Cursor: Hide default OS pointer on devices with a mouse/trackpad */
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html,
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  [role="button"],
+  .work-item,
+  .cursor-pointer,
+  [data-open-project],
+  [data-open-post],
+  [data-open-view],
+  [data-nav-link] {
+    cursor: none !important;
+  }
+}

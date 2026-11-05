@@ -97,10 +97,10 @@
       </div>
     </noscript>
 
-    <!-- Custom Fluid Monochromatic Cursor (Difference blending across dark/light panels) -->
+    <!-- Custom Fluid Monochromatic Cursor -->
     <div id="folio-cursor" class="pointer-events-none fixed inset-0 z-[9999] overflow-hidden transition-opacity duration-300 opacity-0 hidden md:block" aria-hidden="true">
-      <div id="cursor-dot" class="fixed top-0 left-0 w-2 h-2 rounded-full bg-white pointer-events-none -translate-x-1/2 -translate-y-1/2 will-change-transform" style="mix-blend-mode: difference;"></div>
-      <div id="cursor-ring" class="fixed top-0 left-0 w-9 h-9 rounded-full border border-white/50 pointer-events-none -translate-x-1/2 -translate-y-1/2 will-change-transform transition-[border-color,background-color] duration-200" style="mix-blend-mode: difference;"></div>
+      <div id="cursor-dot" class="fixed top-0 left-0 w-2 h-2 rounded-full bg-white pointer-events-none -translate-x-1/2 -translate-y-1/2 will-change-transform shadow-sm"></div>
+      <div id="cursor-ring" class="fixed top-0 left-0 w-9 h-9 rounded-full border border-white/60 pointer-events-none -translate-x-1/2 -translate-y-1/2 will-change-transform"></div>
     </div>
 
     <!-- =====================================================================
@@ -117,7 +117,6 @@
         <div class="w-24 h-[1px] bg-neutral-800 overflow-hidden relative">
           <div id="loader-progress-bar" class="absolute inset-y-0 left-0 bg-white w-0 will-change-transform"></div>
         </div>
-        <span class="font-mono text-[10px] uppercase tracking-widest text-neutral-500">2026 // SYSTEM FOLIO</span>
       </div>
     </div>
 

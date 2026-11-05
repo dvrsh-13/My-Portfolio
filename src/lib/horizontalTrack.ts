@@ -1,6 +1,7 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { getLenis } from "./smoothScroll";
+import { checkPanelEntrances } from "./panelAnimations";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -334,6 +335,7 @@ export function initHorizontalTrack() {
             progressBar.style.transform = `scaleY(${self.progress})`;
           }
           updateRailTheme();
+          checkPanelEntrances();
         },
       });
     } else {
@@ -369,6 +371,7 @@ export function initHorizontalTrack() {
             progressBar.style.transform = `scaleY(${self.progress})`;
           }
           updateRailTheme();
+          checkPanelEntrances();
         },
       });
     }

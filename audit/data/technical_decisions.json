@@ -1,0 +1,92 @@
+{
+  "project_metadata": {
+    "project_name": "Dev Patel Portfolio & CMS Studio",
+    "target_persona": "Dev Patel — Gap Year Student in Computer Science & Applied Mathematics, Degree Apprenticeship Candidate",
+    "repository": "https://github.com/dvrsh-13/My-Portfolio",
+    "active_branch": "reverse_engineer_portfolio",
+    "renamed_main_flag": true,
+    "local_ports": {
+      "dev_server": 3000
+    },
+    "build_tool": "Vite 6 + TypeScript 5.8 + Tailwind CSS v4",
+    "primary_styling_mode": "Pure Monochromatic Greyscale (Obsidian / Stark White / Hairline Grey)",
+    "audit_timestamp": "2026-11-05T02:11:00Z"
+  },
+  "architectural_decisions": [
+    {
+      "id": "ADR-001",
+      "title": "Vite + Vanilla TypeScript over Heavy Framework for Single-Page Storyboard",
+      "status": "Accepted",
+      "context": "Initial reverse engineering revealed khanhnguyen.design was built with Astro v6. For a local single-page interactive experience with heavy GSAP and Lenis DOM manipulations, React or Vue adds unnecessary virtual-DOM overhead, while Astro is multi-page oriented. Vite + TypeScript provides raw DOM performance, zero overhead, and instant HMR.",
+      "consequences": "Ultra-fast load times (dist JS < 155kB gzipped), direct GSAP timeline control without React useEffect/ref lifecycle collisions."
+    },
+    {
+      "id": "ADR-002",
+      "title": "Continuous Mathematical Fluid Scaling Token (--scale)",
+      "status": "Accepted",
+      "context": "Traditional responsive design uses discrete breakpoints (sm/md/lg/xl) which cause abrupt reflows and text wrap shifts on ultrawide, tablet, or unusual laptop viewports.",
+      "decision": "Implement continuous proportional scale formula: calc(100vw / 144) on desktop (1440px baseline) and calc(100vw / 39) on mobile (390px baseline). All spacing (--vg), typography (--display-fs, --name-fs), and container dimensions derive strictly from multiples of --scale.",
+      "consequences": "Pixel-perfect geometric preservation at any aspect ratio (Ultrawide 3440x1440, MacBook 1728x1117, 1080p, 4K)."
+    },
+    {
+      "id": "ADR-003",
+      "title": "Dual-Axis Spatial Experience (Horizontal Storyboard + Vertical Stack)",
+      "status": "Accepted",
+      "context": "Desktop experience requires an expansive, architectural horizontal journey, whereas mobile viewports must maintain intuitive, native vertical swipe ergonomics.",
+      "decision": "GSAP ScrollTrigger pins the viewport on desktop and translates window.scrollY to track.translateX. On viewports < 768px, ScrollTrigger unpins and the document seamlessly renders as a vertical stacked stream.",
+      "consequences": "Flawless native mobile feel while maintaining Awwwards-tier cinematic desktop presence."
+    },
+    {
+      "id": "ADR-004",
+      "title": "Monochromatic Greyscale Palette over Earthy Tones",
+      "status": "Accepted",
+      "context": "Initial reverse engineering extracted warm parchment (#faf9f6) and espresso (#2e2b28). The user specifically critiqued this as a ditto copy of khanhnguyen.design and requested pure black and white / greyscale to match the rigor of CS & Mathematics.",
+      "decision": "Transformed palette into pure high-contrast obsidian slate (#000000, #080808, #0a0a0a), stark white (#ffffff), and subtle hairline boundary dividers (#1f1f1f, #222222, #e5e5e5). Alternating chapter tones create dynamic contrast.",
+      "consequences": "Eliminated warm agency tones, establishing a dignified, academic, and mathematically disciplined atmosphere."
+    },
+    {
+      "id": "ADR-005",
+      "title": "Full-Page Vertical Views over Side-Drawer Modals",
+      "status": "Accepted",
+      "context": "Initial slide-over drawer squeezed archive content into 40% of the screen, creating a desolate 60% black void, horizontal code scrollbars, and feeling like an afterthought.",
+      "decision": "Replaced side drawer with two dedicated full-page vertical views: #vertical-archive-view (slides up from bottom for View All Experience and Projects) and #vertical-article-view (slides in from top for individual research essays). Centered 56rem and 48rem editorial reader containers with ESC dismissal.",
+      "consequences": "Rich, distraction-free reading experience with ample whitespace and zero code truncation."
+    },
+    {
+      "id": "ADR-006",
+      "title": "Standalone CMS Studio with Storyboard Curation & Display Limits",
+      "status": "Accepted",
+      "context": "User requested a fully fledged CMS for all updatable sections (Projects, Experience, Blogs, Identity) with sensible display limits on the main storyboard so it does not get cluttered.",
+      "decision": "Created cms.html and src/cms.ts powered by cmsStore.ts. Features: configurable upper limits (default 3), one-click toggle between Highlight on Storyboard vs Drawer/Archive Only, full CRUD, localStorage persistence, and JSON backup/restore. Removed all CMS links from user-facing UI for clean public presentation.",
+      "consequences": "Complete autonomous content management without rebuilding the project; zero visual clutter on the public portfolio."
+    },
+    {
+      "id": "ADR-007",
+      "title": "Balanced Minimalism & Selective Monospace Typography",
+      "status": "Accepted",
+      "context": "User critiqued excessive use of monospace fonts everywhere and random telemetry clutter (fake brackets, [INIT_SEQUENCE], cyber-HUDs).",
+      "decision": "Newsreader serif for monumental titles, Plus Jakarta Sans for body/subtitles, and JetBrains Mono strictly reserved for dates, quantitative metrics, code snippets, and London UTC clock.",
+      "consequences": "Polished editorial typography free from pseudo-hacker AI slop."
+    }
+  ],
+  "pending_decisions_and_roadmap": [
+    {
+      "id": "ROADMAP-001",
+      "title": "Chapter 03 Transition Panel ('THE SYSTEMS') Redesign",
+      "status": "Pending User Concept",
+      "notes": "User explicitly stated: '(for this I have better plans so wait on further instructions)'. Currently left intact with neutral placeholder awaiting user brief."
+    },
+    {
+      "id": "ROADMAP-002",
+      "title": "Merge Worktree / Main Branch Alignment",
+      "status": "Pending Clean Merge",
+      "notes": "User stated: 'just a heads up, the branch has be renamed as Main - you need not do anything, just reply yes'. Main branch on root currently has unborn commit, all code resides in reverse_engineer_portfolio."
+    },
+    {
+      "id": "ROADMAP-003",
+      "title": "Interactive Project Viewport Evolution",
+      "status": "Deferred",
+      "notes": "Hover preview currently reveals on hover and hides when not hovering. User noted: 'the interactive view could be something much better, we can decide on this later fully'."
+    }
+  ]
+}

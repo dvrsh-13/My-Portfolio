@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dev Patel ─ Computer Science &amp; Applied Mathematics</title>
+    <meta name="description" content="Portfolio and candidate dossier of Dev Patel. Gap year student specialising in Computer Science and Mathematics, targeting a degree apprenticeship. Machine learning, quantitative modelling, and systems engineering." />
+    
+    <!-- Typographic Stack: Editorial Serif (Newsreader) + Modernist Sans (Plus Jakarta Sans) + Tabular Mono (JetBrains Mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body class="antialiased bg-[#080808] text-white">
+
+    <!-- =====================================================================
+         MINIMAL EDITORIAL LOADER
+         Clean, distraction-free loading screen
+         ===================================================================== -->
+    <div
+      id="folio-loader"
+      class="fixed inset-0 z-[200] bg-[#080808] flex flex-col items-center justify-center transition-opacity duration-700 pointer-events-auto"
+      aria-label="Loading portfolio"
+    >
+      <div class="flex flex-col items-center gap-5">
+        <span class="font-serif text-2xl md:text-3xl tracking-widest text-white uppercase font-normal">DEV PATEL</span>
+        <div class="w-16 h-[1px] bg-neutral-800 overflow-hidden relative">
+          <div id="loader-progress-bar" class="absolute inset-y-0 left-0 bg-white w-0 transition-all duration-700 ease-out"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         FIXED RAIL HEADER (Mobile: 390x64 top bar | Desktop: Left 64px rail)
+         Pure Monochromatic Greyscale & Real-time Color Synchronization
+         ===================================================================== -->
+    <header
+      class="fixed z-[110] inset-x-0 top-0 flex w-full flex-row items-center justify-between border-b px-5 py-4 transition-colors duration-500 md:inset-x-auto md:inset-y-0 md:left-0 md:w-16 md:flex-col md:items-center md:justify-start md:px-0 md:py-0 md:border-b-0 md:border-r"
+      style="border-color: var(--header-border); background-color: var(--header-bg); color: var(--header-text);"
+      data-intro-header
+      aria-label="Global navigation rail"
+    >
+      <!-- Real-time scroll progress indicator line -->
+      <div
+        class="pointer-events-none absolute -bottom-px left-0 z-10 h-px w-full origin-left bg-current will-change-transform md:top-0 md:bottom-auto md:h-dvh md:w-[2px] md:origin-top"
+        data-header-scroll-progress
+        style="transform: scaleY(0);"
+        aria-hidden="true"
+      ></div>
+
+      <!-- Mobile brand monogram -->
+      <a href="#site-top" class="block w-12 shrink-0 md:hidden font-serif text-lg tracking-wider font-normal" aria-label="Home">
+        DP
+      </a>
+
+      <!-- Menu toggle trigger (Animated 3-bar hamburger to X) -->
+      <button
+        id="menu-toggle"
+        type="button"
+        class="flex shrink-0 cursor-pointer items-center justify-center outline-none hover:opacity-70 transition-opacity md:h-16 md:w-full md:border-b"
+        style="border-color: var(--header-border);"
+        aria-expanded="false"
+        aria-controls="fullscreen-menu"
+        aria-label="Toggle navigation menu"
+      >
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line data-icon-bar="top" x1="4" y1="7" x2="20" y2="7" class="transition-transform duration-300 origin-center"></line>
+          <line data-icon-bar="mid" x1="4" y1="12" x2="20" y2="12" class="transition-opacity duration-300"></line>
+          <line data-icon-bar="bot" x1="4" y1="17" x2="20" y2="17" class="transition-transform duration-300 origin-center"></line>
+        </svg>
+      </button>
+
+      <!-- Desktop vertical text rail -->
+      <div class="hidden flex-1 flex-col items-center justify-between py-8 md:flex">
+        <p class="vt-rl vt-reading-up font-sans text-[11px] uppercase tracking-widest opacity-60">
+          Dev Patel · Applied Mathematics &amp; CS
+        </p>
+
+        <!-- Center Monogram -->
+        <a href="#site-top" class="block text-center font-serif text-xl tracking-tight hover:opacity-75 transition-opacity" aria-label="Return to initialization">
+          <span class="block">DP</span>
+          <span class="block text-[10px] font-mono opacity-50 mt-0.5">2026</span>
+        </a>
+
+        <div class="flex flex-col items-center gap-6">
+          <p class="vt-rl vt-reading-up font-sans text-[10px] uppercase tracking-widest opacity-40">
+            Portfolio Edition 2026
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- =====================================================================
+         FULLSCREEN NAVIGATION OVERLAY
+         High-contrast architectural index with smooth chapter camera travel
+         ===================================================================== -->
+    <div
+      id="fullscreen-menu"
+      class="fixed inset-0 z-[105] pointer-events-none opacity-0 bg-[#080808]/95 backdrop-blur-xl flex flex-col justify-between text-white p-8 md:py-16 md:pl-32 md:pr-16"
+      aria-hidden="true"
+    >
+      <!-- Top header bar inside menu -->
+      <div class="flex justify-between items-center border-b border-neutral-800 pb-6">
+        <span class="font-sans text-xs uppercase tracking-wider text-neutral-400 font-medium">Index of Chapters</span>
+        <button
+          type="button"
+          id="menu-close"
+          class="font-sans text-xs uppercase tracking-wider cursor-pointer text-neutral-400 hover:text-white transition-colors flex items-center gap-2"
+          aria-label="Close menu"
+        >
+          <span>ESC / Close</span>
+        </button>
+      </div>
+
+      <!-- Primary Chapter Links -->
+      <nav class="flex flex-col gap-3 md:gap-5 my-auto max-w-4xl" aria-label="Primary Chapters">
+        <a class="group flex items-baseline gap-6 text-white opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-5xl leading-tight" href="#site-top" data-nav-link>
+          <span class="font-mono text-xs md:text-sm text-neutral-500">00.</span>
+          <span>Initialization</span>
+        </a>
+        <a class="group flex items-baseline gap-6 text-white opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-5xl leading-tight" href="#about" data-nav-link>
+          <span class="font-mono text-xs md:text-sm text-neutral-500">01.</span>
+          <span>Profile &amp; Technical Foundation</span>
+        </a>
+        <a class="group flex items-baseline gap-6 text-white opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-5xl leading-tight" href="#education" data-nav-link>
+          <span class="font-mono text-xs md:text-sm text-neutral-500">02.</span>
+          <span>Academic Record &amp; Competitions</span>
+        </a>
+        <a class="group flex items-baseline gap-6 text-white opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-5xl leading-tight" href="#experience" data-nav-link>
+          <span class="font-mono text-xs md:text-sm text-neutral-500">03.</span>
+          <span>Work Experience &amp; Placements</span>
+        </a>
+        <a class="group flex items-baseline gap-6 text-white opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-5xl leading-tight" href="#projects" data-nav-link>
+          <span class="font-mono text-xs md:text-sm text-neutral-500">04.</span>
+          <span>Computational Projects &amp; Modelling</span>
+        </a>
+        <a class="group flex items-baseline gap-6 text-white opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-5xl leading-tight" href="#blog" data-nav-link>
+          <span class="font-mono text-xs md:text-sm text-neutral-500">05.</span>
+          <span>Research Notes &amp; Dispatches</span>
+        </a>
+        <a class="group flex items-baseline gap-6 text-white opacity-40 hover:opacity-100 transition-opacity font-serif text-3xl md:text-5xl leading-tight" href="#contact" data-nav-link>
+          <span class="font-mono text-xs md:text-sm text-neutral-500">06.</span>
+          <span>Direct Contact &amp; Channels</span>
+        </a>
+      </nav>
+
+      <!-- Bottom Meta Inside Menu -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-t border-neutral-800 pt-6 gap-4 font-sans text-xs text-neutral-400">
+        <div class="flex gap-8">
+          <a href="https://github.com" target="_blank" rel="noreferrer" data-setting-github class="to-link-underline">GitHub</a>
+          <a href="https://linkedin.com" target="_blank" rel="noreferrer" data-setting-linkedin class="to-link-underline">LinkedIn</a>
+          <a href="mailto:devpatel.cs.math@gmail.com" data-setting-email class="to-link-underline">Email</a>
+        </div>
+        <div>Dev Patel · Degree Apprenticeship Candidate · 2026</div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         DEDICATED FULL-PAGE VERTICAL ARCHIVE VIEW
+         Smooth vertical slide-up transition from bottom (Experience & Projects)
+         ===================================================================== -->
+    <div
+      id="vertical-archive-view"
+      class="fixed inset-0 z-[150] bg-[#0a0a0a] text-white overflow-y-auto px-6 py-12 md:py-16 md:px-12 flex flex-col items-center justify-between"
+      aria-label="Archive View"
+    >
+      <div class="archive-container w-full max-w-4xl min-h-full flex flex-col justify-between mx-auto">
+        <div>
+          <!-- Header Bar -->
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-neutral-800 pb-8 mb-12 gap-4">
+            <div>
+              <span id="archive-view-count" class="font-mono text-xs uppercase tracking-wider text-neutral-500 block"></span>
+              <h2 id="archive-view-title" class="font-serif text-3xl md:text-5xl text-white font-normal mt-1"></h2>
+            </div>
+            <button
+              data-close-archive
+              class="to-link-underline font-sans text-xs uppercase tracking-wider text-neutral-400 hover:text-white cursor-pointer py-1 flex items-center gap-2"
+            >
+              <span>← Return to Storyboard</span>
+              <span class="font-mono text-neutral-500 text-[11px]">(ESC)</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Archive Content List -->
+          <div id="archive-view-content" class="my-8 space-y-14">
+            <!-- Dynamically populated from CMS store -->
+          </div>
+        </div>
+
+        <!-- Archive Footer -->
+        <div class="border-t border-neutral-800 pt-8 mt-16 flex justify-between items-center text-xs text-neutral-500 font-sans">
+          <span>Dev Patel · Complete Archive</span>
+          <button data-close-archive class="to-link-underline text-neutral-300 hover:text-white cursor-pointer flex items-center gap-1.5">
+            <span>Return to Storyboard ↑</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         DEDICATED INDIVIDUAL BLOG POST READING PAGE
+         Cinematic slide-in from TOP and exit to TOP
+         ===================================================================== -->
+    <article
+      id="vertical-article-view"
+      class="fixed inset-0 z-[160] bg-[#080808] text-white overflow-y-auto px-6 py-12 md:py-16 md:px-12 flex flex-col items-center justify-between"
+      aria-label="Article View"
+    >
+      <div class="article-container w-full max-w-3xl min-h-full flex flex-col justify-between mx-auto">
+        <div>
+          <!-- Top Navigation -->
+          <div class="flex justify-between items-center border-b border-neutral-800 pb-6 mb-12">
+            <span id="article-category" class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium"></span>
+            <button
+              data-close-article
+              class="to-link-underline font-sans text-xs uppercase tracking-wider text-neutral-400 hover:text-white cursor-pointer py-1 flex items-center gap-2"
+            >
+              <span>Close Article ↑</span>
+              <span class="font-mono text-neutral-500 text-[11px]">(ESC)</span>
+            </button>
+          </div>
+
+          <!-- Article Content -->
+          <div class="my-8 space-y-8">
+            <div class="space-y-4">
+              <span id="article-meta" class="font-mono text-xs text-neutral-500 block"></span>
+              <h1 id="article-title" class="font-serif text-3xl sm:text-4xl md:text-5xl leading-tight text-white font-normal"></h1>
+              <p id="article-excerpt" class="font-serif text-lg md:text-xl text-neutral-400 font-normal italic leading-relaxed pt-2"></p>
+            </div>
+
+            <div id="article-body" class="space-y-6 pt-8 border-t border-neutral-800/80 font-sans font-light text-neutral-300 leading-relaxed text-sm md:text-base">
+              <!-- Dynamically populated from CMS store -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Article Footer -->
+        <div class="border-t border-neutral-800 pt-8 mt-16 w-full flex justify-between items-center text-xs text-neutral-500 font-sans">
+          <span>Dev Patel · Research Working Paper</span>
+          <button data-close-article class="to-link-underline text-neutral-300 hover:text-white cursor-pointer">
+            Close Post &amp; Return ↑
+          </button>
+        </div>
+      </div>
+    </article>
+
+    <!-- =====================================================================
+         MASTER STORYBOARD TRACK (Lenis + GSAP Horizontal Dual-Axis Translation)
+         ===================================================================== -->
+    <main class="relative" data-main-flow>
+      <div id="site-top" class="absolute top-0 left-0 w-px h-px pointer-events-none" aria-hidden="true"></div>
+
+      <div class="relative w-full overflow-hidden" data-horizontal-pin>
+        <div class="horizontal-track flex flex-col md:flex-row flex-nowrap" data-horizontal-track>
+
+          <!-- =============================================================
+               PANEL 00: HERO / INITIALIZATION
+               Serene negative space & monumental typography
+               ============================================================= -->
+          <section
+            class="horizontal-panel w-full md:w-screen md:h-dvh shrink-0 flex flex-col justify-between overflow-hidden bg-[#080808] text-white p-6 md:py-10 md:pl-28 md:pr-16"
+            data-section="hero"
+            data-header-bg="#080808"
+            data-header-text="#ffffff"
+            data-header-border="#222222"
+            data-horizontal-panel
+            aria-label="System Initialization"
+          >
+            <!-- Top Bar: Minimal & Quiet -->
+            <div class="flex justify-between items-center border-b border-neutral-800/80 pb-3 font-sans text-xs text-neutral-400">
+              <div class="flex items-center gap-2">
+                <span class="text-neutral-500 uppercase">Location:</span> <span data-setting-location>Slough &amp; London, UK</span> · <span data-telemetry-clock class="tabular-nums font-mono text-neutral-300">--:--:--</span>
+              </div>
+              <div class="font-mono text-neutral-500 text-[11px] tracking-wider uppercase">
+                Portfolio · 2026
+              </div>
+            </div>
+
+            <!-- Center Display: Monumental Typographic Presentation -->
+            <div class="my-auto flex flex-col justify-center max-w-5xl py-12">
+              <h1 class="font-serif text-6xl sm:text-7xl md:text-[calc(7.2_*_var(--scale))] leading-[0.95] tracking-tight font-normal text-white uppercase" data-setting-name>
+                DEV PATEL
+              </h1>
+
+              <p class="hero-sub font-sans text-sm md:text-base text-neutral-400 font-light tracking-wide mt-5" data-setting-title>
+                Applied Mathematics &amp; Computer Science
+              </p>
+            </div>
+
+            <!-- Bottom Action Rail: Quiet & Uncluttered -->
+            <div class="flex justify-between items-end border-t border-neutral-800/80 pt-3 font-sans text-xs text-neutral-500">
+              <div data-setting-location>
+                Slough &amp; London, UK
+              </div>
+              <div class="flex items-center gap-2 text-neutral-400">
+                <span>↓</span>
+                <span class="uppercase tracking-wider text-[11px] font-medium">Scroll to explore</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- =============================================================
+               PANEL 01: CHAPTER I — ABOUT & OVERVIEW
+               High-contrast crisp white canvas with balanced typography
+               ============================================================= -->
+          <section
+            id="about"
+            class="horizontal-panel w-full md:w-screen md:h-dvh shrink-0 flex flex-col justify-between overflow-hidden bg-white text-neutral-900 p-6 md:py-10 md:pl-28 md:pr-16"
+            data-section="about"
+            data-header-bg="#ffffff"
+            data-header-text="#0a0a0a"
+            data-header-border="#e5e5e5"
+            data-horizontal-panel
+            aria-label="Chapter I: About and Profile"
+          >
+            <div class="flex justify-between items-center border-b border-neutral-200 pb-3 font-sans text-xs uppercase tracking-wider text-neutral-500">
+              <span class="font-medium">Chapter 01</span>
+              <span>Profile &amp; Focus</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-[1.25fr_1fr] gap-12 md:gap-20 my-auto items-center max-w-6xl">
+              <div class="flex flex-col gap-6">
+                <h2 class="font-serif text-3xl md:text-[calc(3.2_*_var(--scale))] leading-snug font-normal text-neutral-900">
+                  Combining mathematical rigor and software engineering to solve high-stakes analytical problems.
+                </h2>
+                <div class="space-y-4 text-sm md:text-base leading-relaxed text-neutral-600 font-sans font-light" data-setting-bio>
+                  <p>
+                    Gap year student specialising in Computer Science and Mathematics, aiming for a degree apprenticeship. Focused on software engineering, data analytics, and mathematical modelling with applications in quantitative finance.
+                  </p>
+                  <p>
+                    Bridging abstract mathematical logic with real-world technical execution—exploring algorithmic verification, statistical signal processing, and high-performance computing.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Typographic Focus Presentation (NO pills, pure editorial spacing) -->
+              <div class="flex flex-col gap-7 md:pl-12 md:border-l md:border-neutral-200">
+                <div>
+                  <h3 class="font-serif text-lg md:text-xl font-normal text-neutral-900">Applied Mathematics</h3>
+                  <p class="font-sans text-xs md:text-sm text-neutral-500 font-light mt-1.5 leading-relaxed">
+                    Statistical modelling, discrete mathematics, stochastic processes, and Fourier time-series decomposition.
+                  </p>
+                </div>
+
+                <div class="pt-2">
+                  <h3 class="font-serif text-lg md:text-xl font-normal text-neutral-900">Software Engineering</h3>
+                  <p class="font-sans text-xs md:text-sm text-neutral-500 font-light mt-1.5 leading-relaxed">
+                    Python architecture, algorithmic efficiency, high-performance computing, containerization, and Linux environments.
+                  </p>
+                </div>
+
+                <div class="pt-2">
+                  <h3 class="font-serif text-lg md:text-xl font-normal text-neutral-900">Data &amp; Predictive Modelling</h3>
+                  <p class="font-sans text-xs md:text-sm text-neutral-500 font-light mt-1.5 leading-relaxed">
+                    Machine learning pipelines with Scikit-Learn and XGBoost, Monte Carlo risk simulations, and SQL-based analytics.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center border-t border-neutral-200 pt-3 font-sans text-xs text-neutral-500">
+              <span>Slough &amp; London, UK</span>
+              <a href="#education" class="to-link-underline text-neutral-900 font-medium">Chapter 02: Academic Record →</a>
+            </div>
+          </section>
+
+          <!-- =============================================================
+               PANEL 02: CHAPTER II — EDUCATION & COMPETITIONS
+               Deep obsidian canvas with unboxed editorial typography
+               ============================================================= -->
+          <section
+            id="education"
+            class="horizontal-panel w-full md:w-screen md:h-dvh shrink-0 flex flex-col justify-between overflow-hidden bg-[#0a0a0a] text-white p-6 md:py-10 md:pl-28 md:pr-16"
+            data-section="education"
+            data-header-bg="#0a0a0a"
+            data-header-text="#ffffff"
+            data-header-border="#222222"
+            data-horizontal-panel
+            aria-label="Chapter II: Academic Qualifications and Competitions"
+          >
+            <div class="flex justify-between items-center border-b border-neutral-800 pb-3 font-sans text-xs uppercase tracking-wider text-neutral-400">
+              <span class="font-medium">Chapter 02</span>
+              <span>Academic Record &amp; Competitions</span>
+            </div>
+
+            <div class="flex flex-col gap-6 my-auto max-w-6xl">
+              <!-- Dynamically populated from CMS (Academic Records) -->
+              <div data-dynamic-education class="flex flex-col gap-6"></div>
+
+              <!-- Competitions Row: Unboxed Editorial Presentation -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-1">
+                <div class="space-y-1">
+                  <div class="flex justify-between text-xs text-neutral-400 font-sans">
+                    <span class="text-neutral-300 font-medium">MathWorks Math Modelling (M3) Challenge</span>
+                    <span class="font-mono text-neutral-500">2026</span>
+                  </div>
+                  <p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">
+                    <span class="text-white font-medium">Top 20% Worldwide.</span> Trained an XGBoost gradient boosting model on UK gambling datasets and engineered Monte Carlo stochastic simulations to quantify demographic tail risk.
+                  </p>
+                </div>
+
+                <div class="space-y-1">
+                  <div class="flex justify-between text-xs text-neutral-400 font-sans">
+                    <span class="text-neutral-300 font-medium">Lockheed Martin Code Quest</span>
+                    <span class="font-mono text-neutral-500">2025 &amp; 2026</span>
+                  </div>
+                  <p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">
+                    <span class="text-white font-medium">Advanced Division: Top 3 (2026) &amp; 2nd Place (2025).</span> Led team in high-pressure algorithmic problem solving using Python under strict complexity constraints.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center border-t border-neutral-800 pt-3 font-sans text-xs text-neutral-500">
+              <span>Academic &amp; Algorithmic Foundations</span>
+              <a href="#experience" class="to-link-underline text-white font-medium">Chapter 03: Work Experience →</a>
+            </div>
+          </section>
+
+          <!-- =============================================================
+               PANEL 03: TRANSITION — "THE SYSTEMS"
+               Cinematic Midpoint Pause & Typographic Expansion
+               ============================================================= -->
+          <section
+            class="horizontal-panel w-full md:w-screen md:h-dvh shrink-0 flex flex-col items-center justify-center overflow-hidden bg-black text-white p-6 md:py-10 md:pl-28 md:pr-16 relative"
+            data-section="transition"
+            data-transition-section
+            data-header-bg="#000000"
+            data-header-text="#ffffff"
+            data-header-border="#222222"
+            data-horizontal-panel
+            aria-label="Transition: The Systems"
+          >
+            <!-- Center expanding preview card -->
+            <div
+              class="pointer-events-none absolute inset-0 z-10 hidden items-center justify-center md:flex"
+              aria-hidden="true"
+            >
+              <div
+                data-transition-media
+                class="h-64 w-96 overflow-hidden bg-neutral-900 border border-neutral-700 p-6 flex flex-col justify-between font-sans text-xs text-white shadow-2xl rounded"
+              >
+                <div class="flex justify-between border-b border-neutral-800 pb-2 text-neutral-400">
+                  <span class="font-medium text-white">Backtest Overfitting Analysis</span>
+                  <span class="font-mono">N = 520</span>
+                </div>
+                <div class="my-auto space-y-2 font-sans">
+                  <div class="text-white text-sm font-serif">Brent Crude &amp; Henry Hub Spot Prices</div>
+                  <p class="text-xs text-neutral-400 leading-relaxed font-light">
+                    Standard significance tests accepted spurious strategies on random data. Deflated Sharpe Ratio rejected all 520 trials.
+                  </p>
+                  <div class="p-2 bg-black border border-neutral-800 text-[11px] font-mono text-neutral-300">
+                    In-Sample Sharpe: 0.57 → Out-of-Sample: -0.28
+                  </div>
+                </div>
+                <div class="border-t border-neutral-800 pt-2 text-[11px] text-neutral-500 font-sans">
+                  Empirical Quantitative Validation
+                </div>
+              </div>
+            </div>
+
+            <!-- Monumental Split Words -->
+            <div class="relative z-20 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-20">
+              <span data-word-left class="font-serif text-6xl md:text-8xl uppercase tracking-tight font-normal text-white">
+                THE
+              </span>
+              <span data-word-right class="font-serif text-6xl md:text-8xl uppercase tracking-tight font-normal text-white">
+                SYSTEMS
+              </span>
+            </div>
+          </section>
+
+          <!-- =============================================================
+               PANEL 04: CHAPTER III — WORK EXPERIENCE
+               High-contrast clean white canvas
+               ============================================================= -->
+          <section
+            id="experience"
+            class="horizontal-panel w-full md:w-screen md:h-dvh shrink-0 flex flex-col justify-between overflow-hidden bg-white text-neutral-900 p-6 md:py-10 md:pl-28 md:pr-16"
+            data-section="experience"
+            data-header-bg="#ffffff"
+            data-header-text="#0a0a0a"
+            data-header-border="#e5e5e5"
+            data-horizontal-panel
+            aria-label="Chapter III: Work Experience"
+          >
+            <div class="flex justify-between items-center border-b border-neutral-200 pb-3 font-sans text-xs uppercase tracking-wider text-neutral-500">
+              <span class="font-medium">Chapter 03</span>
+              <span>Work Experience &amp; Placements</span>
+            </div>
+
+            <div class="flex flex-col gap-6 my-auto max-w-6xl">
+              <!-- Dynamically populated from CMS (Top 3 Featured) -->
+              <div data-dynamic-experience class="space-y-4"></div>
+
+              <!-- Action to show all records via vertical full-page view -->
+              <div class="pt-2">
+                <button
+                  data-open-view="experience"
+                  class="to-link-underline font-sans text-xs text-neutral-600 hover:text-black uppercase tracking-wider cursor-pointer flex items-center gap-2 font-medium"
+                >
+                  <span>View All Work Experience</span>
+                  <span data-experience-count class="text-neutral-900 font-semibold"></span>
+                  <span>↓</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center border-t border-neutral-200 pt-3 font-sans text-xs text-neutral-500">
+              <span>Commercial &amp; Systems Engineering</span>
+              <a href="#projects" class="to-link-underline text-neutral-900 font-medium">Chapter 04: Projects →</a>
+            </div>
+          </section>
+
+          <!-- =============================================================
+               PANEL 05: CHAPTER IV — PROJECTS & MODELLING
+               Obsidian canvas with interactive hover preview portal
+               ============================================================= -->
+          <section
+            id="projects"
+            class="horizontal-panel w-full md:w-screen md:h-dvh shrink-0 flex flex-col justify-between overflow-hidden bg-[#0a0a0a] text-white p-6 md:py-10 md:pl-28 md:pr-16"
+            data-section="projects"
+            data-header-bg="#0a0a0a"
+            data-header-text="#ffffff"
+            data-header-border="#222222"
+            data-horizontal-panel
+            aria-label="Chapter IV: Computational Projects"
+          >
+            <div class="flex justify-between items-center border-b border-neutral-800 pb-3 font-sans text-xs uppercase tracking-wider text-neutral-400">
+              <span class="font-medium">Chapter 04</span>
+              <span>Projects &amp; Mathematical Modelling</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-[1fr_400px] gap-12 my-auto items-center max-w-6xl">
+              <!-- Dynamic Featured Projects List -->
+              <div class="flex flex-col gap-2 work-list">
+                <div data-dynamic-projects class="flex flex-col"></div>
+
+                <div class="pt-4">
+                  <button
+                    data-open-view="projects"
+                    class="to-link-underline font-sans text-xs text-neutral-400 hover:text-white uppercase tracking-wider cursor-pointer flex items-center gap-2 font-medium"
+                  >
+                    <span>View All Projects &amp; Code</span>
+                    <span data-projects-count class="text-white font-semibold"></span>
+                    <span>↓</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Interactive Hover Preview Portal Frame (Hidden by default until hovered) -->
+              <div
+                id="project-hover-frame"
+                class="relative aspect-[16/11] w-full border border-neutral-800 bg-neutral-900/60 p-6 overflow-hidden flex flex-col justify-between font-sans text-xs rounded-lg shadow-lg opacity-0 pointer-events-none transition-opacity duration-300"
+              >
+                <!-- Dynamic Project Portals Container -->
+                <div data-project-portals class="contents"></div>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center border-t border-neutral-800 pt-3 font-sans text-xs text-neutral-500">
+              <span>Quantitative &amp; Algorithmic Modelling</span>
+              <a href="#blog" class="to-link-underline text-white font-medium">Chapter 05: Research Notes →</a>
+            </div>
+          </section>
+
+          <!-- =============================================================
+               PANEL 06: CHAPTER V — RESEARCH DISPATCHES
+               Clean editorial white canvas
+               ============================================================= -->
+          <section
+            id="blog"
+            class="horizontal-panel w-full md:w-screen md:h-dvh shrink-0 flex flex-col justify-between overflow-hidden bg-white text-neutral-900 p-6 md:py-10 md:pl-28 md:pr-16"
+            data-section="blog"
+            data-header-bg="#ffffff"
+            data-header-text="#0a0a0a"
+            data-header-border="#e5e5e5"
+            data-horizontal-panel
+            aria-label="Chapter V: Research Notes and Dispatches"
+          >
+            <div class="flex justify-between items-center border-b border-neutral-200 pb-3 font-sans text-xs uppercase tracking-wider text-neutral-500">
+              <span class="font-medium">Chapter 05</span>
+              <span>Research Notes &amp; Dispatches</span>
+            </div>
+
+            <div class="flex flex-col gap-6 my-auto max-w-6xl">
+              <!-- Dynamically populated from CMS (Top 3 Featured) -->
+              <div data-dynamic-blogs class="space-y-4"></div>
+
+              <div class="pt-2">
+                <button
+                  data-open-view="blogs"
+                  class="to-link-underline font-sans text-xs text-neutral-600 hover:text-black uppercase tracking-wider cursor-pointer flex items-center gap-2 font-medium"
+                >
+                  <span>View All Research Notes</span>
+                  <span data-blogs-count class="text-neutral-900 font-semibold"></span>
+                  <span>↓</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center border-t border-neutral-200 pt-3 font-sans text-xs text-neutral-500">
+              <span>Research Notes &amp; Working Papers</span>
+              <a href="#contact" class="to-link-underline text-neutral-900 font-medium">Chapter 06: Contact →</a>
+            </div>
+          </section>
+
+          <!-- =============================================================
+               PANEL 07: CHAPTER VI — DIRECT CONTACT & CHANNELS
+               Stark, monumental pure black finish
+               ============================================================= -->
+          <section
+            id="contact"
+            class="horizontal-panel w-full md:w-screen md:h-dvh shrink-0 flex flex-col justify-between overflow-hidden bg-black text-white p-6 md:py-10 md:pl-28 md:pr-16"
+            data-section="contact"
+            data-header-bg="#000000"
+            data-header-text="#ffffff"
+            data-header-border="#222222"
+            data-horizontal-panel
+            aria-label="Chapter VI: Direct Contact"
+          >
+            <div class="flex justify-between items-center border-b border-neutral-800 pb-3 font-sans text-xs uppercase tracking-wider text-neutral-400">
+              <span class="font-medium">Chapter 06</span>
+              <span>Direct Contact &amp; Channels</span>
+            </div>
+
+            <div class="my-auto flex flex-col gap-8 max-w-4xl">
+              <h2 class="font-serif text-5xl sm:text-6xl md:text-7xl uppercase leading-none tracking-tight font-normal text-white">
+                Let’s Connect
+              </h2>
+
+              <div>
+                <a
+                  href="mailto:devpatel.cs.math@gmail.com"
+                  id="contact-email"
+                  data-setting-email
+                  class="from-link-underline font-serif text-2xl md:text-4xl text-white hover:text-neutral-300 transition-colors w-fit font-normal"
+                >
+                  devpatel.cs.math@gmail.com
+                </a>
+              </div>
+
+              <!-- External Links -->
+              <div class="flex flex-wrap gap-8 font-sans text-xs pt-4 border-t border-neutral-900">
+                <a href="https://github.com" target="_blank" rel="noreferrer" data-setting-github class="to-link-underline text-neutral-300 hover:text-white">GitHub ↗</a>
+                <a href="https://linkedin.com" target="_blank" rel="noreferrer" data-setting-linkedin class="to-link-underline text-neutral-300 hover:text-white">LinkedIn ↗</a>
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-t border-neutral-800 pt-3 font-sans text-xs text-neutral-500 gap-2">
+              <div>© 2026 Dev Patel · Computer Science &amp; Applied Mathematics</div>
+              <div>Slough &amp; London, UK</div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- Main Entry Module -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

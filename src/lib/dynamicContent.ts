@@ -1,0 +1,263 @@
+import { cms } from "./cmsStore";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+export function renderDynamicContent() {
+  renderProfileAndSettings();
+  renderEducationList();
+  renderProjectsList();
+  renderExperienceList();
+  renderBlogsList();
+
+  // Subscribe to CMS changes
+  cms.subscribe(() => {
+    renderProfileAndSettings();
+    renderEducationList();
+    renderProjectsList();
+    renderExperienceList();
+    renderBlogsList();
+    ScrollTrigger.refresh();
+  });
+}
+
+function renderProfileAndSettings() {
+  const settings = cms.getSettings();
+
+  // Monogram / Name
+  document.querySelectorAll<HTMLElement>("[data-setting-name]").forEach((el) => {
+    el.textContent = settings.name;
+  });
+
+  // Title / Subtitle
+  document.querySelectorAll<HTMLElement>("[data-setting-title]").forEach((el) => {
+    el.textContent = settings.title;
+  });
+
+  // Bio
+  document.querySelectorAll<HTMLElement>("[data-setting-bio]").forEach((el) => {
+    const paragraphs = settings.bio.split("\n\n").filter(Boolean);
+    if (paragraphs.length > 0) {
+      el.innerHTML = paragraphs.map((p) => `<p>${p}</p>`).join("");
+    } else {
+      el.textContent = settings.bio;
+    }
+  });
+
+  // Location
+  document.querySelectorAll<HTMLElement>("[data-setting-location]").forEach((el) => {
+    el.textContent = settings.location;
+  });
+
+  // Email
+  document.querySelectorAll<HTMLAnchorElement>("[data-setting-email]").forEach((el) => {
+    el.href = `mailto:${settings.email}`;
+    el.textContent = settings.email;
+  });
+
+  // GitHub
+  document.querySelectorAll<HTMLAnchorElement>("[data-setting-github]").forEach((el) => {
+    el.href = settings.github;
+  });
+
+  // LinkedIn
+  document.querySelectorAll<HTMLAnchorElement>("[data-setting-linkedin]").forEach((el) => {
+    el.href = settings.linkedin;
+  });
+}
+
+function renderEducationList() {
+  const container = document.querySelector<HTMLElement>("[data-dynamic-education]");
+  if (!container) return;
+
+  const eduList = cms.getEducation();
+  container.innerHTML = eduList
+    .map(
+      (item) => `
+    <div class="border-b border-neutral-800 pb-4 last:border-b-0 space-y-1">
+      <div class="flex justify-between items-baseline">
+        <h3 class="font-serif text-xl md:text-2xl font-normal text-white">
+          ${item.institution} · <span class="font-sans text-sm md:text-base text-neutral-300 font-light">${item.program}</span>
+        </h3>
+        <span class="font-mono text-xs text-neutral-500">${item.period}</span>
+      </div>
+      <div class="flex items-center gap-2 mt-1 text-xs md:text-sm text-neutral-300 font-light">
+        <span class="text-white font-medium">${item.grades}</span>
+      </div>
+      ${
+        item.details && item.details.length
+          ? item.details
+              .slice(0, 2)
+              .map(
+                (d) => `<p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">${d}</p>`
+              )
+              .join("")
+          : ""
+      }
+    </div>
+  `
+    )
+    .join("");
+}
+
+function renderProjectsList() {
+  const container = document.querySelector<HTMLElement>("[data-dynamic-projects]");
+  const countBtn = document.querySelector<HTMLElement>("[data-projects-count]");
+  if (!container) return;
+
+  const featured = cms.getProjects(true);
+  const total = cms.getAllProjects().length;
+
+  if (countBtn) {
+    countBtn.textContent = `(${total})`;
+  }
+
+  container.innerHTML = featured
+    .map(
+      (p, i) => `
+    <div class="work-item border-b border-neutral-800 py-4 cursor-pointer" data-project-item data-project-index="${i}">
+      <div class="flex justify-between items-center">
+        <div class="flex items-baseline gap-4">
+          <span class="font-mono text-xs text-neutral-500">0${i + 1}</span>
+          <h3 class="font-serif text-2xl md:text-[calc(2.8_*_var(--scale))] font-normal text-white">${p.title}</h3>
+        </div>
+        <span class="work-item-arrow text-base text-neutral-400 font-sans">↗</span>
+      </div>
+      <p class="font-sans text-xs text-neutral-400 mt-1 pl-8 font-light">
+        ${p.subtitle} · ${p.tags.slice(0, 3).join(" · ")}
+      </p>
+    </div>
+  `
+    )
+    .join("");
+
+  // Update preview portal cards
+  const portalContainer = document.querySelector<HTMLElement>("[data-project-portals]");
+  if (portalContainer) {
+    portalContainer.innerHTML = featured
+      .map(
+        (p, i) => `
+      <div data-project-image="${i}" class="absolute inset-6 opacity-0 transition-opacity duration-300 flex flex-col justify-between pointer-events-none">
+        <div class="flex justify-between text-neutral-400 border-b border-neutral-800 pb-2 text-xs font-sans">
+          <span class="text-white font-medium">0${i + 1} · ${p.title}</span>
+          <span class="font-mono text-neutral-500">${p.year}</span>
+        </div>
+        <div class="my-auto space-y-3 font-sans text-xs text-neutral-300">
+          <p class="leading-relaxed font-light">${p.description}</p>
+          ${
+            p.metrics && p.metrics.length
+              ? `<div class="border-l border-neutral-700 pl-3 py-0.5 text-xs text-neutral-400 font-light">
+                  ${p.metrics[0]}
+                </div>`
+              : ""
+          }
+        </div>
+        <div class="text-[11px] font-sans text-neutral-500 border-t border-neutral-800 pt-2">
+          ${p.tags.join(" · ")}
+        </div>
+      </div>
+    `
+      )
+      .join("");
+  }
+
+  rebindProjectHoverPortals();
+}
+
+function renderExperienceList() {
+  const container = document.querySelector<HTMLElement>("[data-dynamic-experience]");
+  const countBtn = document.querySelector<HTMLElement>("[data-experience-count]");
+  if (!container) return;
+
+  const featured = cms.getExperience(true);
+  const total = cms.getAllExperience().length;
+
+  if (countBtn) {
+    countBtn.textContent = `(${total})`;
+  }
+
+  container.innerHTML = featured
+    .map(
+      (e) => `
+    <div class="border-b border-neutral-200 pb-5 last:border-b-0 space-y-1.5">
+      <div class="flex justify-between items-baseline">
+        <h3 class="font-serif text-xl md:text-[calc(2.2_*_var(--scale))] font-normal text-neutral-900">
+          ${e.company} · <span class="font-sans text-sm md:text-base text-neutral-600 font-light">${e.role}</span>
+        </h3>
+        <span class="font-mono text-xs text-neutral-500">${e.period}</span>
+      </div>
+      <p class="font-sans text-xs md:text-sm text-neutral-600 leading-relaxed font-light">
+        ${e.bulletPoints[0] || e.description}
+      </p>
+      ${
+        e.bulletPoints[1]
+          ? `<p class="font-sans text-xs text-neutral-500 leading-relaxed font-light">
+              • ${e.bulletPoints[1]}
+            </p>`
+          : ""
+      }
+    </div>
+  `
+    )
+    .join("");
+}
+
+function renderBlogsList() {
+  const container = document.querySelector<HTMLElement>("[data-dynamic-blogs]");
+  const countBtn = document.querySelector<HTMLElement>("[data-blogs-count]");
+  if (!container) return;
+
+  const featured = cms.getBlogs(true);
+  const total = cms.getAllBlogs().length;
+
+  if (countBtn) {
+    countBtn.textContent = `(${total})`;
+  }
+
+  container.innerHTML = featured
+    .map(
+      (b) => `
+    <article class="border-b border-neutral-200 pb-5 last:border-b-0 cursor-pointer group" data-open-post="${b.id}">
+      <div class="flex justify-between items-baseline font-sans text-xs text-neutral-500">
+        <span class="font-sans text-neutral-600 font-medium">${b.tags.slice(0, 2).join(" · ")}</span>
+        <span class="font-mono text-[11px] text-neutral-400">${b.date} · ${b.readTime}</span>
+      </div>
+      <h3 class="font-serif text-xl md:text-2xl mt-1.5 font-normal text-neutral-900 group-hover:text-neutral-500 transition-colors flex items-center justify-between">
+        <span>${b.title}</span>
+        <span class="text-xs font-sans text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity">Read Note →</span>
+      </h3>
+      <p class="font-sans text-xs md:text-sm text-neutral-600 mt-1 leading-relaxed font-light">
+        ${b.excerpt}
+      </p>
+    </article>
+  `
+    )
+    .join("");
+}
+
+function rebindProjectHoverPortals() {
+  const projectItems = document.querySelectorAll<HTMLElement>("[data-project-item]");
+  const projectImages = document.querySelectorAll<HTMLElement>("[data-project-image]");
+  const portalFrame = document.querySelector<HTMLElement>("#project-hover-frame");
+
+  if (!portalFrame) return;
+
+  projectItems.forEach((item) => {
+    const idx = parseInt(item.dataset.projectIndex || "0", 10);
+    item.addEventListener("mouseenter", () => {
+      // Reveal frame
+      portalFrame.classList.remove("opacity-0", "pointer-events-none");
+      portalFrame.classList.add("opacity-100", "pointer-events-auto");
+
+      projectImages.forEach((img) => {
+        const isMatch = img.getAttribute("data-project-image") === String(idx);
+        img.style.opacity = isMatch ? "1" : "0";
+      });
+    });
+
+    item.addEventListener("mouseleave", () => {
+      projectImages.forEach((img) => (img.style.opacity = "0"));
+      // Hide frame when leaving
+      portalFrame.classList.add("opacity-0", "pointer-events-none");
+      portalFrame.classList.remove("opacity-100", "pointer-events-auto");
+    });
+  });
+}

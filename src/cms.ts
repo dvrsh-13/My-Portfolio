@@ -784,7 +784,7 @@ function setupEventListeners() {
   document.getElementById("gh-publish-btn")?.addEventListener("click", async () => {
     const token = ghTokenInput?.value.trim();
     const repo = ghRepoInput?.value.trim() || "dvrsh-13/My-Portfolio";
-    const branch = ghBranchInput?.value.trim() || "main";
+    const branch = ghBranchInput?.value.trim() || "Main";
 
     if (!token) {
       alert("Please provide a GitHub Personal Access Token (PAT) with 'repo' scope to publish directly.");

@@ -7,14 +7,18 @@ export function initThemeManager() {
 
   if (!header || !panels.length) return () => {};
 
+  // For mobile vertical stacked view
   const observer = new IntersectionObserver(
     (entries) => {
+      // Only run IntersectionObserver when on mobile (on desktop, ScrollTrigger handles it)
+      if (window.innerWidth >= 768) return;
+
       entries.forEach((entry) => {
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.45) {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.4) {
           const target = entry.target as HTMLElement;
-          const bg = target.dataset.headerBg || "transparent";
-          const text = target.dataset.headerText || "#f3eee8";
-          const border = target.dataset.headerBorder || "#5a524d";
+          const bg = target.dataset.headerBg || "#000000";
+          const text = target.dataset.headerText || "#ffffff";
+          const border = target.dataset.headerBorder || "#222222";
 
           header.style.setProperty("--header-bg", bg);
           header.style.setProperty("--header-text", text);
@@ -23,7 +27,7 @@ export function initThemeManager() {
       });
     },
     {
-      threshold: [0.1, 0.45, 0.8],
+      threshold: [0.1, 0.4, 0.8],
     }
   );
 

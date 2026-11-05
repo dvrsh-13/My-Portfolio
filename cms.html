@@ -11,51 +11,61 @@
   </head>
   <body class="bg-[#0c0c0e] text-[#ededed] min-h-screen font-sans antialiased selection:bg-white selection:text-black">
 
-    <div class="max-w-5xl mx-auto px-6 py-12 md:py-16 space-y-10">
-      
-      <!-- Studio Header Bar -->
-      <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-8 border-b border-neutral-800 gap-6">
-        <div>
-          <h1 class="font-serif text-3xl md:text-4xl text-white font-normal tracking-tight">
-            Portfolio Studio
-          </h1>
-          <p class="font-sans text-sm text-neutral-400 mt-1">
-            Manage live storyboard records, display bounds, and biographic content for Devarsh Vinod.
-          </p>
-        </div>
+    <!-- Sticky Top Header & Tabs Bar -->
+    <div id="cms-sticky-bar" class="sticky top-0 z-50 bg-[#0c0c0e]/95 backdrop-blur-md border-b border-neutral-800 transition-all duration-300">
+      <div class="max-w-5xl mx-auto px-6">
+        <!-- Studio Header Bar -->
+        <header id="cms-header" class="flex flex-col sm:flex-row justify-between items-start sm:items-center py-6 gap-4 transition-all duration-300">
+          <div id="cms-header-brand" class="transition-all duration-300">
+            <h1 id="cms-title" class="font-serif text-3xl md:text-4xl text-white font-normal tracking-tight transition-all duration-300">
+              Portfolio Studio
+            </h1>
+            <p id="cms-subtitle" class="font-sans text-sm text-neutral-400 mt-1 max-h-20 opacity-100 overflow-hidden transition-all duration-300">
+              Manage live storyboard records, display bounds, and biographic content for Devarsh Vinod.
+            </p>
+          </div>
 
-        <div class="flex items-center gap-3 shrink-0">
-          <button id="reset-defaults-btn" class="px-3.5 py-2 rounded-lg border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 hover:bg-neutral-800 text-neutral-400 hover:text-white font-sans text-xs transition-colors cursor-pointer">
-            Reset Defaults
+          <div class="flex items-center gap-3 shrink-0">
+            <button id="reset-defaults-btn" class="px-3.5 py-2 rounded-lg border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 hover:bg-neutral-800 text-neutral-400 hover:text-white font-sans text-xs transition-colors cursor-pointer">
+              Reset Defaults
+            </button>
+            <button id="cms-persistent-save-btn" class="px-4 py-2 rounded-lg bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
+              <span>Save Changes</span>
+              <span>✓</span>
+            </button>
+            <a href="./" class="px-4 py-2 rounded-lg border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 hover:bg-neutral-800 text-neutral-300 hover:text-white font-sans text-xs transition-colors cursor-pointer flex items-center gap-1.5">
+              <span>View Live Folio</span>
+              <span>↗</span>
+            </a>
+          </div>
+        </header>
+
+        <!-- Navigation Tabs (Clean Editorial Underline Style) -->
+        <nav id="cms-tabs-nav" class="flex border-t border-neutral-800/80 gap-6 md:gap-8 font-sans text-sm pt-3 pb-2.5 overflow-x-auto transition-all duration-300" aria-label="CMS Navigation">
+          <button data-tab-btn="projects" class="pb-2 border-b-2 border-white text-white font-medium cursor-pointer transition-colors whitespace-nowrap">
+            Projects
           </button>
-          <a href="./" class="px-4 py-2 rounded-lg bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
-            <span>View Live Folio</span>
-            <span>↗</span>
-          </a>
-        </div>
-      </header>
+          <button data-tab-btn="experience" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+            Experience
+          </button>
+          <button data-tab-btn="blogs" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+            Research Dispatches
+          </button>
+          <button data-tab-btn="education" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+            Academic &amp; Honors
+          </button>
+          <button data-tab-btn="profile" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+            Profile &amp; Channels
+          </button>
+          <button data-tab-btn="settings" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+            Display Limits &amp; Sync
+          </button>
+        </nav>
+      </div>
+    </div>
 
-      <!-- Navigation Tabs (Clean Editorial Underline Style) -->
-      <nav class="flex border-b border-neutral-800 gap-8 font-sans text-sm pb-px overflow-x-auto" aria-label="CMS Navigation">
-        <button data-tab-btn="projects" class="pb-3 border-b-2 border-white text-white font-medium cursor-pointer transition-colors whitespace-nowrap">
-          Projects
-        </button>
-        <button data-tab-btn="experience" class="pb-3 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
-          Experience
-        </button>
-        <button data-tab-btn="blogs" class="pb-3 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
-          Research Dispatches
-        </button>
-        <button data-tab-btn="education" class="pb-3 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
-          Academic &amp; Honors
-        </button>
-        <button data-tab-btn="profile" class="pb-3 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
-          Profile &amp; Channels
-        </button>
-        <button data-tab-btn="settings" class="pb-3 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
-          Display Limits &amp; Sync
-        </button>
-      </nav>
+    <!-- Main Content Area -->
+    <main class="max-w-5xl mx-auto px-6 py-8 md:py-12 space-y-10">
 
       <!-- =============================================================
            TAB 1: PROJECTS
@@ -361,7 +371,7 @@
 
       </section>
 
-    </div>
+    </main>
 
     <!-- Universal Editorial Item Modal (Projects / Experience / Blogs / Education) -->
     <dialog id="cms-editor-modal" class="fixed inset-0 z-[120] m-auto w-full max-w-xl bg-[#141416] border border-neutral-800 text-white p-6 md:p-8 rounded-2xl shadow-2xl backdrop:bg-black/80 backdrop:backdrop-blur-sm">

@@ -19,7 +19,7 @@ html {
   text-rendering: optimizeLegibility;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100vw;
 }
 
@@ -30,7 +30,7 @@ html::-webkit-scrollbar {
 body {
   width: 100%;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100vw;
   background-color: var(--color-black-deep);
 }
@@ -50,6 +50,20 @@ html.lenis, html.lenis body {
 
 .lenis.lenis-stopped {
   overflow: hidden;
+}
+
+/* No Scrollbar Utility */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Telemetry Clock Inherit Rail Color */
+[data-telemetry-clock] {
+  color: inherit;
 }
 
 /* Typography Utilities */

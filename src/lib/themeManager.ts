@@ -23,6 +23,9 @@ export function initThemeManager() {
           header.style.setProperty("--header-bg", bg);
           header.style.setProperty("--header-text", text);
           header.style.setProperty("--header-border", border);
+          header.style.color = text;
+          header.style.backgroundColor = bg;
+          header.style.borderColor = border;
         }
       });
     },

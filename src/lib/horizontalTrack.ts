@@ -15,6 +15,7 @@ let centerGeometry: {
 
 let headerElement: HTMLElement | null = null;
 let panelElements: HTMLElement[] = [];
+let activeThemePanel: HTMLElement | null = null;
 
 export function getHorizontalTrigger(): ScrollTrigger | null {
   return activeTrigger;
@@ -22,11 +23,24 @@ export function getHorizontalTrigger(): ScrollTrigger | null {
 
 export function updateRailTheme() {
   if (!headerElement || !panelElements.length) return;
-  const midViewport = window.innerWidth * 0.45;
+
+  const isDesktop = window.innerWidth >= 768;
+  const headerRect = headerElement.getBoundingClientRect();
+  // Chapter theme triggers 2px under the sidebar edge
+  const triggerPoint = isDesktop
+    ? Math.max(0, headerRect.right - 2)
+    : Math.max(0, headerRect.bottom - 2);
 
   for (const panel of panelElements) {
     const rect = panel.getBoundingClientRect();
-    if (rect.left <= midViewport && rect.right >= midViewport) {
+    const coversPoint = isDesktop
+      ? rect.left <= triggerPoint && rect.right > triggerPoint
+      : rect.top <= triggerPoint && rect.bottom > triggerPoint;
+
+    if (coversPoint) {
+      if (panel === activeThemePanel) break; // Avoid redundant DOM writes
+      activeThemePanel = panel;
+
       const bg = panel.dataset.headerBg || "#000000";
       const text = panel.dataset.headerText || "#ffffff";
       const border = panel.dataset.headerBorder || "#222222";
@@ -34,6 +48,9 @@ export function updateRailTheme() {
       headerElement.style.setProperty("--header-bg", bg);
       headerElement.style.setProperty("--header-text", text);
       headerElement.style.setProperty("--header-border", border);
+      headerElement.style.color = text;
+      headerElement.style.backgroundColor = bg;
+      headerElement.style.borderColor = border;
       break;
     }
   }
@@ -167,6 +184,9 @@ export function initHorizontalTrack() {
         headerElement.style.setProperty("--header-bg", bg);
         headerElement.style.setProperty("--header-text", text);
         headerElement.style.setProperty("--header-border", border);
+        headerElement.style.color = text;
+        headerElement.style.backgroundColor = bg;
+        headerElement.style.borderColor = border;
       }
       return () => {};
     }
@@ -233,6 +253,18 @@ export function initHorizontalTrack() {
       // Phase 3: Resume track scroll to end
       masterTimeline.fromTo(track, { x: centeredX }, { x: -scrollDist, duration: phase3Dist });
 
+      // Compute subtle magnetic snap points corresponding to each chapter
+      const snapPoints = panelList.map((_, idx) => {
+        const targetOffset = idx * window.innerWidth;
+        const timelineOffset = targetOffset <= phase1Dist ? targetOffset : targetOffset + zoomDuration;
+        return Math.min(1, Math.max(0, timelineOffset / totalScroll));
+      });
+      // Add snap point for completed transition card preview
+      snapPoints.push(Math.min(1, Math.max(0, (phase1Dist + zoomDuration) / totalScroll)));
+      const uniqueSnapPoints = Array.from(new Set(snapPoints.map((p) => Number(p.toFixed(4))))).sort(
+        (a, b) => a - b
+      );
+
       activeTrigger = ScrollTrigger.create({
         trigger: pinContainer,
         animation: masterTimeline,
@@ -242,6 +274,13 @@ export function initHorizontalTrack() {
         scrub: 1,
         anticipatePin: 1,
         invalidateOnRefresh: true,
+        snap: {
+          snapTo: uniqueSnapPoints,
+          duration: { min: 0.25, max: 0.6 },
+          delay: 0.45,
+          ease: "power2.out",
+          inertia: false,
+        },
         onUpdate: (self) => {
           if (progressBar) {
             progressBar.style.transform = `scaleY(${self.progress})`;
@@ -252,6 +291,10 @@ export function initHorizontalTrack() {
     } else {
       masterTimeline.fromTo(track, { x: 0 }, { x: () => -getScrollDistance() });
 
+      const fallbackSnapPoints = panelElements.map((_, idx) =>
+        panelElements.length > 1 ? idx / (panelElements.length - 1) : 0
+      );
+
       activeTrigger = ScrollTrigger.create({
         trigger: pinContainer,
         animation: masterTimeline,
@@ -261,6 +304,13 @@ export function initHorizontalTrack() {
         scrub: 1,
         anticipatePin: 1,
         invalidateOnRefresh: true,
+        snap: {
+          snapTo: fallbackSnapPoints,
+          duration: { min: 0.25, max: 0.6 },
+          delay: 0.25,
+          ease: "power2.out",
+          inertia: false,
+        },
         onUpdate: (self) => {
           if (progressBar) {
             progressBar.style.transform = `scaleY(${self.progress})`;

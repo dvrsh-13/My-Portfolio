@@ -1,9 +1,15 @@
 import Lenis from "lenis";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 let lenisInstance: Lenis | null = null;
 let isScrollLocked = false;
+let rafId: number | null = null;
 
 export function initSmoothScroll(startLocked = false): Lenis {
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
   if (lenisInstance) {
     lenisInstance.destroy();
   }
@@ -18,6 +24,15 @@ export function initSmoothScroll(startLocked = false): Lenis {
     smoothWheel: true,
     wheelMultiplier: 1.0,
     touchMultiplier: 1.5,
+    prevent: (node) => {
+      const el = node instanceof Element ? node : (node as Node)?.parentElement;
+      return Boolean(el?.closest?.("[data-lenis-prevent]"));
+    },
+  });
+
+  // Keep GSAP ScrollTrigger in sync with Lenis virtual scroll
+  lenisInstance.on("scroll", () => {
+    ScrollTrigger.update();
   });
 
   if (isScrollLocked) {
@@ -26,10 +41,10 @@ export function initSmoothScroll(startLocked = false): Lenis {
 
   function raf(time: number) {
     lenisInstance?.raf(time);
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
   }
 
-  requestAnimationFrame(raf);
+  rafId = requestAnimationFrame(raf);
 
   return lenisInstance;
 }

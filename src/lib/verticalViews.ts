@@ -15,6 +15,18 @@ export function initVerticalViews() {
   gsap.set(archiveView, { yPercent: 100, display: "none" });
   gsap.set(articleView, { yPercent: -100, display: "none" });
 
+  // Isolate wheel & touch scrolling so overlay scrolls smoothly without Lenis window interference
+  const isolateModalScroll = (el: HTMLElement) => {
+    el.addEventListener("wheel", (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+    el.addEventListener("touchmove", (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+  };
+  isolateModalScroll(archiveView);
+  isolateModalScroll(articleView);
+
   // Close triggers
   document.querySelectorAll("[data-close-archive]").forEach((btn) => {
     btn.addEventListener("click", closeArchiveView);
@@ -182,12 +194,14 @@ export function openArchiveView(category: "experience" | "projects" | "blogs") {
 
   archiveView.style.display = "block";
   archiveView.scrollTop = 0;
+  archiveView.focus();
 
   if (window.location.search.includes("view=")) {
     gsap.set(archiveView, { yPercent: 0 });
     return;
   }
 
+  gsap.killTweensOf(archiveView);
   gsap.fromTo(
     archiveView,
     { yPercent: 100 },
@@ -203,6 +217,7 @@ export function closeArchiveView() {
   const archiveView = document.querySelector<HTMLElement>("#vertical-archive-view");
   if (!archiveView || !isArchiveOpen) return;
 
+  gsap.killTweensOf(archiveView);
   gsap.to(archiveView, {
     yPercent: 100,
     duration: 0.5,
@@ -252,12 +267,14 @@ export function openBlogPost(blogId: string) {
 
   articleView.style.display = "block";
   articleView.scrollTop = 0;
+  articleView.focus();
 
   if (window.location.search.includes("post=")) {
     gsap.set(articleView, { yPercent: 0 });
     return;
   }
 
+  gsap.killTweensOf(articleView);
   gsap.fromTo(
     articleView,
     { yPercent: -100 },
@@ -273,6 +290,7 @@ export function closeArticleView() {
   const articleView = document.querySelector<HTMLElement>("#vertical-article-view");
   if (!articleView || !isArticleOpen) return;
 
+  gsap.killTweensOf(articleView);
   gsap.to(articleView, {
     yPercent: -100,
     duration: 0.55,

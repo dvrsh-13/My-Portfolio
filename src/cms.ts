@@ -9,6 +9,7 @@ function init() {
   setupTabs();
   renderAll();
   setupEventListeners();
+  setupStickyHeaderCollapse();
 }
 
 if (document.readyState === "loading") {
@@ -708,6 +709,67 @@ function handleFormSubmit() {
   showToast(activeEditId ? "✓ Record updated successfully" : "✓ New record created successfully");
 }
 
+function saveAllCurrentState() {
+  const nameInput = document.getElementById("setting-name") as HTMLInputElement | null;
+  const titleInput = document.getElementById("setting-title") as HTMLInputElement | null;
+  const emailInput = document.getElementById("setting-email") as HTMLInputElement | null;
+  const locationInput = document.getElementById("setting-location") as HTMLInputElement | null;
+  const githubInput = document.getElementById("setting-github") as HTMLInputElement | null;
+  const linkedinInput = document.getElementById("setting-linkedin") as HTMLInputElement | null;
+  const bioInput = document.getElementById("setting-bio") as HTMLTextAreaElement | null;
+
+  const projInput = document.getElementById("setting-proj-limit") as HTMLInputElement | null;
+  const expInput = document.getElementById("setting-exp-limit") as HTMLInputElement | null;
+  const blogInput = document.getElementById("setting-blog-limit") as HTMLInputElement | null;
+
+  const updatedSettings: Parameters<typeof cms.updateSettings>[0] = {};
+
+  if (nameInput) updatedSettings.name = nameInput.value.trim();
+  if (titleInput) updatedSettings.title = titleInput.value.trim();
+  if (emailInput) updatedSettings.email = emailInput.value.trim();
+  if (locationInput) updatedSettings.location = locationInput.value.trim();
+  if (githubInput) updatedSettings.github = githubInput.value.trim();
+  if (linkedinInput) updatedSettings.linkedin = linkedinInput.value.trim();
+  if (bioInput) updatedSettings.bio = bioInput.value;
+
+  if (projInput) updatedSettings.featuredProjectsLimit = Math.min(6, Math.max(1, parseInt(projInput.value, 10) || 3));
+  if (expInput) updatedSettings.featuredExperienceLimit = Math.min(6, Math.max(1, parseInt(expInput.value, 10) || 3));
+  if (blogInput) updatedSettings.featuredBlogsLimit = Math.min(6, Math.max(1, parseInt(blogInput.value, 10) || 3));
+
+  cms.updateSettings(updatedSettings);
+  renderAll();
+  showToast("✓ All portfolio changes saved successfully");
+}
+
+function setupStickyHeaderCollapse() {
+  const header = document.getElementById("cms-header");
+  const title = document.getElementById("cms-title");
+  const subtitle = document.getElementById("cms-subtitle");
+  if (!header || !title || !subtitle) return;
+
+  const onScroll = () => {
+    const isScrolled = window.scrollY > 20;
+    if (isScrolled) {
+      header.classList.remove("py-6");
+      header.classList.add("py-2.5");
+      subtitle.classList.add("max-h-0", "opacity-0", "overflow-hidden", "mt-0");
+      subtitle.classList.remove("max-h-20", "opacity-100", "mt-1");
+      title.classList.remove("text-3xl", "md:text-4xl");
+      title.classList.add("text-xl", "md:text-2xl");
+    } else {
+      header.classList.add("py-6");
+      header.classList.remove("py-2.5");
+      subtitle.classList.remove("max-h-0", "opacity-0", "overflow-hidden", "mt-0");
+      subtitle.classList.add("max-h-20", "opacity-100", "mt-1");
+      title.classList.add("text-3xl", "md:text-4xl");
+      title.classList.remove("text-xl", "md:text-2xl");
+    }
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll(); // Apply initial collapse state immediately
+}
+
 function setupEventListeners() {
   // Modal buttons
   document.getElementById("add-project-btn")?.addEventListener("click", () => openEditModal("project"));
@@ -724,43 +786,19 @@ function setupEventListeners() {
     handleFormSubmit();
   });
 
+  // Persistent Save Changes button in sticky header
+  document.getElementById("cms-persistent-save-btn")?.addEventListener("click", () => {
+    saveAllCurrentState();
+  });
+
   // Save Profile
   document.getElementById("save-profile-btn")?.addEventListener("click", () => {
-    const nameInput = document.getElementById("setting-name") as HTMLInputElement;
-    const titleInput = document.getElementById("setting-title") as HTMLInputElement;
-    const emailInput = document.getElementById("setting-email") as HTMLInputElement;
-    const locationInput = document.getElementById("setting-location") as HTMLInputElement;
-    const githubInput = document.getElementById("setting-github") as HTMLInputElement;
-    const linkedinInput = document.getElementById("setting-linkedin") as HTMLInputElement;
-    const bioInput = document.getElementById("setting-bio") as HTMLTextAreaElement;
-
-    cms.updateSettings({
-      name: nameInput.value || "DEVARSH VINOD",
-      title: titleInput.value || "Applied Mathematics & Computer Science",
-      email: emailInput.value || "devarshvinod@gmail.com",
-      location: locationInput.value || "Slough & London, UK",
-      github: githubInput.value || "https://github.com",
-      linkedin: linkedinInput.value || "https://linkedin.com",
-      bio: bioInput.value,
-    });
-
-    showToast("✓ Profile settings saved successfully");
+    saveAllCurrentState();
   });
 
   // Apply Limits
   document.getElementById("save-limits-btn")?.addEventListener("click", () => {
-    const projInput = document.getElementById("setting-proj-limit") as HTMLInputElement;
-    const expInput = document.getElementById("setting-exp-limit") as HTMLInputElement;
-    const blogInput = document.getElementById("setting-blog-limit") as HTMLInputElement;
-
-    cms.updateSettings({
-      featuredProjectsLimit: parseInt(projInput.value, 10) || 3,
-      featuredExperienceLimit: parseInt(expInput.value, 10) || 3,
-      featuredBlogsLimit: parseInt(blogInput.value, 10) || 3,
-    });
-
-    renderAll();
-    showToast("✓ Storyboard display limits updated and applied");
+    saveAllCurrentState();
   });
 
   // Reset to Defaults

@@ -5,6 +5,7 @@ import { escapeHtml } from "./utils";
 export function renderDynamicContent(): () => void {
   renderProfileAndSettings();
   renderEducationList();
+  renderCompetitionsList();
   renderProjectsList();
   renderExperienceList();
   renderBlogsList();
@@ -13,6 +14,7 @@ export function renderDynamicContent(): () => void {
   const unsubscribe = cms.subscribe(() => {
     renderProfileAndSettings();
     renderEducationList();
+    renderCompetitionsList();
     renderProjectsList();
     renderExperienceList();
     renderBlogsList();
@@ -25,7 +27,25 @@ export function renderDynamicContent(): () => void {
 function renderProfileAndSettings() {
   const settings = cms.getSettings();
 
-  // Monogram / Name
+  // Update Page Title
+  if (typeof document !== "undefined" && settings.name) {
+    document.title = settings.name;
+  }
+
+  // Monogram Initials
+  const initials = settings.name
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
+  document.querySelectorAll<HTMLElement>("[data-setting-monogram]").forEach((el) => {
+    el.textContent = initials || "DV";
+  });
+
+  // Name
   document.querySelectorAll<HTMLElement>("[data-setting-name]").forEach((el) => {
     el.textContent = settings.name;
   });
@@ -102,6 +122,64 @@ function renderEducationList() {
   `
     )
     .join("");
+}
+
+function renderCompetitionsList() {
+  const container = document.querySelector<HTMLElement>("[data-dynamic-competitions]");
+  if (!container) return;
+
+  const allExp = cms.getAllExperience();
+  const comps = allExp.filter((e) => e.category === "competition");
+
+  const fallbackComps = [
+    {
+      company: "MathWorks Math Modelling (M3) Challenge",
+      period: "2026",
+      highlight: "Top 20% Worldwide.",
+      text: "Trained an XGBoost gradient boosting model on UK gambling datasets and engineered Monte Carlo stochastic simulations to quantify demographic tail risk.",
+    },
+    {
+      company: "Lockheed Martin Code Quest",
+      period: "2025 & 2026",
+      highlight: "Advanced Division: Top 3 (2026) & 2nd Place (2025).",
+      text: "Led team in high-pressure algorithmic problem solving using Python under strict complexity constraints.",
+    },
+  ];
+
+  if (comps.length > 0) {
+    container.innerHTML = comps
+      .slice(0, 2)
+      .map(
+        (c) => `
+      <div class="space-y-1">
+        <div class="flex justify-between text-xs text-neutral-400 font-sans">
+          <span class="text-neutral-300 font-medium">${escapeHtml(c.company || c.role)}</span>
+          <span class="font-mono text-neutral-500">${escapeHtml(c.period)}</span>
+        </div>
+        <p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">
+          <span class="text-white font-medium">${escapeHtml(c.role)}.</span> ${escapeHtml(c.bulletPoints[0] || c.description)}
+        </p>
+      </div>
+    `
+      )
+      .join("");
+  } else {
+    container.innerHTML = fallbackComps
+      .map(
+        (c) => `
+      <div class="space-y-1">
+        <div class="flex justify-between text-xs text-neutral-400 font-sans">
+          <span class="text-neutral-300 font-medium">${escapeHtml(c.company)}</span>
+          <span class="font-mono text-neutral-500">${escapeHtml(c.period)}</span>
+        </div>
+        <p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">
+          <span class="text-white font-medium">${escapeHtml(c.highlight)}</span> ${escapeHtml(c.text)}
+        </p>
+      </div>
+    `
+      )
+      .join("");
+  }
 }
 
 function renderProjectsList() {

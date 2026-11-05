@@ -10,6 +10,10 @@ let isArticleClosing = false;
 let isProjectOpen = false;
 let isProjectClosing = false;
 
+let currentArchiveCategory: "experience" | "projects" | "blogs" | null = null;
+let currentBlogPostId: string | null = null;
+let currentProjectId: string | null = null;
+
 let lastFocusedElement: HTMLElement | null = null;
 
 function clearModalQueryParams() {
@@ -149,6 +153,29 @@ export function initVerticalViews() {
   if (testProject) {
     openProjectDetail(testProject, true);
   }
+
+  // Live reactivity: re-render open vertical overlays whenever CMS mutations occur
+  cms.subscribe(() => {
+    if (isArchiveOpen && currentArchiveCategory) {
+      openArchiveView(currentArchiveCategory, true);
+    }
+    if (isArticleOpen && currentBlogPostId) {
+      const exists = cms.getAllBlogs().some((b) => b.id === currentBlogPostId);
+      if (exists) {
+        openBlogPost(currentBlogPostId, true);
+      } else {
+        closeArticleView();
+      }
+    }
+    if (isProjectOpen && currentProjectId) {
+      const exists = cms.getAllProjects().some((p) => p.id === currentProjectId);
+      if (exists) {
+        openProjectDetail(currentProjectId, true);
+      } else {
+        closeProjectDetail();
+      }
+    }
+  });
 }
 
 /**
@@ -164,6 +191,7 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
   if (!archiveView || !titleEl || !countEl || !contentEl || isArchiveClosing) return;
 
   lastFocusedElement = document.activeElement as HTMLElement | null;
+  currentArchiveCategory = category;
 
   if (category === "experience") {
     const list = cms.getAllExperience();
@@ -321,6 +349,7 @@ export function closeArchiveView() {
       archiveView.setAttribute("aria-hidden", "true");
       isArchiveOpen = false;
       isArchiveClosing = false;
+      currentArchiveCategory = null;
       if (!isArticleOpen && !isProjectOpen) {
         lockScroll(false);
       }
@@ -347,6 +376,7 @@ export function openBlogPost(blogId: string, immediate = false) {
   if (!blog) return;
 
   lastFocusedElement = document.activeElement as HTMLElement | null;
+  currentBlogPostId = blogId;
 
   if (postCategory) postCategory.textContent = blog.tags.slice(0, 2).join(" · ") || "Research Note";
   if (postMeta) postMeta.textContent = `${blog.date} · ${blog.readTime}`;
@@ -406,6 +436,7 @@ export function closeArticleView() {
       articleView.setAttribute("aria-hidden", "true");
       isArticleOpen = false;
       isArticleClosing = false;
+      currentBlogPostId = null;
       if (!isArchiveOpen && !isProjectOpen) {
         lockScroll(false);
       }
@@ -437,6 +468,7 @@ export function openProjectDetail(projectId: string, immediate = false) {
   if (!project) return;
 
   lastFocusedElement = document.activeElement as HTMLElement | null;
+  currentProjectId = projectId;
 
   if (categoryEl) categoryEl.textContent = project.category || "Computational Project";
   if (metaEl) metaEl.textContent = `${project.year} · Computational Implementation`;
@@ -521,6 +553,7 @@ export function closeProjectDetail() {
       projectView.setAttribute("aria-hidden", "true");
       isProjectOpen = false;
       isProjectClosing = false;
+      currentProjectId = null;
       if (!isArchiveOpen && !isArticleOpen) {
         lockScroll(false);
       }

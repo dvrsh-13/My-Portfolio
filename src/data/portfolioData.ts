@@ -65,7 +65,7 @@ export const INITIAL_SETTINGS: SiteSettings = {
   bio: "Gap year student specialising in Computer Science and Mathematics, aiming for a degree apprenticeship. Strong interest in software engineering, systems engineering, data analytics, and mathematical modelling in quantitative finance.",
   location: "LONDON & SLOUGH, UK",
   email: "devarshvinod@gmail.com",
-  github: "https://github.com",
+  github: "https://github.com/dvrsh-13",
   linkedin: "https://linkedin.com",
   featuredProjectsLimit: 3,
   featuredExperienceLimit: 3,

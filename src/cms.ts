@@ -82,6 +82,8 @@ function setupAuthGate() {
     renderAll();
     setupEventListeners();
     setupStickyHeaderCollapse();
+    // Live synchronization across multiple open CMS Studio windows
+    cms.subscribe(() => renderAll());
     return;
   }
 
@@ -144,6 +146,7 @@ function setupAuthGate() {
         renderAll();
         setupEventListeners();
         setupStickyHeaderCollapse();
+        cms.subscribe(() => renderAll());
       } else {
         const attempts = getFailedAttempts() + 1;
         if (attempts >= 5) {
@@ -775,6 +778,11 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
 }
 
 function handleFormSubmit() {
+  const form = document.getElementById("cms-editor-form") as HTMLFormElement | null;
+  if (form && !form.reportValidity()) {
+    return;
+  }
+
   const featuredCheckbox = document.getElementById("modal-featured-checkbox") as HTMLInputElement;
   const isFeatured = featuredCheckbox ? featuredCheckbox.checked : true;
 
@@ -956,18 +964,32 @@ function setupEventListeners() {
   document.getElementById("add-blog-btn")?.addEventListener("click", () => openEditModal("blog"));
   document.getElementById("add-education-btn")?.addEventListener("click", () => openEditModal("education"));
 
+  const modal = document.getElementById("cms-editor-modal") as HTMLDialogElement | null;
   document.getElementById("modal-close-btn")?.addEventListener("click", () => {
-    const modal = document.getElementById("cms-editor-modal") as HTMLDialogElement;
+    modal?.close();
+  });
+  document.getElementById("modal-cancel-btn")?.addEventListener("click", () => {
     modal?.close();
   });
 
+  // Attach submit listeners to form and submit buttons for guaranteed event capture
+  const editorForm = document.getElementById("cms-editor-form") as HTMLFormElement | null;
+  editorForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    handleFormSubmit();
+  });
+
+  document.getElementById("modal-submit-btn")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    handleFormSubmit();
+  });
   document.getElementById("modal-save-btn")?.addEventListener("click", (e) => {
     e.preventDefault();
     handleFormSubmit();
   });
 
-  // Profile save
-  const handleSaveProfile = () => {
+  // Unified save for Profile, Candidate Settings, and Storyboard Display Limits
+  const handleSaveAllSettings = (isGlobalSave = false) => {
     const name = (document.getElementById("setting-name") as HTMLInputElement)?.value;
     const title = (document.getElementById("setting-title") as HTMLInputElement)?.value;
     const email = (document.getElementById("setting-email") as HTMLInputElement)?.value;
@@ -976,49 +998,41 @@ function setupEventListeners() {
     const linkedin = (document.getElementById("setting-linkedin") as HTMLInputElement)?.value;
     const bio = (document.getElementById("setting-bio") as HTMLTextAreaElement)?.value;
 
-    cms.updateSettings({
-      name,
-      title,
-      email,
-      location,
-      github,
-      linkedin,
-      bio,
-    });
-    showToast("✓ Profile & Candidate Settings saved");
-  };
+    const projLimitInput = document.getElementById("setting-proj-limit") as HTMLInputElement | null;
+    const expLimitInput = document.getElementById("setting-exp-limit") as HTMLInputElement | null;
+    const blogLimitInput = document.getElementById("setting-blog-limit") as HTMLInputElement | null;
 
-  document.getElementById("save-profile-btn")?.addEventListener("click", handleSaveProfile);
-  document.getElementById("cms-persistent-save-btn")?.addEventListener("click", () => {
-    handleSaveProfile();
-    showToast("✓ All CMS Changes Saved");
-  });
-
-  // Display Limits save
-  document.getElementById("save-limits-btn")?.addEventListener("click", () => {
-    const featuredProjectsLimit = parseInt(
-      (document.getElementById("setting-proj-limit") as HTMLInputElement)?.value || "3",
-      10
-    );
-    const featuredExperienceLimit = parseInt(
-      (document.getElementById("setting-exp-limit") as HTMLInputElement)?.value || "3",
-      10
-    );
-    const featuredBlogsLimit = parseInt(
-      (document.getElementById("setting-blog-limit") as HTMLInputElement)?.value || "3",
-      10
-    );
+    const featuredProjectsLimit = Math.max(1, Math.min(10, parseInt(projLimitInput?.value || "3", 10) || 3));
+    const featuredExperienceLimit = Math.max(1, Math.min(10, parseInt(expLimitInput?.value || "3", 10) || 3));
+    const featuredBlogsLimit = Math.max(1, Math.min(10, parseInt(blogLimitInput?.value || "3", 10) || 3));
 
     cms.updateSettings({
+      ...(name !== undefined ? { name } : {}),
+      ...(title !== undefined ? { title } : {}),
+      ...(email !== undefined ? { email } : {}),
+      ...(location !== undefined ? { location } : {}),
+      ...(github !== undefined ? { github } : {}),
+      ...(linkedin !== undefined ? { linkedin } : {}),
+      ...(bio !== undefined ? { bio } : {}),
       featuredProjectsLimit,
       featuredExperienceLimit,
       featuredBlogsLimit,
     });
-    showToast("✓ Storyboard display limits saved");
+
     renderCMSProjects();
     renderCMSExperience();
     renderCMSBlogs();
-  });
+
+    if (isGlobalSave) {
+      showToast("✓ All CMS Changes Saved");
+    } else {
+      showToast("✓ Settings & Display Bounds Saved");
+    }
+  };
+
+  document.getElementById("save-profile-btn")?.addEventListener("click", () => handleSaveAllSettings(false));
+  document.getElementById("save-limits-btn")?.addEventListener("click", () => handleSaveAllSettings(false));
+  document.getElementById("cms-persistent-save-btn")?.addEventListener("click", () => handleSaveAllSettings(true));
 
   // Reset defaults
   document.getElementById("reset-defaults-btn")?.addEventListener("click", () => {

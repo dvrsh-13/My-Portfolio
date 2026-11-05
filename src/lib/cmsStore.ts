@@ -28,16 +28,45 @@ export class CMSStore {
   private blogs!: BlogItem[];
   private listeners: (() => void)[] = [];
   private memoryFallback: Record<string, string> = {};
+  private broadcastChannel: BroadcastChannel | null = null;
 
   private constructor() {
     this.reloadAllFromStorage();
 
-    // Cross-tab synchronization: notify listeners when changes occur in other tabs/windows
+    // Multi-window & cross-tab synchronization
     if (typeof window !== "undefined") {
+      // 1. BroadcastChannel: instant zero-latency cross-tab signaling
+      if (typeof BroadcastChannel !== "undefined") {
+        try {
+          this.broadcastChannel = new BroadcastChannel("folio_cms_sync");
+          this.broadcastChannel.onmessage = (e) => {
+            if (e.data?.type === "CMS_UPDATE") {
+              this.reloadAllFromStorage();
+              this.notify(false);
+            }
+          };
+        } catch (err) {
+          console.warn("[CMS] BroadcastChannel initialization failed:", err);
+        }
+      }
+
+      // 2. Storage event: fallback for standard multi-tab updates
       window.addEventListener("storage", (e) => {
         if (!e.key || Object.values(STORAGE_KEYS).includes(e.key)) {
           this.reloadAllFromStorage();
-          this.notify();
+          this.notify(false);
+        }
+      });
+
+      // 3. Focus / Visibility listener: re-check when returning to this tab
+      const handleTabFocus = () => {
+        this.reloadAllFromStorage();
+        this.notify(false);
+      };
+      window.addEventListener("focus", handleTabFocus);
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          handleTabFocus();
         }
       });
     }
@@ -100,8 +129,15 @@ export class CMSStore {
     }
   }
 
-  private notify() {
+  private notify(broadcast = true) {
     this.listeners.forEach((fn) => fn());
+    if (broadcast && this.broadcastChannel) {
+      try {
+        this.broadcastChannel.postMessage({ type: "CMS_UPDATE", timestamp: Date.now() });
+      } catch (err) {
+        console.warn("[CMS] BroadcastChannel post failed:", err);
+      }
+    }
   }
 
   public subscribe(fn: () => void): () => void {

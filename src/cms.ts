@@ -5,11 +5,17 @@ type CurrentEditType = "project" | "experience" | "blog" | "education";
 let activeEditType: CurrentEditType = "project";
 let activeEditId: string | null = null;
 
-document.addEventListener("DOMContentLoaded", () => {
+function init() {
   setupTabs();
   renderAll();
   setupEventListeners();
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
 
 function renderAll() {
   renderCMSProjects();
@@ -28,11 +34,11 @@ function setupTabs() {
       const target = btn.dataset.tabBtn;
 
       tabBtns.forEach((b) => {
-        b.classList.remove("bg-white", "text-black", "shadow-sm");
-        b.classList.add("text-neutral-400", "hover:text-white", "hover:bg-neutral-900/70");
+        b.classList.remove("border-white", "text-white", "font-medium");
+        b.classList.add("border-transparent", "text-neutral-400", "font-normal");
       });
-      btn.classList.add("bg-white", "text-black", "shadow-sm");
-      btn.classList.remove("text-neutral-400", "hover:text-white", "hover:bg-neutral-900/70");
+      btn.classList.add("border-white", "text-white", "font-medium");
+      btn.classList.remove("border-transparent", "text-neutral-400", "font-normal");
 
       tabPanels.forEach((p) => {
         p.classList.toggle("hidden", p.dataset.tabPanel !== target);
@@ -83,30 +89,30 @@ function renderCMSProjects() {
   container.innerHTML = projects
     .map(
       (p) => `
-    <div class="border border-neutral-800/80 hover:border-neutral-700/80 p-5 md:p-6 bg-[#121212] hover:bg-[#141414] rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 transition-all">
-      <div class="space-y-1.5 max-w-2xl">
-        <div class="flex flex-wrap items-center gap-2.5">
-          <h3 class="font-serif text-lg md:text-xl font-normal text-white">${p.title}</h3>
-          <span class="font-mono text-[10px] tracking-wide uppercase px-2.5 py-0.5 rounded-full border ${
+    <div class="border border-neutral-800 hover:border-neutral-700 p-6 bg-[#131316] rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-colors">
+      <div class="space-y-2 max-w-2xl">
+        <div class="flex flex-wrap items-center gap-3">
+          <h3 class="font-serif text-xl font-normal text-white">${p.title}</h3>
+          <span class="font-mono text-xs px-2.5 py-0.5 rounded border ${
             p.featured
-              ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300 font-medium"
-              : "border-neutral-800 bg-neutral-900/60 text-neutral-400"
+              ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-300 font-medium"
+              : "border-neutral-800 text-neutral-500"
           }">
-            ${p.featured ? "● Storyboard Featured" : "Archive View"}
+            ${p.featured ? "● Storyboard Featured" : "Archive Only"}
           </span>
         </div>
         <p class="font-sans text-xs text-neutral-400 font-light">${p.subtitle} · <span class="text-neutral-500">${p.category} (${p.year})</span></p>
-        <p class="font-sans text-xs text-neutral-400 font-light line-clamp-2 leading-relaxed">${p.description}</p>
+        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${p.description}</p>
       </div>
 
       <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
-        <button data-edit-proj="${p.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 text-neutral-200 hover:text-white transition-all cursor-pointer">
+        <button data-edit-proj="${p.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
           Edit
         </button>
-        <button data-toggle-proj="${p.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 ${p.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-all cursor-pointer">
+        <button data-toggle-proj="${p.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 ${p.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-colors cursor-pointer">
           ${p.featured ? "Unfeature" : "Feature"}
         </button>
-        <button data-delete-proj="${p.id}" class="px-3.5 py-1.5 rounded-xl border border-transparent hover:border-rose-900/40 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-all cursor-pointer">
+        <button data-delete-proj="${p.id}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
           Delete
         </button>
       </div>
@@ -162,30 +168,30 @@ function renderCMSExperience() {
   container.innerHTML = exp
     .map(
       (e) => `
-    <div class="border border-neutral-800/80 hover:border-neutral-700/80 p-5 md:p-6 bg-[#121212] hover:bg-[#141414] rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 transition-all">
-      <div class="space-y-1.5 max-w-2xl">
-        <div class="flex flex-wrap items-center gap-2.5">
-          <h3 class="font-serif text-lg md:text-xl font-normal text-white">${e.company}</h3>
-          <span class="font-mono text-[10px] tracking-wide uppercase px-2.5 py-0.5 rounded-full border ${
+    <div class="border border-neutral-800 hover:border-neutral-700 p-6 bg-[#131316] rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-colors">
+      <div class="space-y-2 max-w-2xl">
+        <div class="flex flex-wrap items-center gap-3">
+          <h3 class="font-serif text-xl font-normal text-white">${e.company}</h3>
+          <span class="font-mono text-xs px-2.5 py-0.5 rounded border ${
             e.featured
-              ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300 font-medium"
-              : "border-neutral-800 bg-neutral-900/60 text-neutral-400"
+              ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-300 font-medium"
+              : "border-neutral-800 text-neutral-500"
           }">
-            ${e.featured ? "● Storyboard Featured" : "Archive View"}
+            ${e.featured ? "● Storyboard Featured" : "Archive Only"}
           </span>
         </div>
         <p class="font-sans text-xs text-neutral-400 font-light">${e.role} · <span class="text-neutral-500">${e.location} (${e.period})</span></p>
-        <p class="font-sans text-xs text-neutral-400 font-light line-clamp-2 leading-relaxed">${e.bulletPoints[0] || e.description}</p>
+        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${e.bulletPoints[0] || e.description}</p>
       </div>
 
       <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
-        <button data-edit-exp="${e.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 text-neutral-200 hover:text-white transition-all cursor-pointer">
+        <button data-edit-exp="${e.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
           Edit
         </button>
-        <button data-toggle-exp="${e.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 ${e.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-all cursor-pointer">
+        <button data-toggle-exp="${e.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 ${e.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-colors cursor-pointer">
           ${e.featured ? "Unfeature" : "Feature"}
         </button>
-        <button data-delete-exp="${e.id}" class="px-3.5 py-1.5 rounded-xl border border-transparent hover:border-rose-900/40 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-all cursor-pointer">
+        <button data-delete-exp="${e.id}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
           Delete
         </button>
       </div>
@@ -241,30 +247,30 @@ function renderCMSBlogs() {
   container.innerHTML = blogs
     .map(
       (b) => `
-    <div class="border border-neutral-800/80 hover:border-neutral-700/80 p-5 md:p-6 bg-[#121212] hover:bg-[#141414] rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 transition-all">
-      <div class="space-y-1.5 max-w-2xl">
-        <div class="flex flex-wrap items-center gap-2.5">
-          <h3 class="font-serif text-lg md:text-xl font-normal text-white">${b.title}</h3>
-          <span class="font-mono text-[10px] tracking-wide uppercase px-2.5 py-0.5 rounded-full border ${
+    <div class="border border-neutral-800 hover:border-neutral-700 p-6 bg-[#131316] rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-colors">
+      <div class="space-y-2 max-w-2xl">
+        <div class="flex flex-wrap items-center gap-3">
+          <h3 class="font-serif text-xl font-normal text-white">${b.title}</h3>
+          <span class="font-mono text-xs px-2.5 py-0.5 rounded border ${
             b.featured
-              ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300 font-medium"
-              : "border-neutral-800 bg-neutral-900/60 text-neutral-400"
+              ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-300 font-medium"
+              : "border-neutral-800 text-neutral-500"
           }">
-            ${b.featured ? "● Storyboard Featured" : "Archive View"}
+            ${b.featured ? "● Storyboard Featured" : "Archive Only"}
           </span>
         </div>
         <p class="font-sans text-xs text-neutral-400 font-light">${b.date} · ${b.readTime} · <span class="text-neutral-500">${b.tags.join(", ")}</span></p>
-        <p class="font-sans text-xs text-neutral-400 font-light line-clamp-2 leading-relaxed">${b.excerpt}</p>
+        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${b.excerpt}</p>
       </div>
 
       <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
-        <button data-edit-blog="${b.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 text-neutral-200 hover:text-white transition-all cursor-pointer">
+        <button data-edit-blog="${b.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
           Edit
         </button>
-        <button data-toggle-blog="${b.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 ${b.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-all cursor-pointer">
+        <button data-toggle-blog="${b.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 ${b.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-colors cursor-pointer">
           ${b.featured ? "Unfeature" : "Feature"}
         </button>
-        <button data-delete-blog="${b.id}" class="px-3.5 py-1.5 rounded-xl border border-transparent hover:border-rose-900/40 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-all cursor-pointer">
+        <button data-delete-blog="${b.id}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
           Delete
         </button>
       </div>
@@ -312,18 +318,18 @@ function renderCMSEducation() {
   container.innerHTML = edu
     .map(
       (item) => `
-    <div class="border border-neutral-800/80 hover:border-neutral-700/80 p-5 md:p-6 bg-[#121212] hover:bg-[#141414] rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 transition-all">
-      <div class="space-y-1.5 max-w-2xl">
-        <h3 class="font-serif text-lg md:text-xl font-normal text-white">${item.institution}</h3>
+    <div class="border border-neutral-800 hover:border-neutral-700 p-6 bg-[#131316] rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-colors">
+      <div class="space-y-2 max-w-2xl">
+        <h3 class="font-serif text-xl font-normal text-white">${item.institution}</h3>
         <p class="font-sans text-xs text-neutral-300 font-medium">${item.program} · <span class="text-neutral-400 font-light">${item.grades}</span></p>
         <p class="font-mono text-xs text-neutral-500">${item.period}</p>
       </div>
 
       <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
-        <button data-edit-edu="${item.id}" class="px-3.5 py-1.5 rounded-xl border border-neutral-800 hover:border-neutral-600 bg-neutral-900/80 hover:bg-neutral-800 text-neutral-200 hover:text-white transition-all cursor-pointer">
+        <button data-edit-edu="${item.id}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
           Edit
         </button>
-        <button data-delete-edu="${item.id}" class="px-3.5 py-1.5 rounded-xl border border-transparent hover:border-rose-900/40 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-all cursor-pointer">
+        <button data-delete-edu="${item.id}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
           Delete
         </button>
       </div>

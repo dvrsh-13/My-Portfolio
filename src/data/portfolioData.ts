@@ -206,10 +206,9 @@ export const INITIAL_EDUCATION: EducationItem[] = [
     "institution": "De Salis Studio College",
     "program": "GCSE Qualifications",
     "period": "Sep 2021 — Jun 2024",
-    "grades": "Maths 9, Further Maths 8, Statistics 7, English Lang 8, English Lit 8",
+    "grades": "Maths 9, Further Maths 8, Statistics 7, English Language 8, English Literature 8",
     "details": [
-      "Top grade 9 in Mathematics, with grade 8 in Further Mathematics and 7 in Statistics",
-      "Demonstrated early distinction in quantitative analysis and formal mathematical reasoning"
+      "Achieved  grade 9 in Mathematics, with grade 8 in Further Mathematics and 7 in Statistics"
     ],
     "featured": true
   }

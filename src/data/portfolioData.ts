@@ -68,8 +68,8 @@ export const INITIAL_SETTINGS: SiteSettings = {
   "bio": "Gap year student specialising in Computer Science and Mathematics, aiming for a degree apprenticeship. Strong interest in software engineering, systems engineering, data analytics, and mathematical modelling in quantitative finance.",
   "location": "LONDON, UK",
   "email": "devarsh.vinod@outlook.com",
-  "github": "https://github.com",
-  "linkedin": "https://linkedin.com",
+  "github": "https://github.com/dvrsh-13",
+  "linkedin": "https://www.linkedin.com/in/devarsh-vinod/",
   "featuredProjectsLimit": 3,
   "featuredExperienceLimit": 3,
   "featuredBlogsLimit": 3
@@ -93,32 +93,10 @@ export const INITIAL_PROJECTS: ProjectItem[] = [
       "NumPy",
       "Pandas",
       "Deflated Sharpe Ratio",
-      "Statistical Arbitrage",
-      "Financial Mathematics"
+      "Statistical Arbitrage"
     ],
     "featured": true,
-    "codeSnippet": "def deflated_sharpe_ratio(returns, n_trials, var_sharpe):\n    # Adjusts annualized Sharpe for multiple testing & selection bias\n    gamma = 0.5772156649  # Euler-Mascheroni constant\n    expected_max = (1 - gamma) * norm.ppf(1 - 1/n_trials) + gamma * norm.ppf(1 - 1/(n_trials * np.e))\n    dsr_stat = (sharpe - expected_max) / np.sqrt(var_sharpe)\n    return 1 - norm.cdf(-dsr_stat)"
-  },
-  {
-    "id": "m3-challenge-model",
-    "title": "Monte Carlo Risk & XGBoost Demographics",
-    "subtitle": "MathWorks Math Modelling (M3) Challenge",
-    "category": "Predictive Analytics & Simulation",
-    "year": "2026",
-    "description": "Trained an XGBoost gradient boosting model on UK behavioral datasets and engineered Monte Carlo stochastic simulations to forecast yearly profit and loss by demographic cohorts, quantifying downside financial risk.",
-    "metrics": [
-      "Placed Top 20% Worldwide in rigorous mathematical modelling competition",
-      "100,000-iteration Monte Carlo trials mapping extreme tail risk distributions",
-      "Evaluated feature importance metrics with Scikit-learn and Seaborn"
-    ],
-    "tags": [
-      "XGBoost",
-      "Monte Carlo",
-      "Scikit-Learn",
-      "Matplotlib",
-      "Risk Modelling"
-    ],
-    "featured": true
+    "codeSnippet": "def deflated_sharpe_ratio(returns, n_trials, var_sharpe):\n    # Adjusts annualised Sharpe for multiple testing & selection bias\n    gamma = 0.5772156649  # Euler-Mascheroni constant\n    expected_max = (1 - gamma) * norm.ppf(1 - 1/n_trials) + gamma * norm.ppf(1 - 1/(n_trials * np.e))\n    dsr_stat = (sharpe - expected_max) / np.sqrt(var_sharpe)\n    return 1 - norm.cdf(-dsr_stat)"
   }
 ];
 
@@ -172,7 +150,7 @@ export const INITIAL_EXPERIENCE: ExperienceItem[] = [
     "location": "Ruislip, UK",
     "period": "May 2023 – Jun 2023",
     "category": "work",
-    "description": "Infrastructure systems engineering and cost constraint optimization.",
+    "description": "Infrastructure systems engineering and cost constraint optimisation.",
     "bulletPoints": [
       "Led a team to design a high-speed rail system, balancing engineering requirements against cost constraints.",
       "Secured first place by presenting our solution to a board of directors."
@@ -186,10 +164,10 @@ export const INITIAL_EXPERIENCE: ExperienceItem[] = [
     "location": "International / Remote",
     "period": "2026",
     "category": "competition",
-    "description": "Trained an XGBoost gradient boosting model on UK behavioural datasets and engineered Monte Carlo stochastic simulations to quantify demographic tail risk.",
+    "description": "Trained an XGBoost  model on UK behavioural datasets and used Monte Carlo simulations to predict yearly gambling profit & loss based on demographics.",
     "bulletPoints": [
-      "Trained an XGBoost gradient boosting model on UK behavioural datasets and engineered Monte Carlo stochastic simulations to quantify demographic tail risk.",
-      "Produced technical paper documenting stochastic risk distribution across age cohorts under strict 14-hour deadline."
+      "Trained an XGBoost  model on UK behavioural datasets and used Monte Carlo simulations to predict yearly gambling profit & loss based on demographics.",
+      "Produced technical paper  under strict 14-hour deadline through effective collaboration and teamwork."
     ],
     "featured": true
   },
@@ -218,7 +196,8 @@ export const INITIAL_EDUCATION: EducationItem[] = [
     "grades": "Achieved AAA",
     "details": [
       "Extended Project Qualification (EPQ) Dissertation — Grade A: 'Use of AI in Autonomous Weaponry and Cyber Warfare'",
-      "Leadership: Sixth Form Student Leader, Digital Team Member, Former Co-lead of Computing Society"
+      "Leadership: Sixth Form Student Leader, Digital Team Member, Former Co-lead of Computing Society",
+      "Rigorous study in pure mathematics, complex numbers, matrices, differential equations, and computational data structures"
     ],
     "featured": true
   },
@@ -228,7 +207,10 @@ export const INITIAL_EDUCATION: EducationItem[] = [
     "program": "GCSE Qualifications",
     "period": "Sep 2021 — Jun 2024",
     "grades": "Maths 9, Further Maths 8, Statistics 7, English Lang 8, English Lit 8",
-    "details": [],
+    "details": [
+      "Top grade 9 in Mathematics, with grade 8 in Further Mathematics and 7 in Statistics",
+      "Demonstrated early distinction in quantitative analysis and formal mathematical reasoning"
+    ],
     "featured": true
   }
 ];

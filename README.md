@@ -1,6 +1,6 @@
-# Devarsh Vinod — Systems & Computational Portfolio
+# Devarsh Vinod — Portfolio
 
-A minimalist, high-performance portfolio website engineered for computer science, mathematics, and quantitative systems. Built with a dual-axis continuous storyboard, dedicated vertical reading views, and fluid typographic geometry.
+A minimalist, high-performance portfolio website. Built with a dual-axis continuous storyboard and dedicated vertical reading views.
 
 ---
 

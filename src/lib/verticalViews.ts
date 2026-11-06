@@ -194,7 +194,7 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
   currentArchiveCategory = category;
 
   if (category === "experience") {
-    const list = cms.getAllExperience();
+    const list = cms.getAllExperience().filter((e) => e.category === "work");
     titleEl.textContent = "Work Experience & Placements";
     countEl.textContent = `${list.length} Industrial & Engineering Records`;
 
@@ -292,7 +292,7 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
       >
         <div class="flex justify-between items-baseline text-xs font-sans text-neutral-400">
           <span class="uppercase tracking-widest text-neutral-300 font-medium">${b.tags.map(escapeHtml).join(" · ")}</span>
-          <span class="font-mono text-neutral-500">${escapeHtml(b.date)} · ${escapeHtml(b.readTime)}</span>
+          <span class="font-mono text-neutral-500">${escapeHtml(b.date)}</span>
         </div>
         <h3 class="font-serif text-2xl md:text-3xl text-white font-normal group-hover:text-neutral-400 transition-colors flex items-center justify-between">
           <span>${escapeHtml(b.title)}</span>
@@ -379,12 +379,12 @@ export function openBlogPost(blogId: string, immediate = false) {
   currentBlogPostId = blogId;
 
   if (postCategory) postCategory.textContent = blog.tags.slice(0, 2).join(" · ") || "Research Note";
-  if (postMeta) postMeta.textContent = `${blog.date} · ${blog.readTime}`;
+  if (postMeta) postMeta.textContent = blog.date;
   postTitle.textContent = blog.title;
   if (postExcerpt) postExcerpt.textContent = blog.excerpt;
 
   // Format paragraphs safely
-  const paragraphs = blog.content.split("\n\n").filter(Boolean);
+  const paragraphs = blog.content.split(/\r?\n\r?\n/).filter(Boolean);
   postContent.innerHTML = paragraphs
     .map(
       (p) =>
@@ -476,7 +476,7 @@ export function openProjectDetail(projectId: string, immediate = false) {
   if (subtitleEl) subtitleEl.textContent = project.subtitle;
 
   // Format description paragraphs safely
-  const paragraphs = project.description.split("\n\n").filter(Boolean);
+  const paragraphs = project.description.split(/\r?\n\r?\n/).filter(Boolean);
   descEl.innerHTML = paragraphs
     .map(
       (p) =>

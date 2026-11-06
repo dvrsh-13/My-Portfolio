@@ -2,7 +2,7 @@ import { cms } from "./lib/cmsStore";
 import type { ProjectItem, ExperienceItem, BlogItem, EducationItem } from "./data/portfolioData";
 import { escapeHtml } from "./lib/utils";
 
-type CurrentEditType = "project" | "experience" | "blog" | "education";
+type CurrentEditType = "project" | "experience" | "competition" | "blog" | "education";
 let activeEditType: CurrentEditType = "project";
 let activeEditId: string | null = null;
 
@@ -190,6 +190,7 @@ if (document.readyState === "loading") {
 function renderAll() {
   renderCMSProjects();
   renderCMSExperience();
+  renderCMSCompetitions();
   renderCMSBlogs();
   renderCMSEducation();
   loadProfileAndSettings();
@@ -216,6 +217,21 @@ function setupTabs() {
         p.classList.toggle("hidden", p.dataset.tabPanel !== target);
       });
     });
+  });
+
+  const tabNav = document.getElementById("cms-tabs-nav");
+  tabNav?.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    const btnArray = Array.from(tabBtns);
+    const currentIndex = btnArray.findIndex((b) => b === document.activeElement);
+    if (currentIndex === -1) return;
+    e.preventDefault();
+    const nextIndex =
+      e.key === "ArrowRight"
+        ? (currentIndex + 1) % btnArray.length
+        : (currentIndex - 1 + btnArray.length) % btnArray.length;
+    btnArray[nextIndex].focus();
+    btnArray[nextIndex].click();
   });
 }
 
@@ -323,14 +339,14 @@ function renderCMSProjects() {
 }
 
 // -------------------------------------------------------------
-// 2. Experience CMS
+// 2. Experience CMS (Industrial Placements)
 // -------------------------------------------------------------
 function renderCMSExperience() {
   const container = document.getElementById("cms-experience-list");
   const indicator = document.getElementById("experience-limit-indicator");
   if (!container) return;
 
-  const exp = cms.getAllExperience();
+  const exp = cms.getAllExperience().filter((e) => e.category === "work");
   const limit = cms.getSettings().featuredExperienceLimit;
   const featuredCount = exp.filter((e) => e.featured).length;
 
@@ -402,7 +418,88 @@ function renderCMSExperience() {
 }
 
 // -------------------------------------------------------------
-// 3. Blogs CMS
+// 3. Competitions CMS (Olympiads & Hackathons)
+// -------------------------------------------------------------
+function renderCMSCompetitions() {
+  const container = document.getElementById("cms-competitions-list");
+  const indicator = document.getElementById("competitions-count-indicator");
+  if (!container) return;
+
+  const comps = cms.getAllExperience().filter((e) => e.category === "competition");
+
+  if (indicator) {
+    indicator.textContent = `${comps.length} competition & olympiad records · Rendered in Chapter 02 (Academic Record & Competitions)`;
+  }
+
+  container.innerHTML = comps
+    .map(
+      (c) => `
+    <div class="border border-neutral-800 hover:border-neutral-700 p-6 bg-[#131316] rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-colors">
+      <div class="space-y-2 max-w-2xl">
+        <div class="flex flex-wrap items-center gap-3">
+          <h3 class="font-serif text-xl font-normal text-white">${escapeHtml(c.company)}</h3>
+          <span class="font-mono text-xs px-2.5 py-0.5 rounded border ${
+            c.featured
+              ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-300 font-medium"
+              : "border-neutral-800 text-neutral-500"
+          }">
+            ${c.featured ? "● Chapter 02 Active" : "Archived"}
+          </span>
+        </div>
+        <p class="font-sans text-xs text-neutral-400 font-light">
+          <span class="text-white font-medium">${escapeHtml(c.role)}</span> · <span class="text-neutral-500">${escapeHtml(c.location || "UK")} (${escapeHtml(c.period)})</span>
+        </p>
+        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${escapeHtml(c.bulletPoints[0] || c.description)}</p>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
+        <button data-edit-comp="${escapeHtml(c.id)}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 text-neutral-200 transition-colors cursor-pointer">
+          Edit
+        </button>
+        <button data-toggle-comp="${escapeHtml(c.id)}" class="px-3.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800/60 hover:bg-neutral-700 ${c.featured ? "text-amber-300 hover:text-amber-200" : "text-neutral-300 hover:text-white"} transition-colors cursor-pointer">
+          ${c.featured ? "Unfeature" : "Feature"}
+        </button>
+        <button data-delete-comp="${escapeHtml(c.id)}" class="px-3.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/50 text-neutral-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer">
+          Delete
+        </button>
+      </div>
+    </div>
+  `
+    )
+    .join("");
+
+  container.querySelectorAll("[data-edit-comp]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-edit-comp");
+      if (id) openEditModal("competition", id);
+    });
+  });
+
+  container.querySelectorAll("[data-toggle-comp]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-toggle-comp");
+      if (id) {
+        cms.toggleExperienceFeatured(id);
+        renderCMSCompetitions();
+        showToast("Competition visibility toggled");
+      }
+    });
+  });
+
+  container.querySelectorAll("[data-delete-comp]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-delete-comp");
+      if (id && confirm("Delete this competition record?")) {
+        cms.deleteExperience(id);
+        renderCMSCompetitions();
+        showToast("Competition record deleted");
+      }
+    });
+  });
+}
+
+// -------------------------------------------------------------
+// 4. Blogs CMS
 // -------------------------------------------------------------
 function renderCMSBlogs() {
   const container = document.getElementById("cms-blogs-list");
@@ -432,7 +529,7 @@ function renderCMSBlogs() {
             ${b.featured ? "● Storyboard Featured" : "Archive Only"}
           </span>
         </div>
-        <p class="font-sans text-xs text-neutral-400 font-light">${escapeHtml(b.date)} · ${escapeHtml(b.readTime)} · <span class="text-neutral-500">${b.tags.map((t) => escapeHtml(t)).join(", ")}</span></p>
+        <p class="font-sans text-xs text-neutral-400 font-light">${escapeHtml(b.date)} · <span class="text-neutral-500">${b.tags.map((t) => escapeHtml(t)).join(", ")}</span></p>
         <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${escapeHtml(b.excerpt)}</p>
       </div>
 
@@ -693,6 +790,50 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
     (document.getElementById("f-exp-period") as HTMLInputElement).value = item?.period || "2026";
     (document.getElementById("f-exp-desc") as HTMLTextAreaElement).value = item?.description || "";
     (document.getElementById("f-exp-bullets") as HTMLTextAreaElement).value = item?.bulletPoints ? item.bulletPoints.join("\n") : "";
+  } else if (type === "competition") {
+    const item = id ? cms.getAllExperience().find((e) => e.id === id) : null;
+    titleEl.textContent = item ? "Edit Competition Record" : "New Competition Record";
+    if (featuredCheckbox) featuredCheckbox.checked = item ? item.featured : true;
+
+    fieldsContainer.innerHTML = `
+      <div class="space-y-4 font-sans text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="f-comp-company" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Competition / Organisation</label>
+            <input type="text" id="f-comp-company" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+          </div>
+          <div>
+            <label for="f-comp-role" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Award / Standing / Title</label>
+            <input type="text" id="f-comp-role" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="f-comp-period" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Year / Season</label>
+            <input type="text" id="f-comp-period" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+          </div>
+          <div>
+            <label for="f-comp-loc" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Location / Scope</label>
+            <input type="text" id="f-comp-loc" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
+          </div>
+        </div>
+        <div>
+          <label for="f-comp-desc" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Narrative Summary (Headline highlight in Chapter 02)</label>
+          <textarea id="f-comp-desc" rows="2" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y"></textarea>
+        </div>
+        <div>
+          <label for="f-comp-bullets" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Key Contributions &amp; Algorithmic Details (One per line)</label>
+          <textarea id="f-comp-bullets" rows="3" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] p-3 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans resize-y"></textarea>
+        </div>
+      </div>
+    `;
+
+    (document.getElementById("f-comp-company") as HTMLInputElement).value = item?.company || "";
+    (document.getElementById("f-comp-role") as HTMLInputElement).value = item?.role || "";
+    (document.getElementById("f-comp-period") as HTMLInputElement).value = item?.period || "2026";
+    (document.getElementById("f-comp-loc") as HTMLInputElement).value = item?.location || "UK";
+    (document.getElementById("f-comp-desc") as HTMLTextAreaElement).value = item?.description || "";
+    (document.getElementById("f-comp-bullets") as HTMLTextAreaElement).value = item?.bulletPoints ? item.bulletPoints.join("\n") : "";
   } else if (type === "blog") {
     const item = id ? cms.getAllBlogs().find((b) => b.id === id) : null;
     titleEl.textContent = item ? "Edit Research Dispatch" : "New Research Dispatch";
@@ -704,15 +845,9 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
           <label for="f-blog-title" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Article Title</label>
           <input type="text" id="f-blog-title" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label for="f-blog-date" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Publication Date</label>
-            <input type="text" id="f-blog-date" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
-          </div>
-          <div>
-            <label for="f-blog-time" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Read Time</label>
-            <input type="text" id="f-blog-time" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
-          </div>
+        <div>
+          <label for="f-blog-date" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Publication Date</label>
+          <input type="text" id="f-blog-date" class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
         </div>
         <div>
           <label for="f-blog-tags" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Tags (Comma-separated)</label>
@@ -731,7 +866,6 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
 
     (document.getElementById("f-blog-title") as HTMLInputElement).value = item?.title || "";
     (document.getElementById("f-blog-date") as HTMLInputElement).value = item?.date || "2026";
-    (document.getElementById("f-blog-time") as HTMLInputElement).value = item?.readTime || "7 min read";
     (document.getElementById("f-blog-tags") as HTMLInputElement).value = item?.tags ? item.tags.join(", ") : "Quantitative Finance, Statistics";
     (document.getElementById("f-blog-excerpt") as HTMLTextAreaElement).value = item?.excerpt || "";
     (document.getElementById("f-blog-content") as HTMLTextAreaElement).value = item?.content || "";
@@ -748,7 +882,7 @@ function openEditModal(type: CurrentEditType, id: string | null = null) {
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label for="f-edu-prog" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Program / Qualification</label>
+            <label for="f-edu-prog" class="block font-sans text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5">Programme / Qualification</label>
             <input type="text" id="f-edu-prog" required class="w-full bg-[#161616] border border-neutral-800 focus:border-white focus:bg-[#1c1c1c] px-3.5 py-2.5 text-xs text-white rounded-xl outline-none transition-all placeholder:text-neutral-600 font-sans" />
           </div>
           <div>
@@ -864,10 +998,46 @@ function handleFormSubmit() {
       });
     }
     renderCMSExperience();
+  } else if (activeEditType === "competition") {
+    const company = (document.getElementById("f-comp-company") as HTMLInputElement)?.value;
+    const role = (document.getElementById("f-comp-role") as HTMLInputElement)?.value;
+    const location = (document.getElementById("f-comp-loc") as HTMLInputElement)?.value || "UK";
+    const period = (document.getElementById("f-comp-period") as HTMLInputElement)?.value || "2026";
+    const description = (document.getElementById("f-comp-desc") as HTMLTextAreaElement)?.value || "";
+    const bulletsStr = (document.getElementById("f-comp-bullets") as HTMLTextAreaElement)?.value || "";
+
+    const bulletPoints = bulletsStr.split("\n").map((s) => s.trim()).filter(Boolean);
+
+    if (!company || !role) return;
+
+    if (activeEditId) {
+      cms.updateExperience(activeEditId, {
+        company,
+        role,
+        location,
+        period,
+        description,
+        bulletPoints,
+        featured: isFeatured,
+        category: "competition",
+      });
+    } else {
+      cms.addExperience({
+        id: "comp-" + Date.now(),
+        company,
+        role,
+        location,
+        period,
+        description,
+        bulletPoints,
+        featured: isFeatured,
+        category: "competition",
+      });
+    }
+    renderCMSCompetitions();
   } else if (activeEditType === "blog") {
     const title = (document.getElementById("f-blog-title") as HTMLInputElement)?.value;
     const date = (document.getElementById("f-blog-date") as HTMLInputElement)?.value || "2026";
-    const readTime = (document.getElementById("f-blog-time") as HTMLInputElement)?.value || "7 min read";
     const tagsStr = (document.getElementById("f-blog-tags") as HTMLInputElement)?.value || "";
     const excerpt = (document.getElementById("f-blog-excerpt") as HTMLTextAreaElement)?.value || "";
     const content = (document.getElementById("f-blog-content") as HTMLTextAreaElement)?.value || "";
@@ -880,7 +1050,6 @@ function handleFormSubmit() {
       cms.updateBlog(activeEditId, {
         title,
         date,
-        readTime,
         tags,
         excerpt,
         content,
@@ -891,7 +1060,6 @@ function handleFormSubmit() {
         id: "blog-" + Date.now(),
         title,
         date,
-        readTime,
         tags,
         excerpt,
         content,
@@ -939,19 +1107,11 @@ function handleFormSubmit() {
 }
 
 function setupStickyHeaderCollapse() {
-  const header = document.getElementById("cms-header");
   const stickyBar = document.getElementById("cms-sticky-bar");
-  if (!header || !stickyBar) return;
+  if (!stickyBar) return;
 
   const onScroll = () => {
-    const scrollY = window.scrollY;
-    if (scrollY > 60) {
-      header.classList.add("hidden");
-      stickyBar.classList.add("py-1", "shadow-xl");
-    } else {
-      header.classList.remove("hidden");
-      stickyBar.classList.remove("py-1", "shadow-xl");
-    }
+    stickyBar.classList.toggle("shadow-2xl", window.scrollY > 20);
   };
 
   window.addEventListener("scroll", onScroll, { passive: true });
@@ -961,6 +1121,7 @@ function setupEventListeners() {
   // Modal buttons
   document.getElementById("add-project-btn")?.addEventListener("click", () => openEditModal("project"));
   document.getElementById("add-experience-btn")?.addEventListener("click", () => openEditModal("experience"));
+  document.getElementById("add-competition-btn")?.addEventListener("click", () => openEditModal("competition"));
   document.getElementById("add-blog-btn")?.addEventListener("click", () => openEditModal("blog"));
   document.getElementById("add-education-btn")?.addEventListener("click", () => openEditModal("education"));
 

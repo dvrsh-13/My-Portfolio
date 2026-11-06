@@ -59,7 +59,7 @@
   2. Built **Two Dedicated Full-Page Vertical Views** in `src/lib/verticalViews.ts`:
      - **`#vertical-archive-view`:** Opens for complete Experience and Project archives. Slides up from the bottom of the screen (`y: "100%" -> "0%"` via GSAP). Content is set inside a centered `max-w-4xl mx-auto` (56rem) architectural column.
      - **`#vertical-article-view`:** Opens when clicking any research dispatch or essay. Slides down from the top (`y: "-100%" -> "0%"` via GSAP). Content is set inside a focused `max-w-3xl mx-auto` (48rem) distraction-free reading room.
-  3. Added universal keyboard dismiss (`ESC`) and directional return buttons with kinetic underlines (`← Return to Storyboard`).
+  3. Added universal keyboard dismiss (`ESC`) and directional return buttons with kinetic underlines (`← Return`).
 * **Resulting Captures:** `preview_view_experience_centered.png` and `preview_post_article_centered.png`.
 
 ---

@@ -129,14 +129,15 @@ function renderCompetitionsList() {
   if (!container) return;
 
   const allExp = cms.getAllExperience();
-  const comps = allExp.filter((e) => e.category === "competition");
+  const featuredComps = allExp.filter((e) => e.category === "competition" && e.featured);
+  const comps = featuredComps.length > 0 ? featuredComps : allExp.filter((e) => e.category === "competition");
 
   const fallbackComps = [
     {
       company: "MathWorks Math Modelling (M3) Challenge",
       period: "2026",
       highlight: "Top 20% Worldwide.",
-      text: "Trained an XGBoost gradient boosting model on UK gambling datasets and engineered Monte Carlo stochastic simulations to quantify demographic tail risk.",
+      text: "Trained an XGBoost gradient boosting model on UK behavioural datasets and engineered Monte Carlo stochastic simulations to quantify demographic tail risk.",
     },
     {
       company: "Lockheed Martin Code Quest",
@@ -259,8 +260,9 @@ function renderExperienceList() {
   const countBtn = document.querySelector<HTMLElement>("[data-experience-count]");
   if (!container) return;
 
-  const featured = cms.getExperience(true);
-  const total = cms.getAllExperience().length;
+  const allWork = cms.getAllExperience().filter((e) => e.category === "work");
+  const featured = allWork.filter((e) => e.featured).slice(0, cms.getSettings().featuredExperienceLimit);
+  const total = allWork.length;
 
   if (countBtn) {
     countBtn.textContent = `(${total})`;
@@ -316,7 +318,7 @@ function renderBlogsList() {
     >
       <div class="flex justify-between items-baseline font-sans text-xs text-neutral-500">
         <span class="font-sans text-neutral-600 font-medium">${b.tags.slice(0, 2).map((t) => escapeHtml(t)).join(" · ")}</span>
-        <span class="font-mono text-[11px] text-neutral-400">${escapeHtml(b.date)} · ${escapeHtml(b.readTime)}</span>
+        <span class="font-mono text-[11px] text-neutral-400">${escapeHtml(b.date)}</span>
       </div>
       <h3 class="font-serif text-xl md:text-2xl mt-1.5 font-normal text-neutral-900 group-hover:text-neutral-500 transition-colors flex items-center justify-between">
         <span>${escapeHtml(b.title)}</span>

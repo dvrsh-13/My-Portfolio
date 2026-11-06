@@ -33,7 +33,7 @@ export interface SiteSettings {
   status: string;                 // Operational telemetry status (e.g. "ACTIVE CANDIDATE")
   title: string;                  // Subtitle (e.g. "Computer Science & Mathematics · Degree Apprenticeship Candidate")
   bio: string;                    // Primary editorial lead paragraph for Chapter 01
-  location: string;               // Geographic indicator (e.g. "LONDON & SLOUGH, UK")
+  location: string;               // Geographic indicator (e.g. "LONDON, UK")
   email: string;                  // Direct inquiry email address
   github: string;                 // Profile URL
   linkedin: string;               // Profile URL

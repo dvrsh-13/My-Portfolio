@@ -46,7 +46,7 @@ export class CMSStore {
             }
           };
         } catch (err) {
-          console.warn("[CMS] BroadcastChannel initialization failed:", err);
+          console.warn("[CMS] BroadcastChannel initialisation failed:", err);
         }
       }
 
@@ -76,7 +76,7 @@ export class CMSStore {
     this.settings = this.loadFromStorage(STORAGE_KEYS.SETTINGS, INITIAL_SETTINGS);
     if (this.settings.name === "DEV PATEL" || this.settings.email === "devpatel.cs.math@gmail.com") {
       if (this.settings.name === "DEV PATEL") this.settings.name = "DEVARSH VINOD";
-      if (this.settings.email === "devpatel.cs.math@gmail.com") this.settings.email = "devarshvinod@gmail.com";
+      if (this.settings.email === "devpatel.cs.math@gmail.com") this.settings.email = "devarsh.vinod@outlook.com";
       this.saveToStorage(STORAGE_KEYS.SETTINGS, this.settings);
     }
     this.projects = this.loadFromStorage(STORAGE_KEYS.PROJECTS, INITIAL_PROJECTS);
@@ -359,12 +359,12 @@ export interface EducationItem {
 export interface BlogItem {
   id: string;
   title: string;
-  readTime: string;
   date: string;
   excerpt: string;
   content: string;
   tags: string[];
   featured: boolean;
+  readTime?: string;
 }
 
 export interface SiteSettings {
@@ -473,7 +473,7 @@ export const INITIAL_BLOGS: BlogItem[] = ${JSON.stringify(this.blogs, null, 2)};
           .map((e: Record<string, unknown>, idx: number) => ({
             id: typeof e.id === "string" && e.id.trim() ? e.id.trim() : `exp-${idx + 1}`,
             role: typeof e.role === "string" && e.role.trim() ? e.role.trim() : "Role",
-            company: typeof e.company === "string" && e.company.trim() ? e.company.trim() : "Organization",
+            company: typeof e.company === "string" && e.company.trim() ? e.company.trim() : "Organisation",
             location: typeof e.location === "string" ? e.location.trim() : "London, UK",
             period: typeof e.period === "string" ? e.period.trim() : "",
             description: typeof e.description === "string" ? e.description.trim() : "",
@@ -517,7 +517,7 @@ export const INITIAL_BLOGS: BlogItem[] = ${JSON.stringify(this.blogs, null, 2)};
           .map((b: Record<string, unknown>, idx: number) => ({
             id: typeof b.id === "string" && b.id.trim() ? b.id.trim() : `blog-${idx + 1}`,
             title: typeof b.title === "string" && b.title.trim() ? b.title.trim() : "Untitled Dispatch",
-            readTime: typeof b.readTime === "string" ? b.readTime.trim() : "5 min read",
+            readTime: typeof b.readTime === "string" ? b.readTime.trim() : undefined,
             date: typeof b.date === "string" ? b.date.trim() : "2026",
             excerpt: typeof b.excerpt === "string" ? b.excerpt.trim() : "",
             content: typeof b.content === "string" ? b.content.trim() : "",

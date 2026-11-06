@@ -36,12 +36,12 @@ export interface EducationItem {
 export interface BlogItem {
   id: string;
   title: string;
-  readTime: string;
   date: string;
   excerpt: string;
   content: string;
   tags: string[];
   featured: boolean;
+  readTime?: string;
 }
 
 export interface SiteSettings {
@@ -63,8 +63,8 @@ export const INITIAL_SETTINGS: SiteSettings = {
   status: "ACTIVE CANDIDATE",
   title: "Computer Science & Mathematics · Degree Apprenticeship Candidate",
   bio: "Gap year student specialising in Computer Science and Mathematics, aiming for a degree apprenticeship. Strong interest in software engineering, systems engineering, data analytics, and mathematical modelling in quantitative finance.",
-  location: "LONDON & SLOUGH, UK",
-  email: "devarshvinod@gmail.com",
+  location: "LONDON, UK",
+  email: "devarsh.vinod@outlook.com",
   github: "https://github.com/dvrsh-13",
   linkedin: "https://linkedin.com",
   featuredProjectsLimit: 3,
@@ -89,7 +89,7 @@ export const INITIAL_PROJECTS: ProjectItem[] = [
     tags: ["Python", "NumPy", "Pandas", "Deflated Sharpe Ratio", "Statistical Arbitrage"],
     featured: true,
     codeSnippet: `def deflated_sharpe_ratio(returns, n_trials, var_sharpe):
-    # Adjusts annualized Sharpe for multiple testing & selection bias
+    # Adjusts annualised Sharpe for multiple testing & selection bias
     gamma = 0.5772156649  # Euler-Mascheroni constant
     expected_max = (1 - gamma) * norm.ppf(1 - 1/n_trials) + gamma * norm.ppf(1 - 1/(n_trials * np.e))
     dsr_stat = (sharpe - expected_max) / np.sqrt(var_sharpe)
@@ -123,7 +123,7 @@ export const INITIAL_PROJECTS: ProjectItem[] = [
     category: "Predictive Analytics & Simulation",
     year: "2026",
     description:
-      "Trained an XGBoost gradient boosting model on UK behavioral datasets and engineered Monte Carlo stochastic simulations to forecast yearly profit and loss by demographic cohorts, quantifying downside financial risk.",
+      "Trained an XGBoost gradient boosting model on UK behavioural datasets and engineered Monte Carlo stochastic simulations to forecast yearly profit and loss by demographic cohorts, quantifying downside financial risk.",
     metrics: [
       "Placed Top 20% Worldwide in rigorous mathematical modelling competition",
       "100,000-iteration Monte Carlo trials mapping extreme tail risk distributions",
@@ -136,15 +136,15 @@ export const INITIAL_PROJECTS: ProjectItem[] = [
     id: "satellite-comm-sim",
     title: "Mock LEO Surveillance Satellite",
     subtitle: "Lockheed Martin Harwell Engineering",
-    category: "Systems & Defense Computing",
+    category: "Systems & Defence Computing",
     year: "2025",
     description:
-      "Collaborative systems engineering simulation of a Low Earth Orbit (LEO) reconnaissance satellite payload for defense monitoring, analyzing onboard data bandwidth and high-performance downlinks.",
+      "Collaborative systems engineering simulation of a Low Earth Orbit (LEO) reconnaissance satellite payload for defence monitoring, analysing onboard data bandwidth and high-performance downlinks.",
     metrics: [
-      "Modeled orbital pass windows and telemetry data compression",
+      "Modelled orbital pass windows and telemetry data compression",
       "Explored high-performance computing constraints in secure environments",
     ],
-    tags: ["Systems Engineering", "Data Downlink", "HPC", "Defense Systems"],
+    tags: ["Systems Engineering", "Data Downlink", "HPC", "Defence Systems"],
     featured: false,
   },
 ];
@@ -203,7 +203,7 @@ export const INITIAL_EXPERIENCE: ExperienceItem[] = [
     period: "May 2023 – Jun 2023",
     category: "work",
     description:
-      "Infrastructure systems engineering and cost constraint optimization.",
+      "Infrastructure systems engineering and cost constraint optimisation.",
     bulletPoints: [
       "Led a team to design a high-speed rail system, balancing engineering requirements against cost constraints.",
       "Secured first place by presenting our solution to a board of directors.",
@@ -211,18 +211,34 @@ export const INITIAL_EXPERIENCE: ExperienceItem[] = [
     featured: false,
   },
   {
+    id: "comp-m3-challenge",
+    role: "Top 20% Worldwide",
+    company: "MathWorks Math Modelling (M3) Challenge",
+    location: "International / Remote",
+    period: "2026",
+    category: "competition",
+    description:
+      "Trained an XGBoost gradient boosting model on UK behavioural datasets and engineered Monte Carlo stochastic simulations to quantify demographic tail risk.",
+    bulletPoints: [
+      "Trained an XGBoost gradient boosting model on UK behavioural datasets and engineered Monte Carlo stochastic simulations to quantify demographic tail risk.",
+      "Produced technical paper documenting stochastic risk distribution across age cohorts under strict 14-hour deadline.",
+    ],
+    featured: true,
+  },
+  {
     id: "comp-code-quest",
     role: "Advanced Division Podium Winner",
     company: "Lockheed Martin Code Quest",
-    location: "Harwell / UK",
+    location: "Harwell, UK",
     period: "2025 & 2026",
     category: "competition",
     description:
       "Algorithmic competitive programming in Python under tight time limits.",
     bulletPoints: [
       "Led team to Top 3 (2026) and 2nd place (2025) in algorithmic problem solving using Python, working under tight time limits.",
+      "Optimised graph traversal, dynamic programming, and data structure efficiency under strict evaluation criteria.",
     ],
-    featured: false,
+    featured: true,
   },
 ];
 
@@ -245,9 +261,9 @@ export const INITIAL_EDUCATION: EducationItem[] = [
     institution: "University of Cambridge & Isaac Physics",
     program: "Cambridge STEM Smart Scholar",
     period: "Jan 2025 — Dec 2025",
-    grades: "Selective STEM Program",
+    grades: "Selective STEM Programme",
     details: [
-      "Advanced problem-solving program conducted in partnership with the University of Cambridge",
+      "Advanced problem-solving programme conducted in partnership with the University of Cambridge",
       "Subject focus: Computer Science, Double Mathematics (Pure Mathematics, Mechanics, Discrete Methods)",
       "Intensive weekly problem sets and supervision lectures covering undergraduate-level mathematics and algorithms",
     ],
@@ -271,7 +287,6 @@ export const INITIAL_BLOGS: BlogItem[] = [
   {
     id: "backtest-overfitting-notes",
     title: "Why Most Quantitative Backtests Lie: The Deflated Sharpe Ratio",
-    readTime: "7 min read",
     date: "February 2026",
     excerpt:
       "Exploring selection bias and p-hacking in quantitative trading strategies. How testing multiple parameter variations guarantees false positives without statistical deflation.",
@@ -283,10 +298,9 @@ export const INITIAL_BLOGS: BlogItem[] = [
   {
     id: "ai-in-warfare-epq",
     title: "Autonomous Weaponry & Cyber Warfare: Strategic Invariants of AI",
-    readTime: "12 min read",
     date: "December 2025",
     excerpt:
-      "An executive digest of my Grade A EPQ dissertation analyzing the algorithmic ethics, target classification latencies, and cyber defense vectors of autonomous systems.",
+      "An executive digest of my Grade A EPQ dissertation analysing the algorithmic ethics, target classification latencies, and cyber defence vectors of autonomous systems.",
     content:
       "The integration of machine learning classifiers into kinetic military systems introduces unprecedented verification challenges. Unlike software systems where exceptions can be caught and rolled back, autonomous targeting operates under hard real-time latency deadlines in adversarial environments...",
     tags: ["EPQ Dissertation", "AI Ethics", "Systems Engineering"],
@@ -295,7 +309,6 @@ export const INITIAL_BLOGS: BlogItem[] = [
   {
     id: "fourier-transform-intuition",
     title: "Deconstructing Market Noise with the Discrete Fourier Transform",
-    readTime: "6 min read",
     date: "August 2024",
     excerpt:
       "A geometric and visual walkthrough of transitioning time-series asset prices into the frequency domain using FFT in Python and MATLAB.",
@@ -307,7 +320,6 @@ export const INITIAL_BLOGS: BlogItem[] = [
   {
     id: "random-forest-vs-linear",
     title: "Linear Assumptions in Non-Linear Domains: A Cognizant Case Study",
-    readTime: "5 min read",
     date: "October 2025",
     excerpt:
       "Observations from building vehicle price regression models: when exploratory data analysis demands abandoning linear regression for tree ensembles.",

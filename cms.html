@@ -1,145 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portfolio Studio ─ Devarsh Vinod</title>
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#0c0c0e" />
-    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-    <meta name="referrer" content="strict-origin-when-cross-origin" />
 
-    <!-- Branding & Favicon -->
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <link rel="icon" type="image/png" sizes="512x512" href="DV.png" />
-    <link rel="apple-touch-icon" href="DV.png" />
-    <link rel="manifest" href="manifest.webmanifest" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio Studio ─ Devarsh Vinod</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#0c0c0e" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/src/styles/main.css" />
-  </head>
-  <body class="cms-page bg-[#0c0c0e] text-[#ededed] min-h-screen font-sans antialiased selection:bg-white selection:text-black">
+  <!-- Branding & Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="512x512" href="DV.png" />
+  <link rel="apple-touch-icon" href="DV.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
 
-    <!-- =====================================================================
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+
+<body
+  class="cms-page bg-[#0c0c0e] text-[#ededed] min-h-screen font-sans antialiased selection:bg-white selection:text-black">
+
+  <!-- =====================================================================
          ADMINISTRATIVE ACCESS GATE (RESTRICTED STUDIO ENVIRONMENT)
          Cryptographically verified access barrier for Devarsh Vinod
          ===================================================================== -->
-    <div
-      id="cms-login-barrier"
-      class="fixed inset-0 z-[200] bg-[#0c0c0e] flex flex-col items-center justify-center p-6 antialiased"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Portfolio Studio Authentication"
-    >
-      <div class="w-full max-w-sm border border-neutral-800 bg-[#121214] rounded-2xl p-8 shadow-2xl space-y-6">
-        <div class="text-center pt-1 pb-1">
-          <h2 class="font-serif text-3xl text-white font-normal tracking-wide">CMS</h2>
+  <div id="cms-login-barrier"
+    class="fixed inset-0 z-[200] bg-[#0c0c0e] flex flex-col items-center justify-center p-6 antialiased" role="dialog"
+    aria-modal="true" aria-label="Portfolio Studio Authentication">
+    <div class="w-full max-w-sm border border-neutral-800 bg-[#121214] rounded-2xl p-8 shadow-2xl space-y-6">
+      <div class="text-center pt-1 pb-1">
+        <h2 class="font-serif text-3xl text-white font-normal tracking-wide">CMS</h2>
+      </div>
+
+      <form id="cms-login-form" class="space-y-4">
+        <div class="space-y-1.5 text-left">
+          <label for="cms-auth-username"
+            class="block font-sans text-xs text-neutral-400 font-medium uppercase tracking-wider">Username</label>
+          <input type="text" id="cms-auth-username" autocomplete="username" required
+            class="w-full bg-[#18181b] border border-neutral-800 focus:border-white px-4 py-2.5 text-sm text-white font-sans rounded-xl outline-none transition-colors"
+            placeholder="user" />
         </div>
 
-        <form id="cms-login-form" class="space-y-4">
-          <div class="space-y-1.5 text-left">
-            <label for="cms-auth-username" class="block font-sans text-xs text-neutral-400 font-medium uppercase tracking-wider">Username</label>
-            <input
-              type="text"
-              id="cms-auth-username"
-              autocomplete="username"
-              required
-              class="w-full bg-[#18181b] border border-neutral-800 focus:border-white px-4 py-2.5 text-sm text-white font-sans rounded-xl outline-none transition-colors"
-              placeholder="user"
-            />
-          </div>
+        <div class="space-y-1.5 text-left">
+          <label for="cms-auth-password"
+            class="block font-sans text-xs text-neutral-400 font-medium uppercase tracking-wider">Password</label>
+          <input type="password" id="cms-auth-password" autocomplete="current-password" required
+            class="w-full bg-[#18181b] border border-neutral-800 focus:border-white px-4 py-2.5 text-sm text-white font-sans rounded-xl outline-none transition-colors"
+            placeholder="••••••••••••" />
+        </div>
 
-          <div class="space-y-1.5 text-left">
-            <label for="cms-auth-password" class="block font-sans text-xs text-neutral-400 font-medium uppercase tracking-wider">Password</label>
-            <input
-              type="password"
-              id="cms-auth-password"
-              autocomplete="current-password"
-              required
-              class="w-full bg-[#18181b] border border-neutral-800 focus:border-white px-4 py-2.5 text-sm text-white font-sans rounded-xl outline-none transition-colors"
-              placeholder="••••••••••••"
-            />
-          </div>
+        <div id="cms-login-error"
+          class="hidden text-xs font-sans text-red-300 bg-red-950/50 border border-red-900/60 rounded-xl p-3 text-center"
+          role="alert"></div>
 
-          <div id="cms-login-error" class="hidden text-xs font-sans text-red-300 bg-red-950/50 border border-red-900/60 rounded-xl p-3 text-center" role="alert"></div>
+        <button type="submit" id="cms-login-submit"
+          class="w-full py-3 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded-xl shadow-md flex items-center justify-center gap-1.5">
+          <span>Authenticate &amp; Unlock Studio</span>
+          <span>→</span>
+        </button>
 
-          <button
-            type="submit"
-            id="cms-login-submit"
-            class="w-full py-3 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded-xl shadow-md flex items-center justify-center gap-1.5"
-          >
-            <span>Authenticate &amp; Unlock Studio</span>
-            <span>→</span>
-          </button>
-
-          <div class="text-center pt-2">
-            <a href="./" class="to-link-underline text-xs font-sans text-neutral-500 hover:text-neutral-300 transition-colors">
-              ← Return to Public Portfolio
-            </a>
-          </div>
-        </form>
-      </div>
+        <div class="text-center pt-2">
+          <a href="./"
+            class="to-link-underline text-xs font-sans text-neutral-500 hover:text-neutral-300 transition-colors">
+            ← Return to Public Portfolio
+          </a>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <!-- Authenticated CMS Application Container (Hidden by default until authenticated) -->
-    <div id="cms-app" style="display: none;">
+  <!-- Authenticated CMS Application Container (Hidden by default until authenticated) -->
+  <div id="cms-app" style="display: none;" class="no-scrollbar">
 
-    <!-- Sticky Top Header & Tabs Bar -->
-    <div id="cms-sticky-bar" class="sticky top-0 z-50 bg-[#0c0c0e]/95 backdrop-blur-md border-b border-neutral-800 transition-all duration-300">
-      <div class="max-w-5xl mx-auto px-6">
-        <!-- Studio Header Bar -->
-        <header id="cms-header" class="flex flex-col sm:flex-row justify-between items-start sm:items-center py-6 gap-4 transition-all duration-300">
-          <div id="cms-header-brand" class="transition-all duration-300">
-            <h1 id="cms-title" class="font-serif text-3xl md:text-4xl text-white font-normal tracking-tight transition-all duration-300">
-              Portfolio Studio
-            </h1>
-            <p id="cms-subtitle" class="font-sans text-sm text-neutral-400 mt-1 max-h-20 opacity-100 overflow-hidden transition-all duration-300">
-              Manage live storyboard records, display bounds, and biographic content for Devarsh Vinod.
-            </p>
+    <!-- Studio Header (Static document flow - scrolls away naturally without layout shift) -->
+    <header id="cms-header" class="max-w-5xl mx-auto px-6 pt-8 pb-4">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-neutral-800/60 pb-6">
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 id="cms-title" class="font-serif text-3xl md:text-4xl text-white font-normal tracking-tight">Portfolio Studio</h1>
+            <span class="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border border-neutral-700 bg-neutral-900 text-neutral-400">CMS</span>
           </div>
+          <p id="cms-subtitle" class="font-sans text-xs md:text-sm text-neutral-400 mt-1.5 font-light">
+            Manage live storyboard records, display bounds, and biographic content for Devarsh Vinod.
+          </p>
+        </div>
+      </div>
+    </header>
 
-          <div class="flex items-center gap-3 shrink-0">
-            <button id="reset-defaults-btn" class="px-3.5 py-2 rounded-lg border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 hover:bg-neutral-800 text-neutral-400 hover:text-white font-sans text-xs transition-colors cursor-pointer">
-              Reset Defaults
-            </button>
-            <button id="cms-persistent-save-btn" class="px-4 py-2 rounded-lg bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
-              <span>Save Changes</span>
-              <span>✓</span>
-            </button>
-            <a href="./" class="px-4 py-2 rounded-lg border border-neutral-800 hover:border-neutral-700 bg-neutral-900/60 hover:bg-neutral-800 text-neutral-300 hover:text-white font-sans text-xs transition-colors cursor-pointer flex items-center gap-1.5">
-              <span>View Live Folio</span>
-              <span>↗</span>
-            </a>
-            <button id="cms-logout-btn" class="px-3 py-2 rounded-lg border border-neutral-800 hover:border-red-900/60 bg-neutral-900/60 hover:bg-red-950/30 text-neutral-400 hover:text-red-300 font-sans text-xs transition-colors cursor-pointer flex items-center gap-1.5" title="Lock Studio Session">
-              <span>Lock</span>
-              <span>⎋</span>
-            </button>
-          </div>
-        </header>
-
+    <!-- Sticky Control Bar (Pinned at top-0 throughout entire vertical scrolling - ZERO jitter!) -->
+    <div id="cms-sticky-bar"
+      class="sticky top-0 z-50 bg-[#0c0c0e]/95 backdrop-blur-md border-b border-neutral-800 transition-shadow duration-200">
+      <div class="max-w-5xl mx-auto px-6 py-2.5 flex flex-wrap justify-between items-center gap-4">
         <!-- Navigation Tabs (Clean Editorial Underline Style) -->
-        <nav id="cms-tabs-nav" class="flex border-t border-neutral-800/80 gap-6 md:gap-8 font-sans text-sm pt-3 pb-2.5 overflow-x-auto transition-all duration-300" role="tablist" aria-label="CMS Navigation">
-          <button id="tab-btn-projects" role="tab" aria-selected="true" aria-controls="tab-panel-projects" data-tab-btn="projects" class="pb-2 border-b-2 border-white text-white font-medium cursor-pointer transition-colors whitespace-nowrap">
+        <nav id="cms-tabs-nav"
+          class="flex items-center gap-5 md:gap-7 font-sans text-xs md:text-sm overflow-x-auto no-scrollbar"
+          role="tablist" aria-label="CMS Navigation">
+          <button id="tab-btn-projects" role="tab" aria-selected="true" aria-controls="tab-panel-projects"
+            data-tab-btn="projects"
+            class="pb-1.5 border-b-2 border-white text-white font-medium cursor-pointer transition-colors whitespace-nowrap">
             Projects
           </button>
-          <button id="tab-btn-experience" role="tab" aria-selected="false" aria-controls="tab-panel-experience" data-tab-btn="experience" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+          <button id="tab-btn-experience" role="tab" aria-selected="false" aria-controls="tab-panel-experience"
+            data-tab-btn="experience"
+            class="pb-1.5 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
             Experience
           </button>
-          <button id="tab-btn-blogs" role="tab" aria-selected="false" aria-controls="tab-panel-blogs" data-tab-btn="blogs" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+          <button id="tab-btn-competitions" role="tab" aria-selected="false" aria-controls="tab-panel-competitions"
+            data-tab-btn="competitions"
+            class="pb-1.5 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+            Competitions
+          </button>
+          <button id="tab-btn-blogs" role="tab" aria-selected="false" aria-controls="tab-panel-blogs"
+            data-tab-btn="blogs"
+            class="pb-1.5 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
             Research Dispatches
           </button>
-          <button id="tab-btn-education" role="tab" aria-selected="false" aria-controls="tab-panel-education" data-tab-btn="education" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
-            Academic &amp; Honors
+          <button id="tab-btn-education" role="tab" aria-selected="false" aria-controls="tab-panel-education"
+            data-tab-btn="education"
+            class="pb-1.5 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+            Academic Record
           </button>
-          <button id="tab-btn-profile" role="tab" aria-selected="false" aria-controls="tab-panel-profile" data-tab-btn="profile" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+          <button id="tab-btn-profile" role="tab" aria-selected="false" aria-controls="tab-panel-profile"
+            data-tab-btn="profile"
+            class="pb-1.5 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
             Profile &amp; Channels
           </button>
-          <button id="tab-btn-settings" role="tab" aria-selected="false" aria-controls="tab-panel-settings" data-tab-btn="settings" class="pb-2 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
+          <button id="tab-btn-settings" role="tab" aria-selected="false" aria-controls="tab-panel-settings"
+            data-tab-btn="settings"
+            class="pb-1.5 border-b-2 border-transparent text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors whitespace-nowrap">
             Display Limits &amp; Sync
           </button>
         </nav>
+
+        <!-- Persistent Action Controls (Always visible anywhere on the page!) -->
+        <div class="flex items-center gap-2.5 shrink-0">
+          <button id="reset-defaults-btn"
+            class="px-3 py-1.5 rounded-lg border border-neutral-800 hover:border-neutral-700 bg-neutral-900/70 hover:bg-neutral-800 text-neutral-400 hover:text-white font-sans text-xs transition-colors cursor-pointer">
+            Reset Defaults
+          </button>
+          <button id="cms-persistent-save-btn"
+            class="px-3.5 py-1.5 rounded-lg bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
+            <span>Save Changes</span>
+            <span>✓</span>
+          </button>
+          <a href="./"
+            class="px-3 py-1.5 rounded-lg border border-neutral-800 hover:border-neutral-700 bg-neutral-900/70 hover:bg-neutral-800 text-neutral-300 hover:text-white font-sans text-xs transition-colors cursor-pointer flex items-center gap-1.5">
+            <span>Live Folio</span>
+            <span>↗</span>
+          </a>
+          <button id="cms-logout-btn"
+            class="px-2.5 py-1.5 rounded-lg border border-neutral-800 hover:border-red-900/60 bg-neutral-900/70 hover:bg-red-950/30 text-neutral-400 hover:text-red-300 font-sans text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+            title="Lock Studio Session">
+            <span>Lock</span>
+            <span>⎋</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -149,13 +171,16 @@
       <!-- =============================================================
            TAB 1: PROJECTS
            ============================================================= -->
-      <section id="tab-panel-projects" role="tabpanel" aria-labelledby="tab-btn-projects" data-tab-panel="projects" class="space-y-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
+      <section id="tab-panel-projects" role="tabpanel" aria-labelledby="tab-btn-projects" data-tab-panel="projects"
+        class="space-y-6">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
           <div>
             <h2 class="font-serif text-2xl text-white font-normal">Computational Projects</h2>
             <p id="projects-limit-indicator" class="font-sans text-xs text-neutral-400 mt-1"></p>
           </div>
-          <button id="add-project-btn" class="px-4 py-2 bg-white text-black font-sans font-medium text-xs rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
+          <button id="add-project-btn"
+            class="px-4 py-2 bg-white text-black font-sans font-medium text-xs rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
             <span>+ Add Project</span>
           </button>
         </div>
@@ -168,13 +193,16 @@
       <!-- =============================================================
            TAB 2: EXPERIENCE
            ============================================================= -->
-      <section id="tab-panel-experience" role="tabpanel" aria-labelledby="tab-btn-experience" data-tab-panel="experience" class="space-y-6 hidden">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
+      <section id="tab-panel-experience" role="tabpanel" aria-labelledby="tab-btn-experience"
+        data-tab-panel="experience" class="space-y-6 hidden">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
           <div>
             <h2 class="font-serif text-2xl text-white font-normal">Work Placements &amp; Experience</h2>
             <p id="experience-limit-indicator" class="font-sans text-xs text-neutral-400 mt-1"></p>
           </div>
-          <button id="add-experience-btn" class="px-4 py-2 bg-white text-black font-sans font-medium text-xs rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
+          <button id="add-experience-btn"
+            class="px-4 py-2 bg-white text-black font-sans font-medium text-xs rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
             <span>+ Add Placement</span>
           </button>
         </div>
@@ -185,15 +213,42 @@
       </section>
 
       <!-- =============================================================
+           TAB: COMPETITIONS & OLYMPIADS
+           ============================================================= -->
+      <section id="tab-panel-competitions" role="tabpanel" aria-labelledby="tab-btn-competitions"
+        data-tab-panel="competitions" class="space-y-6 hidden">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
+          <div>
+            <h2 class="font-serif text-2xl text-white font-normal">Competitions &amp; Olympiads</h2>
+            <p id="competitions-count-indicator" class="font-sans text-xs text-neutral-400 mt-1">
+              Competitive mathematics, algorithmic challenges, and engineering awards featured in Chapter 02.
+            </p>
+          </div>
+          <button id="add-competition-btn"
+            class="px-4 py-2 bg-white text-black font-sans font-medium text-xs rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
+            <span>+ Add Competition</span>
+          </button>
+        </div>
+
+        <div id="cms-competitions-list" class="space-y-4">
+          <!-- Dynamically populated from cms.ts -->
+        </div>
+      </section>
+
+      <!-- =============================================================
            TAB 3: RESEARCH DISPATCHES (BLOGS)
            ============================================================= -->
-      <section id="tab-panel-blogs" role="tabpanel" aria-labelledby="tab-btn-blogs" data-tab-panel="blogs" class="space-y-6 hidden">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
+      <section id="tab-panel-blogs" role="tabpanel" aria-labelledby="tab-btn-blogs" data-tab-panel="blogs"
+        class="space-y-6 hidden">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
           <div>
             <h2 class="font-serif text-2xl text-white font-normal">Research Notes &amp; Working Papers</h2>
             <p id="blogs-limit-indicator" class="font-sans text-xs text-neutral-400 mt-1"></p>
           </div>
-          <button id="add-blog-btn" class="px-4 py-2 bg-white text-black font-sans font-medium text-xs rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
+          <button id="add-blog-btn"
+            class="px-4 py-2 bg-white text-black font-sans font-medium text-xs rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
             <span>+ Add Dispatch</span>
           </button>
         </div>
@@ -206,13 +261,17 @@
       <!-- =============================================================
            TAB 4: ACADEMIC & HONORS (EDUCATION)
            ============================================================= -->
-      <section id="tab-panel-education" role="tabpanel" aria-labelledby="tab-btn-education" data-tab-panel="education" class="space-y-6 hidden">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
+      <section id="tab-panel-education" role="tabpanel" aria-labelledby="tab-btn-education" data-tab-panel="education"
+        class="space-y-6 hidden">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-neutral-800">
           <div>
-            <h2 class="font-serif text-2xl text-white font-normal">Academic Qualifications &amp; Honors</h2>
-            <p class="font-sans text-xs text-neutral-400 mt-1">Institutions, examination grades, and leadership records.</p>
+            <h2 class="font-serif text-2xl text-white font-normal">Academic Qualifications &amp; Honours</h2>
+            <p class="font-sans text-xs text-neutral-400 mt-1">Institutions, examination grades, and leadership records.
+            </p>
           </div>
-          <button id="add-education-btn" class="px-4 py-2 bg-white text-black font-sans font-medium text-xs rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
+          <button id="add-education-btn"
+            class="px-4 py-2 bg-white text-black font-sans font-medium text-xs rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm">
             <span>+ Add Academic Record</span>
           </button>
         </div>
@@ -225,57 +284,48 @@
       <!-- =============================================================
            TAB 5: PROFILE & CHANNELS
            ============================================================= -->
-      <section id="tab-panel-profile" role="tabpanel" aria-labelledby="tab-btn-profile" data-tab-panel="profile" class="space-y-12 hidden">
-        
+      <section id="tab-panel-profile" role="tabpanel" aria-labelledby="tab-btn-profile" data-tab-panel="profile"
+        class="space-y-12 hidden">
+
         <!-- Group 1: Candidate Core Details -->
         <div class="space-y-6">
           <div class="border-b border-neutral-800 pb-3">
             <h2 class="font-serif text-2xl text-white font-normal">Candidate Information</h2>
-            <p class="font-sans text-xs text-neutral-400 mt-1">Personal editorial titles and location shown on the storyboard.</p>
+            <p class="font-sans text-xs text-neutral-400 mt-1">Personal editorial titles and location shown on the
+              storyboard.</p>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Candidate Full Name</label>
-              <input
-                type="text"
-                id="setting-name"
-                placeholder="DEVARSH VINOD"
-                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600"
-              />
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Candidate
+                Full Name</label>
+              <input type="text" id="setting-name" placeholder="DEVARSH VINOD"
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600" />
               <span class="text-xs text-neutral-500 block">Monogram and monumental headline name.</span>
             </div>
 
             <div class="space-y-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Editorial Title / Focus</label>
-              <input
-                type="text"
-                id="setting-title"
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Editorial
+                Title / Focus</label>
+              <input type="text" id="setting-title"
                 placeholder="Computer Science & Mathematics · Degree Apprenticeship Candidate"
-                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600"
-              />
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600" />
               <span class="text-xs text-neutral-500 block">Hero subtitle displayed under candidate name.</span>
             </div>
 
             <div class="space-y-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Inquiry Email</label>
-              <input
-                type="email"
-                id="setting-email"
-                placeholder="devarshvinod@gmail.com"
-                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all placeholder:text-neutral-600"
-              />
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Enquiry
+                Email</label>
+              <input type="email" id="setting-email" placeholder="devarsh.vinod@outlook.com"
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all placeholder:text-neutral-600" />
               <span class="text-xs text-neutral-500 block">Target email for Chapter 06 transmission link.</span>
             </div>
 
             <div class="space-y-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Geographic Base</label>
-              <input
-                type="text"
-                id="setting-location"
-                placeholder="Slough & London, UK"
-                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600"
-              />
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Geographic
+                Base</label>
+              <input type="text" id="setting-location" placeholder="London, UK"
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white rounded-xl outline-none transition-all placeholder:text-neutral-600" />
               <span class="text-xs text-neutral-500 block">Location tag displayed on the global footer.</span>
             </div>
           </div>
@@ -285,28 +335,23 @@
         <div class="space-y-6">
           <div class="border-b border-neutral-800 pb-3">
             <h2 class="font-serif text-2xl text-white font-normal">Verified Channels</h2>
-            <p class="font-sans text-xs text-neutral-400 mt-1">Direct links in the fullscreen navigation menu and contact section.</p>
+            <p class="font-sans text-xs text-neutral-400 mt-1">Direct links in the fullscreen navigation menu and
+              contact section.</p>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">GitHub Profile URL</label>
-              <input
-                type="url"
-                id="setting-github"
-                placeholder="https://github.com/dvrsh-13"
-                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all placeholder:text-neutral-600"
-              />
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">GitHub
+                Profile URL</label>
+              <input type="url" id="setting-github" placeholder="https://github.com/dvrsh-13"
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all placeholder:text-neutral-600" />
             </div>
 
             <div class="space-y-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">LinkedIn Profile URL</label>
-              <input
-                type="url"
-                id="setting-linkedin"
-                placeholder="https://linkedin.com/in/..."
-                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all placeholder:text-neutral-600"
-              />
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">LinkedIn
+                Profile URL</label>
+              <input type="url" id="setting-linkedin" placeholder="https://linkedin.com/in/..."
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all placeholder:text-neutral-600" />
             </div>
           </div>
         </div>
@@ -315,28 +360,25 @@
         <div class="space-y-6">
           <div class="border-b border-neutral-800 pb-3">
             <h2 class="font-serif text-2xl text-white font-normal">Chapter 01 Biographic Statement</h2>
-            <p class="font-sans text-xs text-neutral-400 mt-1">Editorial profile copy. Separate multiple paragraphs with a blank line.</p>
+            <p class="font-sans text-xs text-neutral-400 mt-1">Editorial profile copy. Separate multiple paragraphs with
+              a blank line.</p>
           </div>
 
           <div class="space-y-2">
-            <textarea
-              id="setting-bio"
-              rows="6"
+            <textarea id="setting-bio" rows="6"
               placeholder="Gap year student specialising in Computer Science and Mathematics, aiming for a degree apprenticeship..."
-              class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] p-4 text-sm text-white rounded-xl outline-none transition-all leading-relaxed placeholder:text-neutral-600 font-sans resize-y"
-            ></textarea>
+              class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] p-4 text-sm text-white rounded-xl outline-none transition-all leading-relaxed placeholder:text-neutral-600 font-sans resize-y"></textarea>
           </div>
         </div>
 
         <!-- Action Row -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-6 border-t border-neutral-800 gap-4">
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-6 border-t border-neutral-800 gap-4">
           <p class="font-sans text-xs text-neutral-400">
             Changes save immediately to browser local storage.
           </p>
-          <button
-            id="save-profile-btn"
-            class="px-6 py-3 bg-white text-black font-sans font-medium text-xs rounded-xl hover:bg-neutral-200 transition-colors cursor-pointer shadow-md flex items-center gap-2"
-          >
+          <button id="save-profile-btn"
+            class="px-6 py-3 bg-white text-black font-sans font-medium text-xs rounded-xl hover:bg-neutral-200 transition-colors cursor-pointer shadow-md flex items-center gap-2">
             <span>Save Profile Changes</span>
             <span>✓</span>
           </button>
@@ -347,39 +389,48 @@
       <!-- =============================================================
            TAB 6: DISPLAY BOUNDS & GITHUB SYNC
            ============================================================= -->
-      <section id="tab-panel-settings" role="tabpanel" aria-labelledby="tab-btn-settings" data-tab-panel="settings" class="space-y-12 hidden">
-        
+      <section id="tab-panel-settings" role="tabpanel" aria-labelledby="tab-btn-settings" data-tab-panel="settings"
+        class="space-y-12 hidden">
+
         <!-- Storyboard Limits -->
         <div class="space-y-6">
           <div class="border-b border-neutral-800 pb-3">
             <h2 class="font-serif text-2xl text-white font-normal">Storyboard Display Limits</h2>
             <p class="font-sans text-xs text-neutral-400 mt-1">
-              Enforce upper bounds on highlighted records shown on the horizontal storyboard. Excess items remain accessible in vertical archives.
+              Enforce upper bounds on highlighted records shown on the horizontal storyboard. Excess items remain
+              accessible in vertical archives.
             </p>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="space-y-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Projects Limit</label>
-              <input type="number" id="setting-proj-limit" min="1" max="10" class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 font-mono text-white text-sm rounded-xl outline-none transition-all" />
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Projects
+                Limit</label>
+              <input type="number" id="setting-proj-limit" min="1" max="10"
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 font-mono text-white text-sm rounded-xl outline-none transition-all" />
               <span class="text-xs text-neutral-500 block">Default: 3. Panel 04 highlights.</span>
             </div>
 
             <div class="space-y-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Experience Limit</label>
-              <input type="number" id="setting-exp-limit" min="1" max="10" class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 font-mono text-white text-sm rounded-xl outline-none transition-all" />
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Experience
+                Limit</label>
+              <input type="number" id="setting-exp-limit" min="1" max="10"
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 font-mono text-white text-sm rounded-xl outline-none transition-all" />
               <span class="text-xs text-neutral-500 block">Default: 3. Panel 03 highlights.</span>
             </div>
 
             <div class="space-y-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Dispatches Limit</label>
-              <input type="number" id="setting-blog-limit" min="1" max="10" class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 font-mono text-white text-sm rounded-xl outline-none transition-all" />
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Dispatches
+                Limit</label>
+              <input type="number" id="setting-blog-limit" min="1" max="10"
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 font-mono text-white text-sm rounded-xl outline-none transition-all" />
               <span class="text-xs text-neutral-500 block">Default: 3. Panel 05 highlights.</span>
             </div>
           </div>
 
           <div class="flex justify-end pt-2">
-            <button id="save-limits-btn" class="px-5 py-2.5 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded-xl shadow-sm flex items-center gap-1.5">
+            <button id="save-limits-btn"
+              class="px-5 py-2.5 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded-xl shadow-sm flex items-center gap-1.5">
               <span>Apply Display Limits</span>
               <span>✓</span>
             </button>
@@ -396,15 +447,18 @@
           </div>
 
           <div class="flex flex-wrap gap-4">
-            <button id="export-json-btn" class="px-4 py-2.5 border border-neutral-700 hover:border-neutral-500 bg-neutral-900/80 text-xs font-sans text-neutral-200 hover:text-white transition-colors cursor-pointer rounded-xl flex items-center gap-2">
+            <button id="export-json-btn"
+              class="px-4 py-2.5 border border-neutral-700 hover:border-neutral-500 bg-neutral-900/80 text-xs font-sans text-neutral-200 hover:text-white transition-colors cursor-pointer rounded-xl flex items-center gap-2">
               <span>Export JSON Snapshot</span>
               <span>↓</span>
             </button>
-            <button id="export-ts-btn" class="px-4 py-2.5 border border-neutral-700 hover:border-neutral-500 bg-neutral-900/80 text-xs font-sans text-neutral-200 hover:text-white transition-colors cursor-pointer rounded-xl flex items-center gap-2">
+            <button id="export-ts-btn"
+              class="px-4 py-2.5 border border-neutral-700 hover:border-neutral-500 bg-neutral-900/80 text-xs font-sans text-neutral-200 hover:text-white transition-colors cursor-pointer rounded-xl flex items-center gap-2">
               <span>Download portfolioData.ts</span>
               <span>↓</span>
             </button>
-            <label class="px-4 py-2.5 border border-neutral-700 hover:border-neutral-500 bg-neutral-900/80 text-xs font-sans text-neutral-200 hover:text-white transition-colors cursor-pointer rounded-xl flex items-center gap-2">
+            <label
+              class="px-4 py-2.5 border border-neutral-700 hover:border-neutral-500 bg-neutral-900/80 text-xs font-sans text-neutral-200 hover:text-white transition-colors cursor-pointer rounded-xl flex items-center gap-2">
               <span>Import JSON Snapshot</span>
               <span>↑</span>
               <input type="file" id="import-json-input" accept=".json" class="hidden" />
@@ -423,24 +477,32 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Repository (owner/repo)</label>
-              <input type="text" id="gh-sync-repo" value="dvrsh-13/My-Portfolio" class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all" />
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Repository
+                (owner/repo)</label>
+              <input type="text" id="gh-sync-repo" value="dvrsh-13/My-Portfolio"
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all" />
             </div>
 
             <div class="space-y-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Target Branch</label>
-              <input type="text" id="gh-sync-branch" value="main" class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all" />
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">Target
+                Branch</label>
+              <input type="text" id="gh-sync-branch" value="main"
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all" />
             </div>
 
             <div class="space-y-2 md:col-span-2">
-              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">GitHub Personal Access Token (PAT)</label>
-              <input type="password" id="gh-sync-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all" />
-              <span class="text-xs text-neutral-500 block">Stored only in your browser and used to commit updated portfolioData.ts to GitHub.</span>
+              <label class="block font-sans text-xs font-medium text-neutral-300 uppercase tracking-wider">GitHub
+                Personal Access Token (PAT)</label>
+              <input type="password" id="gh-sync-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                class="w-full bg-[#141416] border border-neutral-800 focus:border-white focus:bg-[#18181b] px-4 py-3 text-sm text-white font-mono rounded-xl outline-none transition-all" />
+              <span class="text-xs text-neutral-500 block">Stored only in your browser and used to commit updated
+                portfolioData.ts to GitHub.</span>
             </div>
           </div>
 
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-4 gap-4">
-            <button id="gh-publish-btn" class="px-5 py-3 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded-xl flex items-center gap-2 shadow-md">
+            <button id="gh-publish-btn"
+              class="px-5 py-3 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded-xl flex items-center gap-2 shadow-md">
               <span>Publish to GitHub</span>
               <span>↗</span>
             </button>
@@ -453,11 +515,13 @@
     </main>
 
     <!-- Universal Editorial Item Modal (Projects / Experience / Blogs / Education) -->
-    <dialog id="cms-editor-modal" aria-labelledby="modal-form-title" class="fixed inset-0 z-[120] m-auto w-full max-w-xl bg-[#141416] border border-neutral-800 text-white p-6 md:p-8 rounded-2xl shadow-2xl backdrop:bg-black/80 backdrop:backdrop-blur-sm">
+    <dialog id="cms-editor-modal" aria-labelledby="modal-form-title"
+      class="fixed inset-0 z-[120] m-auto w-full max-w-xl bg-[#141416] border border-neutral-800 text-white p-6 md:p-8 rounded-2xl shadow-2xl backdrop:bg-black/80 backdrop:backdrop-blur-sm">
       <form method="dialog" id="cms-editor-form" class="space-y-6">
         <div class="flex justify-between items-center border-b border-neutral-800 pb-4">
           <h3 id="modal-form-title" class="font-serif text-2xl font-normal text-white">Edit Record</h3>
-          <button type="button" id="modal-close-btn" class="text-xs text-neutral-400 hover:text-white uppercase cursor-pointer px-2 py-1 rounded hover:bg-neutral-800 transition-colors">
+          <button type="button" id="modal-close-btn"
+            class="text-xs text-neutral-400 hover:text-white uppercase cursor-pointer px-2 py-1 rounded hover:bg-neutral-800 transition-colors">
             ✕
           </button>
         </div>
@@ -466,16 +530,19 @@
           <!-- Dynamically generated fields based on item type -->
         </div>
 
-        <div class="border-t border-neutral-800 pt-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div
+          class="border-t border-neutral-800 pt-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <label class="flex items-center gap-2.5 cursor-pointer font-sans text-xs text-neutral-300">
             <input type="checkbox" id="modal-featured-checkbox" class="accent-white w-4 h-4 rounded" />
             <span>Highlight on Storyboard</span>
           </label>
           <div class="flex gap-3">
-            <button type="button" id="modal-cancel-btn" class="px-4 py-2 border border-neutral-700 bg-neutral-900 text-xs font-sans text-neutral-300 hover:text-white transition-colors cursor-pointer rounded-lg">
+            <button type="button" id="modal-cancel-btn"
+              class="px-4 py-2 border border-neutral-700 bg-neutral-900 text-xs font-sans text-neutral-300 hover:text-white transition-colors cursor-pointer rounded-lg">
               Cancel
             </button>
-            <button type="submit" id="modal-submit-btn" class="px-5 py-2 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded-lg shadow-sm">
+            <button type="submit" id="modal-submit-btn"
+              class="px-5 py-2 bg-white text-black font-sans font-medium text-xs hover:bg-neutral-200 transition-colors cursor-pointer rounded-lg shadow-sm">
               Save Record
             </button>
           </div>
@@ -483,9 +550,10 @@
       </form>
     </dialog>
 
-    </div><!-- End #cms-app -->
+  </div><!-- End #cms-app -->
 
-    <!-- CMS Logic Script -->
-    <script type="module" src="/src/cms.ts"></script>
-  </body>
+  <!-- CMS Logic Script -->
+  <script type="module" src="/src/cms.ts"></script>
+</body>
+
 </html>

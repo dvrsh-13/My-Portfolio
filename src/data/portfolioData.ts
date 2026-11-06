@@ -59,7 +59,7 @@ export interface SiteSettings {
 }
 
 export const INITIAL_SETTINGS: SiteSettings = {
-  name: "DEVARSH VINOD",
+  name: "Devarsh Vinod",
   status: "ACTIVE CANDIDATE",
   title: "Computer Science & Mathematics · Degree Apprenticeship Candidate",
   bio: "Gap year student specialising in Computer Science and Mathematics, aiming for a degree apprenticeship. Strong interest in software engineering, systems engineering, data analytics, and mathematical modelling in quantitative finance.",

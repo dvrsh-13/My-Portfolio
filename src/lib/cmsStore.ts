@@ -74,8 +74,8 @@ export class CMSStore {
 
   public reloadAllFromStorage() {
     this.settings = this.loadFromStorage(STORAGE_KEYS.SETTINGS, INITIAL_SETTINGS);
-    if (this.settings.name === "DEV PATEL" || this.settings.email === "devpatel.cs.math@gmail.com") {
-      if (this.settings.name === "DEV PATEL") this.settings.name = "DEVARSH VINOD";
+    if (this.settings.name === "DEV PATEL" || this.settings.name === "DEVARSH VINOD" || this.settings.email === "devpatel.cs.math@gmail.com") {
+      this.settings.name = "Devarsh Vinod";
       if (this.settings.email === "devpatel.cs.math@gmail.com") this.settings.email = "devarsh.vinod@outlook.com";
       this.saveToStorage(STORAGE_KEYS.SETTINGS, this.settings);
     }

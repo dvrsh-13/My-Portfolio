@@ -28,8 +28,8 @@ function renderProfileAndSettings() {
   const settings = cms.getSettings();
 
   // Update Page Title
-  if (typeof document !== "undefined" && settings.name) {
-    document.title = settings.name;
+  if (typeof document !== "undefined") {
+    document.title = "Devarsh Vinod";
   }
 
   // Monogram Initials

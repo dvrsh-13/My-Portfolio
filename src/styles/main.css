@@ -192,19 +192,14 @@ html.lenis, html.lenis body {
 
 .horizontal-panel {
   width: 100%;
-  min-height: auto; /* Natural content-aware sizing on mobile: avoids artificial 100vh blank voids */
+  min-height: 100dvh;
   position: relative;
   overflow-x: hidden;
   overflow-y: visible !important;
   padding: 1.5rem;
-  padding-top: 4.5rem; /* Clearance for fixed top rail */
-  padding-bottom: 4.5rem;
+  padding-top: 5rem; /* Generous clearance for fixed top rail */
+  padding-bottom: 4rem;
   scroll-margin-top: 4.5rem;
-}
-
-/* First screen initialisation on mobile remains a full viewport impression */
-#hero.horizontal-panel {
-  min-height: calc(100dvh - 3.5rem);
 }
 
 @media (min-width: 768px) {

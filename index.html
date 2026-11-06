@@ -583,15 +583,16 @@
         </section>
 
         <!-- =============================================================
-               PANEL 03: TRANSITION — "THE SYSTEMS"
-               Cinematic Midpoint Pause & Typographic Expansion
+               PANEL 03: TRANSITION — "MY WORK"
+               Desktop: Cinematic Midpoint Pause & Typographic Expansion
+               Mobile: Omitted entirely for seamless chapter traversal
                ============================================================= -->
         <section
-          class="horizontal-panel w-full md:w-screen md:h-dvh shrink-0 flex flex-col items-center justify-center overflow-visible md:overflow-hidden bg-black text-white p-6 py-16 md:py-10 md:pl-28 md:pr-16 relative"
+          class="horizontal-panel hidden md:flex md:w-screen md:h-dvh shrink-0 flex-col items-center justify-center overflow-hidden bg-black text-white p-6 md:py-10 md:pl-28 md:pr-16 relative"
           data-section="transition" data-transition-section data-header-bg="#000000" data-header-text="#ffffff"
-          data-header-border="#222222" data-horizontal-panel aria-label="Transition: The Systems">
+          data-header-border="#222222" data-horizontal-panel aria-label="Transition: My Work">
           <!-- Center expanding preview container (z-30: zooms on top of words) -->
-          <div class="pointer-events-none absolute inset-0 z-30 hidden items-center justify-center md:flex"
+          <div class="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
             aria-hidden="true">
             <div data-transition-media
               class="w-[440px] h-[275px] md:w-[560px] md:h-[350px] overflow-hidden bg-black border border-neutral-800 shadow-2xl rounded-sm relative flex items-center justify-center">
@@ -607,25 +608,15 @@
           </div>
 
           <!-- Monumental Split Words (z-10) -->
-          <div class="relative z-10 flex flex-row items-center justify-center gap-3 sm:gap-6 md:gap-20">
+          <div class="relative z-10 flex flex-row items-center justify-center gap-6 md:gap-20">
             <span data-word-left
-              class="font-serif text-4xl sm:text-6xl md:text-8xl uppercase tracking-tight font-normal text-white">
-              THE
+              class="font-serif text-6xl md:text-8xl uppercase tracking-tight font-normal text-white">
+              MY
             </span>
             <span data-word-right
-              class="font-serif text-4xl sm:text-6xl md:text-8xl uppercase tracking-tight font-normal text-white">
-              SYSTEMS
+              class="font-serif text-6xl md:text-8xl uppercase tracking-tight font-normal text-white">
+              WORK
             </span>
-          </div>
-
-          <!-- Mobile Video / Media Container (Cleanly showcased on mobile below the title) -->
-          <div class="relative z-10 w-full max-w-sm aspect-[16/10] mt-6 bg-black border border-neutral-800/80 rounded shadow-lg overflow-hidden flex items-center justify-center md:hidden">
-            <video autoplay muted loop playsinline class="w-full h-full object-cover hidden" data-transition-video-mobile>
-              <source src="" type="video/mp4">
-            </video>
-            <div class="absolute inset-0 bg-neutral-950 flex flex-col items-center justify-center text-neutral-600 gap-2 font-mono text-[10px] tracking-widest uppercase">
-              <div class="w-2 h-2 rounded-full bg-neutral-800 animate-pulse"></div>
-            </div>
           </div>
         </section>
 

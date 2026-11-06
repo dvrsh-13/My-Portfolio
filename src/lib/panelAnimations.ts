@@ -11,7 +11,7 @@ export function initPanelAnimations() {
 
   panels.forEach((panel) => {
     const section = panel.dataset.section;
-    // Hero and transition ("THE SYSTEMS") are excluded
+    // Hero and transition ("MY WORK") are excluded
     if (section === "hero" || section === "transition") return;
 
     // Set initial hidden states for content inside each panel

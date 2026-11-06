@@ -198,9 +198,19 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
     titleEl.textContent = "Work Experience & Placements";
     countEl.textContent = `${list.length} Industrial & Engineering Records`;
 
-    contentEl.innerHTML = list
-      .map(
-        (e) => `
+    if (list.length === 0) {
+      contentEl.innerHTML = `
+        <div class="py-20 text-center border border-neutral-800/80 rounded-sm p-8 space-y-3">
+          <div class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium">Work Experience · In Progress</div>
+          <p class="font-sans text-sm text-neutral-500 font-light max-w-md mx-auto leading-relaxed">
+            Industrial placements, quantitative research internships, and engineering positions are being updated.
+          </p>
+        </div>
+      `;
+    } else {
+      contentEl.innerHTML = list
+        .map(
+          (e) => `
       <article class="border-b border-neutral-800/80 pb-12 last:border-b-0 space-y-4">
         <div class="flex flex-col md:flex-row md:items-baseline justify-between gap-1 text-xs font-sans text-neutral-400">
           <span class="uppercase tracking-widest text-neutral-300 font-medium">${escapeHtml(e.company)} · ${escapeHtml(e.location)}</span>
@@ -211,21 +221,32 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
         
         <div class="pt-1">
           <ul class="space-y-2 text-xs md:text-sm font-sans text-neutral-300 pl-4 list-disc font-light">
-            ${e.bulletPoints.map((b) => `<li class="leading-relaxed">${escapeHtml(b)}</li>`).join("")}
+            ${(e.bulletPoints || []).map((b) => `<li class="leading-relaxed">${escapeHtml(b)}</li>`).join("")}
           </ul>
         </div>
       </article>
     `
-      )
-      .join("");
+        )
+        .join("");
+    }
   } else if (category === "projects") {
     const list = cms.getAllProjects();
     titleEl.textContent = "Computational Projects & Mathematical Models";
     countEl.textContent = `${list.length} Projects & Quantitative Implementations`;
 
-    contentEl.innerHTML = list
-      .map(
-        (p, i) => `
+    if (list.length === 0) {
+      contentEl.innerHTML = `
+        <div class="py-20 text-center border border-neutral-800/80 rounded-sm p-8 space-y-3">
+          <div class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium">Selected Projects · Work in Progress</div>
+          <p class="font-sans text-sm text-neutral-500 font-light max-w-md mx-auto leading-relaxed">
+            Algorithmic models, software repositories, and technical case studies are currently being curated and will be published shortly.
+          </p>
+        </div>
+      `;
+    } else {
+      contentEl.innerHTML = list
+        .map(
+          (p, i) => `
       <article class="border-b border-neutral-800/80 pb-12 last:border-b-0 space-y-5">
         <div class="flex flex-col md:flex-row md:items-baseline justify-between gap-1 text-xs font-sans text-neutral-400">
           <span class="uppercase tracking-widest text-neutral-300 font-medium">0${i + 1} · ${escapeHtml(p.category)}</span>
@@ -273,16 +294,27 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
         </div>
       </article>
     `
-      )
-      .join("");
+        )
+        .join("");
+    }
   } else if (category === "blogs") {
     const list = cms.getAllBlogs();
     titleEl.textContent = "Research Notes & Working Papers";
     countEl.textContent = `${list.length} Dispatches & Dissertation Insights`;
 
-    contentEl.innerHTML = list
-      .map(
-        (b) => `
+    if (list.length === 0) {
+      contentEl.innerHTML = `
+        <div class="py-20 text-center border border-neutral-800/80 rounded-sm p-8 space-y-3">
+          <div class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium">Research Dispatches · Coming Soon</div>
+          <p class="font-sans text-sm text-neutral-500 font-light max-w-md mx-auto leading-relaxed">
+            Technical write-ups, mathematical explorations, and research working papers are currently in preparation.
+          </p>
+        </div>
+      `;
+    } else {
+      contentEl.innerHTML = list
+        .map(
+          (b) => `
       <article
         class="border-b border-neutral-800/80 pb-10 last:border-b-0 cursor-pointer group space-y-2 outline-none focus-visible:ring-1 focus-visible:ring-white"
         data-open-post="${escapeHtml(b.id)}"
@@ -303,8 +335,9 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
         </p>
       </article>
     `
-      )
-      .join("");
+        )
+        .join("");
+    }
   }
 
   isArchiveOpen = true;

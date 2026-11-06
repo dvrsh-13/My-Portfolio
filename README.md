@@ -1,69 +1,65 @@
-# Mathematical & Systems Architecture Portfolio
-*A bespoke portfolio reverse-engineered from [khanhnguyen.design](https://khanhnguyen.design/) tailored for Computer Science & Applied Mathematics.*
+# Devarsh Vinod — Systems & Computational Portfolio
+
+A minimalist, high-performance portfolio website engineered for computer science, mathematics, and quantitative systems. Built with a dual-axis continuous storyboard, dedicated vertical reading views, and an integrated in-browser Content Management Studio.
 
 ---
 
-## 1. Architectural Principles
+## Tech Stack
 
-This codebase is deliberately constructed to avoid "vibecoded" tropes (arbitrary Tailwind margins, uncalibrated spring physics, generic Inter fonts, and ungrounded drop shadows). Instead, it implements a disciplined mathematical and mechanical design system:
-
-1. **Fluid Scaling Engine (`--scale`)**:
-   - Desktop ($\ge 768\text{px}$): `--scale: calc(100vw / 144)` (based on a 1440px canvas, where 1 unit = 10px).
-   - Mobile ($< 768\text{px}$): `--scale: calc(100vw / 39)` (based on a 390px mobile canvas, where 1 unit = 10px).
-   - All line heights, type scales, gutters (`--vg`), and bounding boxes derive strictly from this unit, guaranteeing proportional geometry across any screen resolution.
-
-2. **Dual-Axis Continuous Storyboard**:
-   - **Desktop**: Pinned horizontal virtual scroll powered by **Lenis** + **GSAP ScrollTrigger**, translating vertical wheel input into smooth horizontal traversal.
-   - **Midpoint Cinematic Pause ("The Systems")**: The track halts at the midpoint, smoothly scales an architectural benchmark card from `scale(0)` to full view, and splits the display typography outwards along the X-axis before handing back scroll velocity.
-   - **Mobile**: Seamlessly folds into a responsive, tactile vertical layout.
-
-3. **Dynamic Fixed Rail Navigation**:
-   - A permanent 64px vertical rail on the left on desktop containing:
-     - Real-time scroll progress indicator line.
-     - Brand mark / Sigma-Lambda monogram.
-     - Rotated vertical text reading upwards (`SYSTEMS · DISCRETE MATH` and `FOLIO — ARCHITECTURE`).
-     - Dynamic theme synchronization (`--header-bg`, `--header-text`, `--header-border`) transitioning per chapter.
-
-4. **Typography Pairing**:
-   - High-contrast editorial serif (`Newsreader` / `PP Editorial Old`) with discretionary ligatures and italics.
-   - Disciplined neo-grotesque sans (`Plus Jakarta Sans` / `PP Neue Montreal`).
-   - Tabular monospace (`JetBrains Mono` / `SF Mono`) for timestamps, proofs, coordinates, and chapter indices.
+- **Core Engine**: [TypeScript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Animation & Motion**: [GSAP (GreenSock)](https://gsap.com/) & ScrollTrigger
+- **Smooth Scrolling**: [@studio-freight/lenis](https://github.com/darkroomengineering/lenis)
+- **Content Management**: Client-side Portfolio Studio (`/cms.html`) with multi-tab `BroadcastChannel` sync and GitHub REST API integration
 
 ---
 
-## 2. Chapter Structure
+## Key Features
 
-- **00. Initialization (Hero)**: Year strip ticker (`2018` $\to$ `2026`), real-time UTC/GMT clock, system status `[SYS.NORMAL]`, and name reveal.
-- **01. Philosophy & Theory (About)**: First-principles systems engineering, state-machine replication proofs, Curry-Howard isomorphism, queueing theory, with interactive formula hover portals.
-- **02. Academic Pedigree (Education)**: Degree in Computer Science & Applied Mathematics, graduate coursework, Putnam / ICPC honors.
-- **03. The Systems (Transition)**: Cinematic expander and split-typography transition.
-- **04. Engineering & Infrastructure (Experience)**: High-throughput lab research, quantitative trading matching engines, formal verification.
-- **05. Selected Artifacts (Projects)**: Interactive project ledger (*Aether-Consensus*, *Kryo-VM*, *ZK-SNARK*, *Hyperion-Book*) with live architecture blueprints in a fixed geometric frame.
-- **06. Technical Dispatches (Blog)**: Papers on monads & state machines, cache-oblivious B-trees, linearizability.
-- **07. Terminal Dispatch (Contact)**: Direct RFC 5322 email with kinetic underline, copyable PGP fingerprint, and academic channels.
+- **Dual-Axis Storyboard**: Smooth horizontal virtual scroll on desktop translating wheel input into lateral traversal, paired with a midpoint cinematic expander ("The Systems"). Seamlessly refolds into a tactile vertical layout on mobile devices.
+- **Dedicated Vertical Reading Views**: Full-page pull-down reading overlays for technical working papers and dedicated detail screens for computational projects.
+- **Dynamic Theme Synchronisation**: Fixed vertical navigation rail that dynamically updates theme colours, timestamps, and chapter indicators based on active screen position.
+- **In-Browser Portfolio Studio (`/cms.html`)**: Visual management for projects, industrial placements, mathematical competitions, research essays, and biographic metadata with instant live preview.
+- **Subtle Magnetic Snapping**: Fluid, directional snapping that gently aligns chapters as you navigate across the storyboard.
+- **Zero-Item Graceful Handling**: Built-in empty states across all views to cleanly handle in-progress projects, working papers, or competition updates.
+- **Performance & Accessibility**: Semantic HTML5, full keyboard navigation support, high-contrast typography, and strict British English content standards.
 
 ---
 
-## 3. Getting Started
+## Quickstart & Template Guide
 
 ### Prerequisites
-- Node.js $\ge 18$ (tested on v26)
+- Node.js $\ge$ 18.0.0
 - npm
 
-### Development
+### 1. Installation
+```bash
+git clone https://github.com/dvrsh-13/My-Portfolio.git
+cd My-Portfolio
+npm install
+```
+
+### 2. Development Server
 ```bash
 npm run dev
 ```
-Starts the local development server at `http://localhost:3000`.
+Open `http://localhost:5173` to explore the live portfolio.
 
-### Production Build
+### 3. Customising Content
+You can customise the portfolio content in two ways:
+
+- **Via Code**: Edit the structured data records directly in `src/data/portfolioData.ts`.
+- **Via Portfolio Studio**: Navigate to `http://localhost:5173/cms.html`. Make live updates visually, test changes with instant live sync, and click **Export portfolioData.ts** to replace the data file or **Commit to GitHub** for direct deployment.
+
+### 4. Production Build
 ```bash
 npm run build
-```
-Typechecks and builds the optimized static bundle into `dist/`.
-
-### Preview Build
-```bash
 npm run preview
 ```
-Previews the production build locally.
+Compiles and optimises static assets into `dist/` ready for hosting on GitHub Pages, Vercel, or Netlify.
+
+---
+
+## Attribution
+
+Design inspiration credited to [khanhnguyen.design](https://khanhnguyen.design/).

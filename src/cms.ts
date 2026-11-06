@@ -6,8 +6,12 @@ type CurrentEditType = "project" | "experience" | "competition" | "blog" | "educ
 let activeEditType: CurrentEditType = "project";
 let activeEditId: string | null = null;
 
-const CMS_AUTH_HASH = "c6a54c0acd53bd4c8856b04e1043a921ccaafd824bb0df5dfd9ba59630b7347c";
-const CMS_PASS_HASH = "755e362692395313f23227cfb5d518905e9e868d5c4984120cae327cc0a17252";
+const CMS_AUTH_HASH =
+  (import.meta.env.VITE_CMS_AUTH_HASH as string) ||
+  "c6a54c0acd53bd4c8856b04e1043a921ccaafd824bb0df5dfd9ba59630b7347c";
+const CMS_PASS_HASH =
+  (import.meta.env.VITE_CMS_PASS_HASH as string) ||
+  "755e362692395313f23227cfb5d518905e9e868d5c4984120cae327cc0a17252";
 const CMS_SESSION_KEY = "folio_cms_session_token";
 const CMS_LOCKOUT_KEY = "folio_cms_lockout_until";
 const CMS_ATTEMPTS_KEY = "folio_cms_failed_attempts";
@@ -123,15 +127,71 @@ function setupAuthGate() {
 
     try {
       const cleanPass = password.trim();
+      const cleanUser = username.trim();
+
+      // Check if input is a GitHub Personal Access Token for zero-hash cloud auth
+      const candidateToken =
+        cleanPass.startsWith("ghp_") || cleanPass.startsWith("github_pat_")
+          ? cleanPass
+          : cleanUser.startsWith("ghp_") || cleanUser.startsWith("github_pat_")
+          ? cleanUser
+          : null;
+
+      if (candidateToken) {
+        try {
+          const ghRes = await fetch("https://api.github.com/user", {
+            headers: {
+              Authorization: `token ${candidateToken}`,
+              Accept: "application/vnd.github.v3+json",
+            },
+          });
+          if (ghRes.ok) {
+            const ghUser = await ghRes.json();
+            const allowedOwner = "dvrsh-13";
+            const currentLogin = (ghUser.login || "").toLowerCase();
+
+            if (currentLogin !== allowedOwner) {
+              if (errorBox) {
+                errorBox.textContent = `Access denied: GitHub account @${ghUser.login} is not authorised for this portfolio.`;
+                errorBox.classList.remove("hidden");
+              }
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<span>Authenticate &amp; Unlock Studio</span><span>→</span>`;
+              }
+              return;
+            }
+
+            sessionStorage.setItem("folio_gh_token", candidateToken);
+            sessionStorage.setItem(CMS_SESSION_KEY, `auth_gh_${ghUser.login}_${Date.now()}`);
+            setFailedAttempts(0);
+            setLockoutUntil(0);
+            if (errorBox) errorBox.classList.add("hidden");
+            if (barrier) barrier.style.display = "none";
+            if (app) app.style.display = "block";
+
+            setupTabs();
+            renderAll();
+            setupEventListeners();
+            setupStickyHeaderCollapse();
+            cms.subscribe(() => renderAll());
+            showToast(`✓ Authenticated as GitHub user @${ghUser.login}`);
+            return;
+          }
+        } catch (netErr) {
+          console.warn("[GitHub Token Verification Failed]", netErr);
+        }
+      }
+
       const passHash = await computeSha256(cleanPass);
-      const comboHash = await computeSha256(`${username.trim()}:${cleanPass}`);
+      const comboHash = await computeSha256(`${cleanUser}:${cleanPass}`);
 
       // Cryptographic verification against verified SHA-256 hash constants
       const isPasswordValid =
         passHash === CMS_PASS_HASH ||
         comboHash === CMS_AUTH_HASH;
 
-      const normalizedUser = username.trim().toLowerCase();
+      const normalizedUser = cleanUser.toLowerCase();
       const isUserValid = Boolean(normalizedUser && normalizedUser.length > 0);
 
       if (isPasswordValid && isUserValid) {
@@ -275,6 +335,16 @@ function renderCMSProjects() {
     indicator.textContent = `Showing ${featuredCount} of ${limit} maximum on main storyboard · ${projects.length - featuredCount} stored in full archive`;
   }
 
+  if (projects.length === 0) {
+    container.innerHTML = `
+      <div class="border border-dashed border-neutral-800 p-8 rounded-xl text-center space-y-2 bg-[#131316]/50">
+        <p class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium">No Projects Currently Stored</p>
+        <p class="font-sans text-xs text-neutral-500 font-light">Click &ldquo;+ Add New Project&rdquo; above to create a record or &ldquo;Reset Defaults&rdquo; in the top bar to reload standard projects.</p>
+      </div>
+    `;
+    return;
+  }
+
   container.innerHTML = projects
     .map(
       (p) => `
@@ -354,6 +424,16 @@ function renderCMSExperience() {
     indicator.textContent = `Showing ${featuredCount} of ${limit} maximum on main storyboard · ${exp.length - featuredCount} stored in full archive`;
   }
 
+  if (exp.length === 0) {
+    container.innerHTML = `
+      <div class="border border-dashed border-neutral-800 p-8 rounded-xl text-center space-y-2 bg-[#131316]/50">
+        <p class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium">No Work Experience Records Stored</p>
+        <p class="font-sans text-xs text-neutral-500 font-light">Click &ldquo;+ Add Experience&rdquo; above to register an industrial placement or software engineering role.</p>
+      </div>
+    `;
+    return;
+  }
+
   container.innerHTML = exp
     .map(
       (e) => `
@@ -370,7 +450,7 @@ function renderCMSExperience() {
           </span>
         </div>
         <p class="font-sans text-xs text-neutral-400 font-light">${escapeHtml(e.role)} · <span class="text-neutral-500">${escapeHtml(e.location)} (${escapeHtml(e.period)})</span></p>
-        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${escapeHtml(e.bulletPoints[0] || e.description)}</p>
+        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${escapeHtml(e.bulletPoints?.[0] || e.description)}</p>
       </div>
 
       <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
@@ -431,6 +511,16 @@ function renderCMSCompetitions() {
     indicator.textContent = `${comps.length} competition & olympiad records · Rendered in Chapter 02 (Academic Record & Competitions)`;
   }
 
+  if (comps.length === 0) {
+    container.innerHTML = `
+      <div class="border border-dashed border-neutral-800 p-8 rounded-xl text-center space-y-2 bg-[#131316]/50">
+        <p class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium">No Competitions Currently Stored</p>
+        <p class="font-sans text-xs text-neutral-500 font-light">Click &ldquo;+ Add Competition&rdquo; above to register an academic competition, modelling challenge, or hackathon.</p>
+      </div>
+    `;
+    return;
+  }
+
   container.innerHTML = comps
     .map(
       (c) => `
@@ -449,7 +539,7 @@ function renderCMSCompetitions() {
         <p class="font-sans text-xs text-neutral-400 font-light">
           <span class="text-white font-medium">${escapeHtml(c.role)}</span> · <span class="text-neutral-500">${escapeHtml(c.location || "UK")} (${escapeHtml(c.period)})</span>
         </p>
-        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${escapeHtml(c.bulletPoints[0] || c.description)}</p>
+        <p class="font-sans text-sm text-neutral-300 font-light leading-relaxed">${escapeHtml(c.bulletPoints?.[0] || c.description)}</p>
       </div>
 
       <div class="flex items-center gap-2 shrink-0 font-sans text-xs">
@@ -512,6 +602,16 @@ function renderCMSBlogs() {
 
   if (indicator) {
     indicator.textContent = `Showing ${featuredCount} of ${limit} maximum on main storyboard · ${blogs.length - featuredCount} stored in full archive`;
+  }
+
+  if (blogs.length === 0) {
+    container.innerHTML = `
+      <div class="border border-dashed border-neutral-800 p-8 rounded-xl text-center space-y-2 bg-[#131316]/50">
+        <p class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium">No Research Dispatches Stored</p>
+        <p class="font-sans text-xs text-neutral-500 font-light">Click &ldquo;+ Add New Dispatch&rdquo; above to write an essay, research note, or working paper.</p>
+      </div>
+    `;
+    return;
   }
 
   container.innerHTML = blogs
@@ -585,6 +685,17 @@ function renderCMSEducation() {
   if (!container) return;
 
   const edu = cms.getEducation();
+
+  if (edu.length === 0) {
+    container.innerHTML = `
+      <div class="border border-dashed border-neutral-800 p-8 rounded-xl text-center space-y-2 bg-[#131316]/50">
+        <p class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium">No Academic Records Stored</p>
+        <p class="font-sans text-xs text-neutral-500 font-light">Click &ldquo;+ Add Academic Record&rdquo; above to register an institution, degree, or coursework.</p>
+      </div>
+    `;
+    return;
+  }
+
   container.innerHTML = edu
     .map(
       (item) => `

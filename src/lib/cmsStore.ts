@@ -83,6 +83,22 @@ export class CMSStore {
     this.experience = this.loadFromStorage(STORAGE_KEYS.EXPERIENCE, INITIAL_EXPERIENCE);
     this.education = this.loadFromStorage(STORAGE_KEYS.EDUCATION, INITIAL_EDUCATION);
     this.blogs = this.loadFromStorage(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
+
+    // One-time auto-migration to backfill comp-m3-challenge for users with legacy cached storage
+    const MIGRATION_KEY = "folio_cms_migrated_v2";
+    if (typeof window !== "undefined" && !window.localStorage.getItem(MIGRATION_KEY)) {
+      const existingExpIds = new Set(this.experience.map((e) => e.id));
+      const missingExp = INITIAL_EXPERIENCE.filter((e) => !existingExpIds.has(e.id));
+      if (missingExp.length > 0) {
+        this.experience = [...this.experience, ...missingExp];
+        this.saveToStorage(STORAGE_KEYS.EXPERIENCE, this.experience);
+      }
+      try {
+        window.localStorage.setItem(MIGRATION_KEY, "true");
+      } catch {
+        // ignore
+      }
+    }
   }
 
   public static getInstance(): CMSStore {

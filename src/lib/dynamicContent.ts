@@ -95,6 +95,21 @@ function renderEducationList() {
   const featured = eduList.filter((e) => e.featured);
   const displayList = featured.length > 0 ? featured : eduList;
 
+  if (displayList.length === 0) {
+    container.innerHTML = `
+      <div class="py-6 border-b border-neutral-800 space-y-1">
+        <div class="flex items-center gap-2 text-xs text-neutral-400 font-sans">
+          <span class="w-1.5 h-1.5 rounded-full bg-neutral-600 animate-pulse"></span>
+          <span class="text-neutral-300 font-medium">Academic Records · In Progress</span>
+        </div>
+        <p class="font-sans text-xs text-neutral-500 font-light leading-relaxed pl-3.5">
+          Academic pedigree and course credentials are currently being updated.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
   container.innerHTML = displayList
     .map(
       (item) => `
@@ -132,21 +147,6 @@ function renderCompetitionsList() {
   const featuredComps = allExp.filter((e) => e.category === "competition" && e.featured);
   const comps = featuredComps.length > 0 ? featuredComps : allExp.filter((e) => e.category === "competition");
 
-  const fallbackComps = [
-    {
-      company: "MathWorks Math Modelling (M3) Challenge",
-      period: "2026",
-      highlight: "Top 20% Worldwide.",
-      text: "Trained an XGBoost gradient boosting model on UK behavioural datasets and engineered Monte Carlo stochastic simulations to quantify demographic tail risk.",
-    },
-    {
-      company: "Lockheed Martin Code Quest",
-      period: "2025 & 2026",
-      highlight: "Advanced Division: Top 3 (2026) & 2nd Place (2025).",
-      text: "Led team in high-pressure algorithmic problem solving using Python under strict complexity constraints.",
-    },
-  ];
-
   if (comps.length > 0) {
     container.innerHTML = comps
       .slice(0, 2)
@@ -158,28 +158,24 @@ function renderCompetitionsList() {
           <span class="font-mono text-neutral-500">${escapeHtml(c.period)}</span>
         </div>
         <p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">
-          <span class="text-white font-medium">${escapeHtml(c.role)}.</span> ${escapeHtml(c.bulletPoints[0] || c.description)}
+          <span class="text-white font-medium">${escapeHtml(c.role)}.</span> ${escapeHtml(c.bulletPoints?.[0] || c.description)}
         </p>
       </div>
     `
       )
       .join("");
   } else {
-    container.innerHTML = fallbackComps
-      .map(
-        (c) => `
-      <div class="space-y-1">
-        <div class="flex justify-between text-xs text-neutral-400 font-sans">
-          <span class="text-neutral-300 font-medium">${escapeHtml(c.company)}</span>
-          <span class="font-mono text-neutral-500">${escapeHtml(c.period)}</span>
+    container.innerHTML = `
+      <div class="space-y-1 py-1">
+        <div class="flex items-center gap-2 text-xs text-neutral-400 font-sans">
+          <span class="w-1.5 h-1.5 rounded-full bg-neutral-600 animate-pulse"></span>
+          <span class="text-neutral-300 font-medium">Competitions &amp; Olympiads · In Progress</span>
         </div>
-        <p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">
-          <span class="text-white font-medium">${escapeHtml(c.highlight)}</span> ${escapeHtml(c.text)}
+        <p class="font-sans text-xs text-neutral-500 font-light leading-relaxed pl-3.5">
+          Academic competitions and algorithmic challenges are currently being updated.
         </p>
       </div>
-    `
-      )
-      .join("");
+    `;
   }
 }
 
@@ -193,6 +189,35 @@ function renderProjectsList() {
 
   if (countBtn) {
     countBtn.textContent = `(${total})`;
+  }
+
+  if (featured.length === 0) {
+    container.innerHTML = `
+      <div class="py-12 border-b border-neutral-800 space-y-2">
+        <div class="flex items-center gap-3 text-neutral-400 font-sans text-xs uppercase tracking-widest font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-neutral-600 animate-pulse"></span>
+          <span>Selected Projects · Work in Progress</span>
+        </div>
+        <p class="font-sans text-xs md:text-sm text-neutral-500 font-light pl-4 leading-relaxed max-w-xl">
+          Quantitative pipelines, algorithmic simulations, and software architectures are currently being compiled and will be published shortly.
+        </p>
+      </div>
+    `;
+    const portalContainer = document.querySelector<HTMLElement>("[data-project-portals]");
+    if (portalContainer) {
+      portalContainer.innerHTML = `
+        <div class="absolute inset-6 flex flex-col justify-between text-neutral-500">
+          <div class="border-b border-neutral-800 pb-2 text-xs font-sans text-neutral-500 uppercase tracking-widest">
+            <span>Portfolio Dossier</span>
+          </div>
+          <div class="my-auto space-y-2 text-xs font-sans text-neutral-400 font-light">
+            <p>New computational projects and systems are undergoing development.</p>
+          </div>
+          <div class="font-mono text-[10px] text-neutral-600">STATUS // WORK IN PROGRESS</div>
+        </div>
+      `;
+    }
+    return;
   }
 
   container.innerHTML = featured
@@ -268,6 +293,21 @@ function renderExperienceList() {
     countBtn.textContent = `(${total})`;
   }
 
+  if (featured.length === 0) {
+    container.innerHTML = `
+      <div class="py-12 border-b border-neutral-200 space-y-2">
+        <div class="flex items-center gap-3 text-neutral-500 font-sans text-xs uppercase tracking-widest font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-neutral-400 animate-pulse"></span>
+          <span>Work Experience · In Progress</span>
+        </div>
+        <p class="font-sans text-xs md:text-sm text-neutral-600 font-light pl-4 leading-relaxed max-w-xl">
+          Industrial placements, quantitative research internships, and software engineering engagements are being compiled.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
   container.innerHTML = featured
     .map(
       (e) => `
@@ -279,10 +319,10 @@ function renderExperienceList() {
         <span class="font-mono text-xs text-neutral-500">${escapeHtml(e.period)}</span>
       </div>
       <p class="font-sans text-xs md:text-sm text-neutral-600 leading-relaxed font-light">
-        ${escapeHtml(e.bulletPoints[0] || e.description)}
+        ${escapeHtml(e.bulletPoints?.[0] || e.description)}
       </p>
       ${
-        e.bulletPoints[1]
+        e.bulletPoints?.[1]
           ? `<p class="font-sans text-xs text-neutral-500 leading-relaxed font-light">
               • ${escapeHtml(e.bulletPoints[1])}
             </p>`
@@ -304,6 +344,21 @@ function renderBlogsList() {
 
   if (countBtn) {
     countBtn.textContent = `(${total})`;
+  }
+
+  if (featured.length === 0) {
+    container.innerHTML = `
+      <div class="py-12 border-b border-neutral-200 space-y-2">
+        <div class="flex items-center gap-3 text-neutral-500 font-sans text-xs uppercase tracking-widest font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-neutral-400 animate-pulse"></span>
+          <span>Research Dispatches · Coming Soon</span>
+        </div>
+        <p class="font-sans text-xs md:text-sm text-neutral-600 font-light pl-4 leading-relaxed max-w-xl">
+          Essays and working papers on quantitative backtesting, algorithmic trading, signal processing, and systems engineering are currently in preparation.
+        </p>
+      </div>
+    `;
+    return;
   }
 
   container.innerHTML = featured

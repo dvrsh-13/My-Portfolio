@@ -56,6 +56,18 @@ function isSessionAuthenticated(): boolean {
   return Boolean(token && token.startsWith("auth_"));
 }
 
+async function syncToDiskIfDev() {
+  try {
+    await fetch("/__api/save-content", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: cms.exportPortfolioDataTS() }),
+    });
+  } catch {
+    // In production or static hosting, dev endpoint won't exist - silent ignore
+  }
+}
+
 function init() {
   setupAuthGate();
 }
@@ -82,8 +94,11 @@ function setupAuthGate() {
     renderAll();
     setupEventListeners();
     setupStickyHeaderCollapse();
-    // Live synchronization across multiple open CMS Studio windows
-    cms.subscribe(() => renderAll());
+    // Live synchronization across multiple open CMS Studio windows & auto-sync to disk if local dev
+    cms.subscribe(() => {
+      renderAll();
+      syncToDiskIfDev();
+    });
     return;
   }
 
@@ -170,7 +185,10 @@ function setupAuthGate() {
             renderAll();
             setupEventListeners();
             setupStickyHeaderCollapse();
-            cms.subscribe(() => renderAll());
+            cms.subscribe(() => {
+              renderAll();
+              syncToDiskIfDev();
+            });
             showToast(`✓ Authenticated as GitHub user @${ghUser.login}`);
             return;
           }
@@ -1350,23 +1368,53 @@ function setupEventListeners() {
   const savedRepo = localStorage.getItem("folio_gh_repo");
   if (savedRepo && ghRepoInput) ghRepoInput.value = savedRepo;
 
-  document.getElementById("gh-publish-btn")?.addEventListener("click", async () => {
-    const token = ghTokenInput?.value.trim();
+  const handlePublishToGitHub = async () => {
+    // 1. Flush any pending input edits from Settings/Profile tabs into CMSStore
+    handleSaveAllSettings(false);
+
+    let token =
+      ghTokenInput?.value.trim() ||
+      sessionStorage.getItem("folio_gh_token") ||
+      "";
     const repo = ghRepoInput?.value.trim() || "dvrsh-13/My-Portfolio";
-    const branch = ghBranchInput?.value.trim() || "main";
+    const branch = ghBranchInput?.value.trim() || "Main";
 
     if (!token) {
-      showToast("Please provide a GitHub Personal Access Token (PAT) with repo scope", true);
-      return;
+      const entered = window.prompt(
+        "Enter your GitHub Personal Access Token (PAT) with 'repo' scope to publish live to dvrsh.com:"
+      );
+      if (!entered || !entered.trim()) {
+        showToast("Publish cancelled: GitHub PAT required to update live site", true);
+        return;
+      }
+      token = entered.trim();
+      sessionStorage.setItem("folio_gh_token", token);
+      if (ghTokenInput) ghTokenInput.value = token;
     }
 
     sessionStorage.setItem("folio_gh_token", token);
     localStorage.setItem("folio_gh_repo", repo);
 
+    // In-flight guard: disable publish buttons and set loading text
+    const headerPubBtn = document.getElementById("cms-publish-live-btn") as HTMLButtonElement | null;
+    const tabPubBtn = document.getElementById("gh-publish-btn") as HTMLButtonElement | null;
+    if (headerPubBtn) {
+      headerPubBtn.disabled = true;
+      headerPubBtn.classList.add("opacity-60", "pointer-events-none");
+    }
+    if (tabPubBtn) {
+      tabPubBtn.disabled = true;
+      tabPubBtn.classList.add("opacity-60", "pointer-events-none");
+    }
+
     if (ghStatus) {
       ghStatus.textContent = "Connecting to GitHub API...";
       ghStatus.className = "text-xs font-mono text-neutral-400";
     }
+    showToast("Publishing updates directly to GitHub repository...");
+
+    // Compatible auth header: works with classic (ghp_) and fine-grained (github_pat_) tokens
+    const authHeader = token.startsWith("ghp_") ? `token ${token}` : `Bearer ${token}`;
 
     try {
       const filePath = "src/data/portfolioData.ts";
@@ -1375,7 +1423,7 @@ function setupEventListeners() {
       // 1. Fetch existing file SHA
       const getRes = await fetch(apiUrl, {
         headers: {
-          Authorization: `token ${token}`,
+          Authorization: authHeader,
           Accept: "application/vnd.github.v3+json",
         },
       });
@@ -1400,11 +1448,11 @@ function setupEventListeners() {
       }
       const base64Content = btoa(binStr);
 
-      // 3. Commit directly via GitHub REST API
+      // 3. Commit directly via GitHub REST API to production branch
       const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
         method: "PUT",
         headers: {
-          Authorization: `token ${token}`,
+          Authorization: authHeader,
           Accept: "application/vnd.github.v3+json",
           "Content-Type": "application/json",
         },
@@ -1425,7 +1473,7 @@ function setupEventListeners() {
         ghStatus.textContent = "✓ Successfully committed! GitHub Pages build will trigger automatically.";
         ghStatus.className = "text-xs font-mono text-emerald-400";
       }
-      showToast("✓ Successfully committed updated data to GitHub repository!");
+      showToast("✓ Published live! GitHub Pages is building your updates (~45s).");
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
       console.error("[CMS GitHub Sync]", err);
@@ -1434,8 +1482,20 @@ function setupEventListeners() {
         ghStatus.className = "text-xs font-mono text-rose-400";
       }
       showToast(`✕ GitHub Publish Failed: ${errMsg}`, true);
+    } finally {
+      if (headerPubBtn) {
+        headerPubBtn.disabled = false;
+        headerPubBtn.classList.remove("opacity-60", "pointer-events-none");
+      }
+      if (tabPubBtn) {
+        tabPubBtn.disabled = false;
+        tabPubBtn.classList.remove("opacity-60", "pointer-events-none");
+      }
     }
-  });
+  };
+
+  document.getElementById("gh-publish-btn")?.addEventListener("click", handlePublishToGitHub);
+  document.getElementById("cms-publish-live-btn")?.addEventListener("click", handlePublishToGitHub);
 
   // Import JSON
   const importInput = document.getElementById("import-json-input") as HTMLInputElement;

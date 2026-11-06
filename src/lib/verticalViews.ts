@@ -196,7 +196,7 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
   if (category === "experience") {
     const list = cms.getAllExperience().filter((e) => e.category === "work");
     titleEl.textContent = "Work Experience & Placements";
-    countEl.textContent = `${list.length} Industrial & Engineering Records`;
+    countEl.textContent = `${list.length} Placements`;
 
     if (list.length === 0) {
       contentEl.innerHTML = `

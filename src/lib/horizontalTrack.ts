@@ -150,13 +150,18 @@ export function scrollToSection(
       return;
     }
 
+    const headerEl = document.querySelector<HTMLElement>("[data-intro-header]");
+    const headerHeight = headerEl ? headerEl.offsetHeight : 56;
+
     if (immediate) {
-      targetEl.scrollIntoView({ behavior: "instant" });
-      lenis?.scrollTo(targetEl, { immediate: true });
+      const top = targetEl.getBoundingClientRect().top + window.scrollY - headerHeight;
+      window.scrollTo(0, Math.max(0, top));
+      lenis?.scrollTo(Math.max(0, top), { immediate: true });
     } else if (lenis) {
-      lenis.scrollTo(targetEl, { duration });
+      lenis.scrollTo(targetEl, { offset: -headerHeight, duration });
     } else {
-      targetEl.scrollIntoView({ behavior: "smooth" });
+      const top = targetEl.getBoundingClientRect().top + window.scrollY - headerHeight;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
     }
   }
 }

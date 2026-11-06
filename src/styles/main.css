@@ -192,13 +192,19 @@ html.lenis, html.lenis body {
 
 .horizontal-panel {
   width: 100%;
-  min-height: 100dvh;
+  min-height: auto; /* Natural content-aware sizing on mobile: avoids artificial 100vh blank voids */
   position: relative;
   overflow-x: hidden;
-  overflow-y: visible !important; /* Allow natural vertical expansion on mobile */
+  overflow-y: visible !important;
   padding: 1.5rem;
-  padding-top: 5rem; /* Account for 56px mobile header with breathing room */
-  padding-bottom: 5rem; /* Account for mobile bottom bar with comfortable margin */
+  padding-top: 4.5rem; /* Clearance for fixed top rail */
+  padding-bottom: 4.5rem;
+  scroll-margin-top: 4.5rem;
+}
+
+/* First screen initialisation on mobile remains a full viewport impression */
+#hero.horizontal-panel {
+  min-height: calc(100dvh - 3.5rem);
 }
 
 @media (min-width: 768px) {
@@ -210,8 +216,9 @@ html.lenis, html.lenis body {
   }
 
   .horizontal-panel {
-    height: 100dvh;
-    width: 100vw;
+    height: 100dvh !important;
+    width: 100vw !important;
+    min-height: 100dvh;
     flex-shrink: 0;
     position: relative;
     overflow: hidden !important;
@@ -219,6 +226,7 @@ html.lenis, html.lenis body {
     padding-right: 4.5rem !important; /* 72px */
     padding-top: 2.75rem !important; /* 44px */
     padding-bottom: 2.75rem !important; /* 44px */
+    scroll-margin-top: 0;
   }
 }
 

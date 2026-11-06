@@ -41,6 +41,22 @@ function initApp() {
   // 10. Fluid Monochromatic Custom Cursor
   initCustomCursor();
 
+  // 11. Normalize Focus States: prevent button click boxes while keeping Tab accessibility
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Tab") {
+      document.body.classList.add("is-tabbing");
+    }
+  });
+  window.addEventListener("mousedown", () => {
+    document.body.classList.remove("is-tabbing");
+  });
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement)?.closest("button, a, [role='button']");
+    if (btn instanceof HTMLElement && !document.body.classList.contains("is-tabbing")) {
+      btn.blur();
+    }
+  });
+
   // Expose global controller for testing and automation
   (window as unknown as { __folio: unknown }).__folio = {
     scrollToSection,

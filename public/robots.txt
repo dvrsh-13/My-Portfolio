@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /cms.html
 
-Sitemap: https://dvrsh-13.github.io/My-Portfolio/sitemap.xml
+Sitemap: https://dvrsh.com/sitemap.xml

@@ -256,8 +256,12 @@ export function initHorizontalTrack() {
       const centeredX = -(sectionOffset - (window.innerWidth - centerSection.offsetWidth) / 2);
       const phase1Dist = Math.max(0, -centeredX);
       const phase3Dist = Math.max(0, scrollDist - phase1Dist);
-      const zoomDuration = window.innerHeight * 0.9;
+      const zoomDuration = window.innerHeight * 1.1;
       const totalScroll = scrollDist + zoomDuration;
+
+      const mediaW = centerMedia.offsetWidth || 560;
+      const mediaH = centerMedia.offsetHeight || 350;
+      const fullScreenScale = Math.max(window.innerWidth / mediaW, window.innerHeight / mediaH) * 1.15;
 
       centerGeometry = {
         phase1Dist,
@@ -267,31 +271,31 @@ export function initHorizontalTrack() {
       };
 
       // Base states
-      gsap.set(centerMedia, { scale: 0, transformOrigin: "center center" });
-      gsap.set(centerLeftWord, { x: 0 });
-      gsap.set(centerRightWord, { x: 0 });
+      gsap.set(centerMedia, { scale: 0, opacity: 0, transformOrigin: "center center" });
+      gsap.set(centerLeftWord, { x: 0, opacity: 1 });
+      gsap.set(centerRightWord, { x: 0, opacity: 1 });
 
       // Phase 1: Track scrolls to center section
       masterTimeline.fromTo(track, { x: 0 }, { x: centeredX, duration: phase1Dist });
 
-      // Phase 2: Pause track scroll, expand center media, fly text outwards
+      // Phase 2: Pause track scroll, expand center media, fly text outwards to complete fade
       masterTimeline.addLabel("centerPause");
       masterTimeline.fromTo(
         centerMedia,
-        { scale: 0 },
-        { scale: 1.1, duration: zoomDuration, ease: "power2.inOut" },
+        { scale: 0, opacity: 0 },
+        { scale: fullScreenScale, opacity: 1, duration: zoomDuration, ease: "power2.inOut" },
         "centerPause"
       );
       masterTimeline.fromTo(
         centerLeftWord,
-        { x: 0 },
-        { x: -window.innerWidth * 0.35, duration: zoomDuration, ease: "power2.inOut" },
+        { x: 0, opacity: 1 },
+        { x: -window.innerWidth * 0.75, opacity: 0, duration: zoomDuration, ease: "power2.inOut" },
         "centerPause"
       );
       masterTimeline.fromTo(
         centerRightWord,
-        { x: 0 },
-        { x: window.innerWidth * 0.35, duration: zoomDuration, ease: "power2.inOut" },
+        { x: 0, opacity: 1 },
+        { x: window.innerWidth * 0.75, opacity: 0, duration: zoomDuration, ease: "power2.inOut" },
         "centerPause"
       );
 
@@ -383,7 +387,21 @@ export function initHorizontalTrack() {
     updateRailTheme();
   });
 
+  // Mobile real-time scroll progress tracking
+  const updateMobileProgress = () => {
+    if (window.innerWidth < 768 && progressBar) {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
+      progressBar.style.transform = `scaleX(${progress})`;
+    }
+  };
+  window.addEventListener("scroll", updateMobileProgress, { passive: true });
+  window.addEventListener("resize", updateMobileProgress, { passive: true });
+  updateMobileProgress();
+
   return () => {
+    window.removeEventListener("scroll", updateMobileProgress);
+    window.removeEventListener("resize", updateMobileProgress);
     activeTrigger?.kill();
     activeTrigger = null;
     masterTimeline?.kill();

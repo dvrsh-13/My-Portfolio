@@ -123,16 +123,15 @@ function renderEducationList() {
       <div class="flex items-center gap-2 mt-1 text-xs md:text-sm text-neutral-300 font-light">
         <span class="text-white font-medium">${escapeHtml(item.grades)}</span>
       </div>
-      ${
-        item.details && item.details.length
+      ${item.details && item.details.length
           ? item.details
-              .slice(0, 2)
-              .map(
-                (d) => `<p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">${escapeHtml(d)}</p>`
-              )
-              .join("")
+            .slice(0, 2)
+            .map(
+              (d) => `<p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">${escapeHtml(d)}</p>`
+            )
+            .join("")
           : ""
-      }
+        }
     </div>
   `
     )
@@ -153,9 +152,9 @@ function renderCompetitionsList() {
       .map(
         (c) => `
       <div class="space-y-1">
-        <div class="flex justify-between text-xs text-neutral-400 font-sans">
+        <div class="flex justify-between items-baseline gap-4 text-xs text-neutral-400 font-sans">
           <span class="text-neutral-300 font-medium">${escapeHtml(c.company || c.role)}</span>
-          <span class="font-mono text-neutral-500">${escapeHtml(c.period)}</span>
+          <span class="font-mono text-neutral-500 shrink-0 text-right">${escapeHtml(c.period)}</span>
         </div>
         <p class="font-sans text-xs text-neutral-400 font-light leading-relaxed">
           <span class="text-white font-medium">${escapeHtml(c.role)}.</span> ${escapeHtml(c.bulletPoints?.[0] || c.description)}
@@ -260,12 +259,11 @@ function renderProjectsList() {
         </div>
         <div class="my-auto space-y-3 font-sans text-xs text-neutral-300">
           <p class="leading-relaxed font-light">${escapeHtml(p.description)}</p>
-          ${
-            p.metrics && p.metrics.length
-              ? `<div class="border-l border-neutral-700 pl-3 py-0.5 text-xs text-neutral-400 font-light">
+          ${p.metrics && p.metrics.length
+            ? `<div class="border-l border-neutral-700 pl-3 py-0.5 text-xs text-neutral-400 font-light">
                   ${escapeHtml(p.metrics[0])}
                 </div>`
-              : ""
+            : ""
           }
         </div>
         <div class="text-[11px] font-sans text-neutral-500 border-t border-neutral-800 pt-2">
@@ -321,13 +319,12 @@ function renderExperienceList() {
       <p class="font-sans text-xs md:text-sm text-neutral-600 leading-relaxed font-light">
         ${escapeHtml(e.bulletPoints?.[0] || e.description)}
       </p>
-      ${
-        e.bulletPoints?.[1]
+      ${e.bulletPoints?.[1]
           ? `<p class="font-sans text-xs text-neutral-500 leading-relaxed font-light">
               • ${escapeHtml(e.bulletPoints[1])}
             </p>`
           : ""
-      }
+        }
     </div>
   `
     )
@@ -351,10 +348,10 @@ function renderBlogsList() {
       <div class="py-12 border-b border-neutral-200 space-y-2">
         <div class="flex items-center gap-3 text-neutral-500 font-sans text-xs uppercase tracking-widest font-medium">
           <span class="w-1.5 h-1.5 rounded-full bg-neutral-400 animate-pulse"></span>
-          <span>Research Dispatches · Coming Soon</span>
+          <span>Writings · Coming Soon</span>
         </div>
         <p class="font-sans text-xs md:text-sm text-neutral-600 font-light pl-4 leading-relaxed max-w-xl">
-          Essays and working papers on quantitative backtesting, algorithmic trading, signal processing, and systems engineering are currently in preparation.
+          Still writing...
         </p>
       </div>
     `;

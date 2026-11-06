@@ -1,6 +1,6 @@
 # Devarsh Vinod — Systems & Computational Portfolio
 
-A minimalist, high-performance portfolio website engineered for computer science, mathematics, and quantitative systems. Built with a dual-axis continuous storyboard, dedicated vertical reading views, and an integrated in-browser Content Management Studio.
+A minimalist, high-performance portfolio website engineered for computer science, mathematics, and quantitative systems. Built with a dual-axis continuous storyboard, dedicated vertical reading views, and fluid typographic geometry.
 
 ---
 
@@ -10,16 +10,14 @@ A minimalist, high-performance portfolio website engineered for computer science
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **Animation & Motion**: [GSAP (GreenSock)](https://gsap.com/) & ScrollTrigger
 - **Smooth Scrolling**: [@studio-freight/lenis](https://github.com/darkroomengineering/lenis)
-- **Content Management**: Client-side Portfolio Studio (`/cms.html`) with multi-tab `BroadcastChannel` sync and GitHub REST API integration
 
 ---
 
 ## Key Features
 
-- **Dual-Axis Storyboard**: Smooth horizontal virtual scroll on desktop translating wheel input into lateral traversal, paired with a midpoint cinematic expander ("The Systems"). Seamlessly refolds into a tactile vertical layout on mobile devices.
+- **Dual-Axis Storyboard**: Smooth horizontal virtual scroll on desktop translating wheel input into lateral traversal, paired with a midpoint kinetic expander. Seamlessly refolds into a tactile vertical layout on mobile devices.
 - **Dedicated Vertical Reading Views**: Full-page pull-down reading overlays for technical working papers and dedicated detail screens for computational projects.
 - **Dynamic Theme Synchronisation**: Fixed vertical navigation rail that dynamically updates theme colours, timestamps, and chapter indicators based on active screen position.
-- **In-Browser Portfolio Studio (`/cms.html`)**: Visual management for projects, industrial placements, mathematical competitions, research essays, and biographic metadata with instant live preview.
 - **Subtle Magnetic Snapping**: Fluid, directional snapping that gently aligns chapters as you navigate across the storyboard.
 - **Zero-Item Graceful Handling**: Built-in empty states across all views to cleanly handle in-progress projects, working papers, or competition updates.
 - **Performance & Accessibility**: Semantic HTML5, full keyboard navigation support, high-contrast typography, and strict British English content standards.
@@ -46,10 +44,7 @@ npm run dev
 Open `http://localhost:5173` to explore the live portfolio.
 
 ### 3. Customising Content
-You can customise the portfolio content in two ways:
-
-- **Via Code**: Edit the structured data records directly in `src/data/portfolioData.ts`.
-- **Via Portfolio Studio**: Navigate to `http://localhost:5173/cms.html`. Make live updates visually, test changes with instant live sync, and click **Export portfolioData.ts** to replace the data file or **Commit to GitHub** for direct deployment.
+Customise your portfolio content by modifying the structured data records directly in `src/data/portfolioData.ts`.
 
 ### 4. Production Build
 ```bash

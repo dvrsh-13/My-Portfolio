@@ -231,8 +231,8 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
     }
   } else if (category === "projects") {
     const list = cms.getAllProjects();
-    titleEl.textContent = "Computational Projects & Mathematical Models";
-    countEl.textContent = `${list.length} Projects & Quantitative Implementations`;
+    titleEl.textContent = "All Projects";
+    countEl.textContent = `${list.length} Projects Completed`;
 
     if (list.length === 0) {
       contentEl.innerHTML = `
@@ -258,25 +258,23 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
         </div>
         <p class="font-sans text-sm md:text-base text-neutral-300 font-light leading-relaxed">${escapeHtml(p.description)}</p>
         
-        ${
-          p.metrics && p.metrics.length
-            ? `
+        ${p.metrics && p.metrics.length
+              ? `
           <div class="border-l border-neutral-700 pl-4 py-1 space-y-1.5 text-xs md:text-sm font-sans text-neutral-300">
             ${p.metrics.map((m) => `<div>• ${escapeHtml(m)}</div>`).join("")}
           </div>
         `
-            : ""
-        }
+              : ""
+            }
 
-        ${
-          p.codeSnippet
-            ? `
+        ${p.codeSnippet
+              ? `
           <div class="bg-neutral-950 border border-neutral-800/80 p-4 rounded text-xs font-mono text-neutral-300 overflow-x-auto">
             <pre class="leading-relaxed whitespace-pre font-mono text-xs text-neutral-300"><code>${escapeHtml(p.codeSnippet)}</code></pre>
           </div>
         `
-            : ""
-        }
+              : ""
+            }
 
         <div class="flex justify-between items-center pt-2">
           <div class="font-sans text-xs text-neutral-400">
@@ -289,7 +287,7 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
             tabindex="0"
             aria-label="View dedicated details for ${escapeHtml(p.title)}"
           >
-            <span>View Dedicated Project →</span>
+            <span>View Project →</span>
           </button>
         </div>
       </article>
@@ -299,15 +297,15 @@ export function openArchiveView(category: "experience" | "projects" | "blogs", i
     }
   } else if (category === "blogs") {
     const list = cms.getAllBlogs();
-    titleEl.textContent = "Research Notes & Working Papers";
-    countEl.textContent = `${list.length} Dispatches & Dissertation Insights`;
+    titleEl.textContent = "Blogs and Research";
+    countEl.textContent = `${list.length} Articles written`;
 
     if (list.length === 0) {
       contentEl.innerHTML = `
         <div class="py-20 text-center border border-neutral-800/80 rounded-sm p-8 space-y-3">
-          <div class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium">Research Dispatches · Coming Soon</div>
+          <div class="font-sans text-xs uppercase tracking-widest text-neutral-400 font-medium">Writings · Coming Soon</div>
           <p class="font-sans text-sm text-neutral-500 font-light max-w-md mx-auto leading-relaxed">
-            Technical write-ups, mathematical explorations, and research working papers are currently in preparation.
+            Still writing...
           </p>
         </div>
       `;
@@ -504,7 +502,7 @@ export function openProjectDetail(projectId: string, immediate = false) {
   currentProjectId = projectId;
 
   if (categoryEl) categoryEl.textContent = project.category || "Computational Project";
-  if (metaEl) metaEl.textContent = `${project.year} · Computational Implementation`;
+  if (metaEl) metaEl.textContent = `${project.year} · Project Details`;
   titleEl.textContent = project.title;
   if (subtitleEl) subtitleEl.textContent = project.subtitle;
 

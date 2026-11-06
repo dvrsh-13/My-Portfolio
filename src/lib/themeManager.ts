@@ -3,38 +3,44 @@
  */
 export function initThemeManager() {
   const header = document.querySelector<HTMLElement>("[data-intro-header]");
-  const panels = document.querySelectorAll<HTMLElement>("[data-horizontal-panel]");
+  const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-horizontal-panel]"));
 
   if (!header || !panels.length) return () => {};
 
-  // For mobile vertical stacked view
-  const observer = new IntersectionObserver(
-    (entries) => {
-      // Only run IntersectionObserver when on mobile (on desktop, ScrollTrigger handles it)
-      if (window.innerWidth >= 768) return;
+  let activeMobilePanel: HTMLElement | null = null;
 
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.4) {
-          const target = entry.target as HTMLElement;
-          const bg = target.dataset.headerBg || "#000000";
-          const text = target.dataset.headerText || "#ffffff";
-          const border = target.dataset.headerBorder || "#222222";
+  // For mobile vertical stacked view: check exact bounding client rect under header
+  const updateMobileHeaderTheme = () => {
+    if (window.innerWidth >= 768 || !header) return;
+    const headerBottom = header.getBoundingClientRect().bottom;
 
-          header.style.setProperty("--header-bg", bg);
-          header.style.setProperty("--header-text", text);
-          header.style.setProperty("--header-border", border);
-          header.style.color = text;
-          header.style.backgroundColor = bg;
-          header.style.borderColor = border;
-        }
-      });
-    },
-    {
-      threshold: [0.1, 0.4, 0.8],
+    for (const panel of panels) {
+      const rect = panel.getBoundingClientRect();
+      if (rect.top <= headerBottom && rect.bottom > headerBottom) {
+        if (panel === activeMobilePanel) break;
+        activeMobilePanel = panel;
+
+        const bg = panel.dataset.headerBg || "#000000";
+        const text = panel.dataset.headerText || "#ffffff";
+        const border = panel.dataset.headerBorder || "#222222";
+
+        header.style.setProperty("--header-bg", bg);
+        header.style.setProperty("--header-text", text);
+        header.style.setProperty("--header-border", border);
+        header.style.color = text;
+        header.style.backgroundColor = bg;
+        header.style.borderColor = border;
+        break;
+      }
     }
-  );
+  };
 
-  panels.forEach((p) => observer.observe(p));
+  window.addEventListener("scroll", updateMobileHeaderTheme, { passive: true });
+  window.addEventListener("resize", updateMobileHeaderTheme, { passive: true });
+  updateMobileHeaderTheme();
 
-  return () => observer.disconnect();
+  return () => {
+    window.removeEventListener("scroll", updateMobileHeaderTheme);
+    window.removeEventListener("resize", updateMobileHeaderTheme);
+  };
 }

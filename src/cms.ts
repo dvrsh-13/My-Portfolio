@@ -6,12 +6,8 @@ type CurrentEditType = "project" | "experience" | "competition" | "blog" | "educ
 let activeEditType: CurrentEditType = "project";
 let activeEditId: string | null = null;
 
-const CMS_AUTH_HASH =
-  (import.meta.env.VITE_CMS_AUTH_HASH as string) ||
-  "c6a54c0acd53bd4c8856b04e1043a921ccaafd824bb0df5dfd9ba59630b7347c";
-const CMS_PASS_HASH =
-  (import.meta.env.VITE_CMS_PASS_HASH as string) ||
-  "755e362692395313f23227cfb5d518905e9e868d5c4984120cae327cc0a17252";
+const CMS_AUTH_HASH = (import.meta.env.VITE_CMS_AUTH_HASH as string) || "";
+const CMS_PASS_HASH = (import.meta.env.VITE_CMS_PASS_HASH as string) || "";
 const CMS_SESSION_KEY = "folio_cms_session_token";
 const CMS_LOCKOUT_KEY = "folio_cms_lockout_until";
 const CMS_ATTEMPTS_KEY = "folio_cms_failed_attempts";
@@ -186,10 +182,10 @@ function setupAuthGate() {
       const passHash = await computeSha256(cleanPass);
       const comboHash = await computeSha256(`${cleanUser}:${cleanPass}`);
 
-      // Cryptographic verification against verified SHA-256 hash constants
+      // Cryptographic verification against verified SHA-256 hash constants (if configured via env)
       const isPasswordValid =
-        passHash === CMS_PASS_HASH ||
-        comboHash === CMS_AUTH_HASH;
+        Boolean(CMS_PASS_HASH && passHash === CMS_PASS_HASH) ||
+        Boolean(CMS_AUTH_HASH && comboHash === CMS_AUTH_HASH);
 
       const normalizedUser = cleanUser.toLowerCase();
       const isUserValid = Boolean(normalizedUser && normalizedUser.length > 0);
@@ -219,7 +215,9 @@ function setupAuthGate() {
         } else {
           setFailedAttempts(attempts);
           if (errorBox) {
-            errorBox.textContent = "Invalid administrator username or password.";
+            errorBox.textContent = candidateToken
+              ? "Invalid or expired GitHub Personal Access Token."
+              : "Invalid credentials. Please authenticate using a GitHub Personal Access Token (PAT) for @dvrsh-13.";
             errorBox.classList.remove("hidden");
           }
         }

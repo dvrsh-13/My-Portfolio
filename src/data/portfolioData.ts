@@ -164,10 +164,10 @@ export const INITIAL_EXPERIENCE: ExperienceItem[] = [
     "location": "International / Remote",
     "period": "2026",
     "category": "competition",
-    "description": "Trained an XGBoost  model on UK behavioural datasets and used Monte Carlo simulations to predict yearly gambling profit & loss based on demographics.",
+    "description": "Trained an XGBoost model on UK behavioural datasets and used Monte Carlo simulations to predict yearly gambling profit & loss based on demographics.",
     "bulletPoints": [
-      "Trained an XGBoost  model on UK behavioural datasets and used Monte Carlo simulations to predict yearly gambling profit & loss based on demographics.",
-      "Produced technical paper  under strict 14-hour deadline through effective collaboration and teamwork."
+      "Trained an XGBoost model on UK behavioural datasets and used Monte Carlo simulations to predict yearly gambling profit & loss based on demographics.",
+      "Produced technical paper under strict 14-hour deadline through effective collaboration and teamwork."
     ],
     "featured": true
   },
@@ -208,7 +208,7 @@ export const INITIAL_EDUCATION: EducationItem[] = [
     "period": "Sep 2021 — Jun 2024",
     "grades": "Maths 9, Further Maths 8, Statistics 7, English Language 8, English Literature 8",
     "details": [
-      "Achieved  grade 9 in Mathematics, with grade 8 in Further Mathematics and 7 in Statistics"
+      "Achieved grade 9 in Mathematics, with grade 8 in Further Mathematics and 7 in Statistics"
     ],
     "featured": true
   }

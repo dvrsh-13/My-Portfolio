@@ -13,11 +13,20 @@ function localDevSavePlugin(): Plugin {
       server.middlewares.use("/__api/save-content", (req, res) => {
         if (req.method === "POST") {
           const origin = req.headers.origin;
-          const host = req.headers.host;
-          if (origin && !origin.includes(host || "localhost") && !origin.includes("127.0.0.1")) {
-            res.writeHead(403, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ error: "Forbidden cross-origin request" }));
-            return;
+          if (origin) {
+            try {
+              const originUrl = new URL(origin);
+              const isLocal = originUrl.hostname === "localhost" || originUrl.hostname === "127.0.0.1";
+              if (!isLocal) {
+                res.writeHead(403, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: "Forbidden cross-origin request" }));
+                return;
+              }
+            } catch {
+              res.writeHead(400, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ error: "Invalid Origin header" }));
+              return;
+            }
           }
 
           let body = "";

@@ -1,24 +1,29 @@
 {
-  "name": "Devarsh Vinod ─ Portfolio Dossier",
+  "name": "Devarsh Vinod",
   "short_name": "Devarsh Vinod",
-  "description": "Portfolio dossier of Devarsh Vinod. Computer Science & Applied Mathematics degree apprenticeship candidate.",
-  "start_url": "./",
-  "scope": "./",
+  "description": "Portfolio of Devarsh Vinod - Gap year student specialising in Computer Science and Maths",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#080808",
   "theme_color": "#080808",
   "icons": [
     {
-      "src": "favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "DV.png",
+      "src": "/DV.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ]
 }
